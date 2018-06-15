@@ -1,0 +1,21 @@
+Hi everyone.
+
+I'm trying to create a package in order to understand how various numerical tools (such as VEGAS, odsint etc.) work.
+I'll try to write some scripts in python (maybe later I will translate them in something faster like C++ and Fortran)
+that perform some calculations. 
+
+For the moment I'm working on Monte-Carlo, and I have succesfully implemented the plain MC and the Accept-Reject MC
+flavours. Since I am selftought on these subjects, I cannot give you my word that the codes work as intented. So,
+If you are looking for something that works better, look at other available tools online.  However, if you 
+are trying to understand what makes these tools work, maybe you will find my scripts helpful. Remember that I am still
+learning, so I may not be able to help if something does not work. 
+
+
+I'll try to use scipy as little as possible, but for some simple things (e.g. min, max, sum etc.). 
+So, in order to run these scripts, you should have at least scipy and matplotlib intalled, and
+use python 2.7 (that's what I'm using). 
+
+
+
+Cheers,
+Dimitris
