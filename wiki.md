@@ -1,3 +1,3 @@
 # Testing #
 
-Just testing: $$\lambda{}$$.
+Just testing: $$\lambda$$.
