@@ -1,0 +1,9 @@
+Things to do (no particular order):
+
+1)Examples of Discrete Marcov Chains and try to understand their mechanics (a bit of theory would be nice).
+2)Solve optimization problems (stochasticly).
+3)Define 'burn-in period' and 'converge' rules for Metropolis.
+4)Simulated annealing (it should be easy enough).
+5)VEGAS
+6)Algorithms for histograming data (in many dimensions). 
+7)Solve systems of differencial equations (almost ready!).
