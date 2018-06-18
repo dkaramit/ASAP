@@ -79,4 +79,5 @@ print len(true_samples)
 x=[i[0] for i in true_samples]
 y=[i[1] for i in true_samples]
 plt.scatter(x,y,s=.1,color='black')
+#plt.hist2d(x,y,bins=50)
 plt.show()
