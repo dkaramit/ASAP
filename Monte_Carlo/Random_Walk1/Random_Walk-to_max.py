@@ -5,7 +5,7 @@ def func(x,y):
     return np.exp(-(x-0.5)**2*2500)*np.exp(-(y-0.5)**2*100)
 
 
-N_steps=700
+N_steps=7000
 eps=.05
 wx=[]
 wy=[]
