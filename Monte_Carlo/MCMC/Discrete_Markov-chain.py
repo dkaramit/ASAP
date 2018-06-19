@@ -4,12 +4,25 @@ import numpy as np
 The trasition matrix defines the Markov Chain. If you change to higher dimentions and want to start from
 a state diferent from 0, then you should change the dimension of variables v and state, accordingly.
 '''
-Transition=np.array([\
-            [0.5,0.3,0.1,0.1],\
-            [0.05,0.45,0.4,0.1],\
-            [0.25,0.35,0.3,0.1],\
-            [0.4,0.1,0.25,0.25]
-            ])#Reminder: the sum of each row sums up to 1.
+
+EXAMPLE=2
+
+
+if EXAMPLE==1:
+    Transition=np.array([\
+                [0.5,0.3,0.1,0.1],\
+                [0.05,0.45,0.4,0.1],\
+                [0.25,0.35,0.3,0.1],\
+                [0.4,0.1,0.25,0.25]
+                ])#Reminder: the sum of each row sums up to 1.
+
+if EXAMPLE==2:
+    Transition=np.array([\
+                [0.2,0.7,0.1],\
+                [0,0,1],\
+                [1,0,0]\
+                ])#Reminder: the sum of each row sums up to 1.
+
 
 #Number of steps in both the Iteration and Simulation.
 N_tot=250000
