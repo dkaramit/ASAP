@@ -90,5 +90,6 @@ print 'simulation=', s#probabilities is the fraction of visits over time.
 
 print r"Maximum discrepancy:", np.max(np.abs(v-s))/np.max(np.abs(v)),r"%"
 
+#=============================================================Done
 
 #
