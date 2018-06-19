@@ -33,13 +33,15 @@ if EXAMPLE==2:
 Generate a random Markov Chain (with N_dim #states) and see if it reaches equilibrium (the most probable scenario is that it will, since I generate random rows
 with numbers that add up to 1)
 '''
-N_dim=5
+N_dim=10
 if EXAMPLE==3:
     Transition=np.random.dirichlet(np.ones(N_dim),N_dim)
 
-#Number of steps in both the Iteration and Simulation.
-N_tot=50000
 
+
+#=============================================================Begin
+#Number of steps in both the Iteration and Simulation.
+N_tot=100000
 #Doing the following you start at state 0 automatically.
 len_T=len(Transition[0])
 init_s=np.zeros(len_T)
@@ -53,52 +55,40 @@ Iteratively find w^{(n)}=w^{(0)}.P^{(n+1)}.
 #v=[1,0,0,0]#play around with this (the final result should not change as long as the v.v=1)
 v=init_s[:]#start at state 0 automatically
 
-
-_iter=v[:]
-for i in np.arange(N_tot):
-    _iter=np.dot(Transition.T,_iter)
-    #print s
-print "iterative=", _iter
-
-
 '''
 Simulation.
 Simulate the Markov Chain
 '''
-
 #state=[1,0,0,0]#This is the initial sate vector, which indicates the current state. e.g [1,0,0] indicates that the system is in state 0 (I start counting from 0).
-
 state=init_s[:]#start at state 0 automatically
-def Transition_Probability(state,Transition):
-    _probabilities=np.dot(Transition.T,state)#probabilities to move from the current state to all other states.
-    return _probabilities
+_visits=np.zeros(len(state))
 
 
-_N=0
-_visits=np.zeros(len(state))#initialize the number of visits.
 
 
-while True:
-    if _N==N_tot:
-        break
+
+for i in np.arange(N_tot):
 
     '''
-    The next state is determined by the multinomial distribution, which is included in numpy (how do you sample from the multinomial?).
+    Calculate v^{(n+1)}=P^{T}v^{(n)}
     '''
-    state= np.random.multinomial(1,Transition_Probability(state,Transition))
+    v=np.dot(Transition.T,v)
+
+    '''
+    The next state in the simulation is determined by the multinomial distribution, which is included in numpy (how do you sample from the multinomial?).
+    '''
+    state= np.random.multinomial(1,np.dot(Transition.T,state))
     _visits+=state#Fortunately, all notations click together. Since states are defined in "binary", we can add them up to obtain the number of visits for each state.
 
-    _N+=1
 
 
+print "iterative=", v
 
-_sim=np.array(_visits)/float(_N)
-print 'simulation=', _sim#probabilities is the fraction of visits over time.
-
-
-print r"Maximum discrepancy:", np.max(np.abs(_iter-_sim))/np.max(np.abs(_iter)),r"%"
+s=np.array(_visits)/float(N_tot)
+print 'simulation=', s#probabilities is the fraction of visits over time.
 
 
-#print "As for large N_tot, the simulated result should approach the iteratitve one."
+print r"Maximum discrepancy:", np.max(np.abs(v-s))/np.max(np.abs(v)),r"%"
+
 
 #
