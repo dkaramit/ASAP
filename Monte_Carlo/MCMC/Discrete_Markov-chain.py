@@ -1,6 +1,11 @@
 import numpy as np
 
+'''
+The trasition matrix defines the Markov Chain. If you change to higher dimentions, then you should change the variables:
+i) v
+ii) state
 
+'''
 Transition=np.array([\
             [0.5,0.3,0.2],\
             [0.05,0.45,0.5],\
@@ -12,11 +17,12 @@ Transition=np.array([\
 
 '''
 Iterative solution to w.P=w
+Iteratively find w^{(n)}=w^{(0)}.P^{(n+1)}.
 '''
 v=[0.1,0.1,0.8]#play around with this (the final result should not change as long as the v.v=1)
 
 s=v[:]
-N_tot=50000
+N_tot=100000
 for i in range(N_tot):
     s=np.dot(Transition.T,s)
     #print s
@@ -25,14 +31,11 @@ print "iterative=", s
 
 
 '''
-Simulation
+Simulation.
+Simulate the Markov Chain
 '''
+
 state=[1,0,0]#This is the initial sate vector, which indicates the current state. e.g [1,0,0] indicates that the system is in state 0 (I start counting from 0).
-
-#state=v[:]#I can set any initial probability (since MC is ergodic)
-
-def Read_State(state):
-    return state.index(1)#the state is the index of the state vector.
 
 
 def Transition_Probability(state,Transition):
@@ -42,27 +45,25 @@ def Transition_Probability(state,Transition):
 
 _N=0
 
-_visits=[0,0,0]
+_visits=np.zeros(len(state))
 while True:
     if _N==N_tot:
         break
 
     '''
-
     The next state is determined by the multinomial distribution, which is included in numpy (how do you sample from the multinomial?).
-
     '''
     state= np.random.multinomial(1,Transition_Probability(state,Transition))
-    _visits+=state#fortunately, all definitions click together. Since stetes are defined in "binary", sowe can add them up to give us the #of visits of each state.
+    _visits+=state#Fortunately, all notations click together. Since states are defined in "binary", we can add them up to obtain the number of visits for each state.
 
     _N+=1
 
 
-print 'simulation=', np.array(_visits)/float(_N)#probabilities is ne fraction of visits over time :)
+print 'simulation=', np.array(_visits)/float(_N)#probabilities is ne fraction of visits over time.
 
 
 
-
+print "As for large N_tot, the simulated result should approach the iteratitve one."
 
 
 
