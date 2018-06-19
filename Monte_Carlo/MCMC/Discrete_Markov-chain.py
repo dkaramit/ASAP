@@ -5,7 +5,7 @@ The trasition matrix defines the Markov Chain. If you change to higher dimention
 a state diferent from 0, then you should change the dimension of variables v and state, accordingly.
 '''
 
-EXAMPLE=2
+EXAMPLE=3
 
 
 if EXAMPLE==1:
@@ -23,6 +23,14 @@ if EXAMPLE==2:
                 [1,0,0]\
                 ])#Reminder: the sum of each row sums up to 1.
 
+
+'''
+Generate a random Markov Chain (with N_dim #states) and see if it reaches equilibrium (the most probable scenario is that it will, since I generate random rows
+with numbers that add up to 1)
+'''
+N_dim=20
+if EXAMPLE==3:
+    Transition=np.random.dirichlet(np.ones(N_dim),N_dim)
 
 #Number of steps in both the Iteration and Simulation.
 N_tot=250000
@@ -79,29 +87,14 @@ while True:
     _N+=1
 
 
-print 'simulation=', np.array(_visits)/float(_N)#probabilities is the fraction of visits over time.
+
+_sim=np.array(_visits)/float(_N)
+print 'simulation=', _sim#probabilities is the fraction of visits over time.
 
 
-
-print "As for large N_tot, the simulated result should approach the iteratitve one."
-
+print "Maximum discrepancy:", np.max(np.abs(s-_sim))/np.max(np.abs(s))
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+#print "As for large N_tot, the simulated result should approach the iteratitve one."
 
 #
