@@ -28,12 +28,12 @@ if EXAMPLE==2:
 Generate a random Markov Chain (with N_dim #states) and see if it reaches equilibrium (the most probable scenario is that it will, since I generate random rows
 with numbers that add up to 1)
 '''
-N_dim=20
+N_dim=5
 if EXAMPLE==3:
     Transition=np.random.dirichlet(np.ones(N_dim),N_dim)
 
 #Number of steps in both the Iteration and Simulation.
-N_tot=250000
+N_tot=50000
 
 #Doing the following you start at state 0 automatically.
 len_T=len(Transition[0])
@@ -49,12 +49,11 @@ Iteratively find w^{(n)}=w^{(0)}.P^{(n+1)}.
 v=init_s[:]#start at state 0 automatically
 
 
-s=v[:]
+_iter=v[:]
 for i in np.arange(N_tot):
-    s=np.dot(Transition.T,s)
+    _iter=np.dot(Transition.T,_iter)
     #print s
-print "iterative=", s
-
+print "iterative=", _iter
 
 
 '''
@@ -92,7 +91,7 @@ _sim=np.array(_visits)/float(_N)
 print 'simulation=', _sim#probabilities is the fraction of visits over time.
 
 
-print "Maximum discrepancy:", np.max(np.abs(s-_sim))/np.max(np.abs(s))
+print r"Maximum discrepancy:", np.max(np.abs(_iter-_sim))/np.max(np.abs(_iter)),r"%"
 
 
 #print "As for large N_tot, the simulated result should approach the iteratitve one."
