@@ -27,8 +27,7 @@ x=np.array(x)
 
 
 
-Means=[]
-Vars=[]
+
 samples = []
 
 
@@ -45,7 +44,7 @@ for run_d in range(batches):
             while True:
                 step=(np.random.rand()*2-1)*eps
 
-                if x[d]+step<1 and x[d]+step>0:#check if x stays inside the cube [0,1]^dim (I wand the point in here for integration)
+                if x[d]+step<1 and x[d]+step>0:#check if x stays inside the cube [0,1]^dim (I want the point in here for integration)
                     break
 
             can.append(x[d] + step) #candidate

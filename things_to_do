@@ -1,9 +1,33 @@
 Things to do (no particular order):
+-----------------------------------
 
-1)Examples of Discrete Marcov Chains and try to understand their mechanics (a bit of theory would be nice).#done
-2)Solve optimization problems (stochasticly).
-3)Define 'burn-in period' and 'converge' rules for Metropolis.
-4)Simulated annealing (it should be easy enough).
-5)VEGAS
-6)Algorithms for histograming data (in many dimensions). 
-7)Solve systems of differential equations (almost ready!).
+
+-Examples of Discrete Marcov Chains and try to understand their mechanics (a bit of theory would be nice).#done
+
+
+-Component-wise Sampling for Metropolis (there is a useful blog: https://theclevermachine.wordpress.com/) 
+[see https://theclevermachine.wordpress.com/2012/11/04/mcmc-multivariate-distributions-block-wise-component-wise-updates/]
+
+
+-Gibbs sampler
+
+
+-Define 'burn-in period' and 'converge' rules for Metropolis.
+
+
+-Simulated annealing (it should be easy enough).
+
+
+-Solve optimization problems (stochasticly).
+
+
+-VEGAS (almost ready. Needs some corrections.)
+
+
+-Algorithms for histograming data (in many dimensions). 
+
+
+-Solve systems of differential equations (almost ready!).
+
+
+-Hamiltonian  Monte  Carlo (no idea... arXiv:1701.02434)
