@@ -33,7 +33,7 @@ if EXAMPLE==2:
 Generate a random Markov Chain (with N_dim #states) and see if it reaches equilibrium (the most probable scenario is that it will, since I generate random rows
 with numbers that add up to 1)
 '''
-N_dim=10
+N_dim=30
 if EXAMPLE==3:
     Transition=np.random.dirichlet(np.ones(N_dim),N_dim)
 
@@ -41,7 +41,7 @@ if EXAMPLE==3:
 
 #=============================================================Begin
 #Number of steps in both the Iteration and Simulation.
-N_tot=100000
+N_tot=500000
 #Doing the following you start at state 0 automatically.
 len_T=len(Transition[0])
 init_s=np.zeros(len_T)

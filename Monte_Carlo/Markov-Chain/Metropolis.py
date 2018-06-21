@@ -18,7 +18,7 @@ Dim=len(x)#get the number of variables automatically (it's stupid but I sometime
 
 
 
-n = 5000
+n = 10000
 eps = .1
 batches=20
 
@@ -29,11 +29,11 @@ x=np.array(x)
 
 Means=[]
 Vars=[]
-true_samples = []
+samples = []
 
 
 for run_d in range(batches):
-    samples = []
+
     for i in range(Dim):#start each batch at a random point
         x[i]=  np.random.rand()
 
@@ -60,24 +60,19 @@ for run_d in range(batches):
         u = np.random.rand()
         if u < a :
             x = can
-            true_samples.append(x)
+            samples.append(x)
 
         func_x=func(can)
-        '''count_d=0
-        for d in range(Dim):#check if x goes outside of the cube [0,1]^dim (I wand the point in here for integration)
-            if x[d]>0 and x[d]<1:
-                count_d+=1
-        if count_d==Dim:
-            true_samples.append(x)'''
 
 
 
 
 
-print len(true_samples)
+print len(samples)
 
-x=[i[0] for i in true_samples]
-y=[i[1] for i in true_samples]
+x=[i[0] for i in samples]
+y=[i[1] for i in samples]
 plt.scatter(x,y,s=.1,color='black')
+#plt.plot(x,y,'b--')
 #plt.hist2d(x,y,bins=50)
 plt.show()
