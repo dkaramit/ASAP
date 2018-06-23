@@ -5,14 +5,13 @@ Things to do (no particular order):
 -Examples of Discrete Marcov Chains and try to understand their mechanics (a bit of theory would be nice).#done
 
 
--Component-wise Sampling for Metropolis (there is a useful blog: https://theclevermachine.wordpress.com/) 
-[see https://theclevermachine.wordpress.com/2012/11/04/mcmc-multivariate-distributions-block-wise-component-wise-updates/]
+-Component-wise Sampling for Metropolis [see https://theclevermachine.wordpress.com/2012/11/04/mcmc-multivariate-distributions-block-wise-component-wise-updates/]
 
 
 -Gibbs sampler
 
 
--Define 'burn-in period' and 'converge' rules for Metropolis.
+-Define 'burn-in period' and 'converge' rules for Metropolis (A bit of time series analysis seems to be required).
 
 
 -Simulated annealing (it should be easy enough).
@@ -21,13 +20,17 @@ Things to do (no particular order):
 -Solve optimization problems (stochasticly).
 
 
--VEGAS (almost ready. Needs some corrections.)
+-VEGAS (almost ready-- needs some minor (?) adjustments.)
 
 
 -Algorithms for histograming data (in many dimensions). 
 
 
--Solve systems of differential equations (almost ready!).
+-LU decomposition, only because it is used in Rosenbrock method for differential equations. #It is done, but only useful in solving differential equations (so, it will be part of this batch).
 
 
--Hamiltonian  Monte  Carlo (no idea... arXiv:1701.02434)
+-Solve systems of differential equations (some classic examples along with ROS3W ready! They need some documentation. I'll also write other Rosenbrock ones.).
+#########Comment on ROS3W: it is very simple and works even for some coupled stiff equations that I've tried! 
+
+
+-Hamiltonian  Monte  Carlo (no idea how to do this for the moment, but seems good [arXiv:1701.02434])
