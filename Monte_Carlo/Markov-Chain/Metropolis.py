@@ -1,3 +1,9 @@
+'''
+Things to do:
+-Finish the 1-D example
+-use what you've learned to make this work better!
+'''
+
 import numpy as np
 import matplotlib.pyplot as plt
 _tiny=1.e-80
