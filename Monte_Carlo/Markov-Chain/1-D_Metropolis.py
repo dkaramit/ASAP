@@ -159,7 +159,7 @@ plt.show()
 
 #=============================================================================#
 #normalized Histogram of sample vs normalized target distribution
-plots=False
+'''plots=False
 if plots:
     import scipy.integrate as integrate
 
@@ -172,7 +172,7 @@ if plots:
     ax.hist(accepted,bins='auto',density=True)#it would only work for normalized func...
 
     plt.show()
-#=============================================================================#
+'''#=============================================================================#
 
 
 #
