@@ -11,7 +11,7 @@ Things to do (no particular order):
 -Gibbs sampler
 
 
--Define 'burn-in period' and 'converge' rules for Metropolis (A bit of time series analysis seems to be required).
+-Define 'burn-in period' and 'converge' rules for Metropolis.#done for 1-D
 
 
 -Simulated annealing (it should be easy enough).
