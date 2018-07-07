@@ -19,7 +19,7 @@ VF=np.vectorize(func)
 def Metropolis(Target,xin,N=10000,eps=0.01,burn_in=0,thinning=10,_fixed_interval=True):
     '''
     burn_in (integer): do not store the first 'burn_in' accepted steps (the first few steps could be in a region with low probability).
-    thinning (integer): store 1 every 'thinning' accepted steps (makes the more independent).
+    thinning (integer): store 1 every 'thinning' accepted steps (makes the sample more independent).
     _fixed_interval (boolean): if True keps x in [0,1].
     '''
     accepted=[]
