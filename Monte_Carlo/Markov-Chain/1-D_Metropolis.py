@@ -171,7 +171,7 @@ if plots:
     ax.plot(x,y,'c--')
     ax.hist(accepted,bins='auto',density=True)#it would only work for normalized func...
 
-    plt.show()
+#    plt.show()
 #=============================================================================#
 
 
