@@ -11,13 +11,13 @@ Things to do (no particular order):
 -Gibbs sampler
 
 
--Define 'burn-in period' and 'converge' rules for Metropolis.#done for 1-D
+-Define 'burn-in period' and 'converge' rules for Metropolis.#done for 1-D!
 
 
 -Simulated annealing (it should be easy enough).
 
 
--Solve optimization problems (stochasticly).
+-Solve optimization problems (stochastically).
 
 
 -VEGAS (almost ready-- needs some minor (?) adjustments.)
