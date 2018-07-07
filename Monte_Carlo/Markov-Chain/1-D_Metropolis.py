@@ -159,7 +159,7 @@ plt.show()
 
 #=============================================================================#
 #normalized Histogram of sample vs normalized target distribution
-'''plots=False
+plots=False
 if plots:
     import scipy.integrate as integrate
 
