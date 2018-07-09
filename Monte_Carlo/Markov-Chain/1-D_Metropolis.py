@@ -131,7 +131,6 @@ for k in np.arange(0,50):
     means.append(np.mean(batch_means))
     vars.append( np.sqrt(np.var(batch_means,ddof=1)))
 
-    #NBs.append(bins)
     NBs.append(NB)
 
 ax[1,0].plot( NBs,means )
@@ -139,13 +138,13 @@ ax[1,0].scatter( NBs,means,color=(0,0,0,1) )
 ax[1,0].set_yscale('log')
 ax[1,0].set_xscale('log')
 ax[1,0].set_ylabel('Mean of func')
-ax[1,0].set_xlabel('No. bins')
+ax[1,0].set_xlabel('No. points per bin')
 
 ax[1,1].plot( NBs,vars )
 ax[1,1].scatter( NBs,vars,color=(0,0,0,1) )
 ax[1,1].set_xscale('log')
 ax[1,1].set_ylabel('Sigma of the mean')
-ax[1,1].set_xlabel('No. bins')
+ax[1,1].set_xlabel('No. points per bin')
 #=============================================================================#
 plt.tight_layout()
 
