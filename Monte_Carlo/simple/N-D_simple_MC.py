@@ -1,5 +1,4 @@
 import numpy as np
-import scipy.integrate as nint
 
 
 def func(x):
@@ -15,7 +14,6 @@ def MC(func,Ndim,Nt=1000):
 
 
 Ndim=100
-
 N_tot=100
 N_batches=1000
 I=[]
@@ -56,10 +54,10 @@ mm=1.*np.max( np.histogram(np.random.normal(integral, sigma , N_batches),normed=
 x=np.arange(integral-3*sigma,integral+3*sigma,6*sigma/1000.)
 
 y=gauss(x,np.mean(I),sigma)
-plt.plot(x,y/np.max(y)*mm)
+plt.plot(x,y)
 
 
-plt.hist( np.random.normal(integral, sigma , N_batches),color='black')
-plt.hist(I,alpha=0.5,color='c')
+plt.hist( np.random.normal(integral, sigma , N_batches),color='black',density=True)
+plt.hist(I,alpha=0.5,color='c',density=True)
 
 plt.show()
