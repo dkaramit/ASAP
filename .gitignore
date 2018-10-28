@@ -2,3 +2,5 @@ Monte_Carlo/Random_Walk
 *.ipynb_checkpoints*
 simulation*
 tests*
+*c++
+*.DS_Store
