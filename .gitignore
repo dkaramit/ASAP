@@ -6,3 +6,4 @@ tests*
 *.DS_Store
 *.pdf
 *.DS_Store
+*open.py
