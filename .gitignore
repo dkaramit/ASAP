@@ -7,3 +7,4 @@ tests*
 *.pdf
 *.DS_Store
 *open.py
+*.pyc
