@@ -1,7 +1,7 @@
 from numpy import random,zeros_like
 
 
-def multinomial(n,probabilities):
+def multinomial(N,probabilities):
     '''
     works like  numpy.random.multinomial!
 
@@ -26,7 +26,7 @@ def multinomial(n,probabilities):
 
     state=zeros_like(probabilities)
 
-    for i in range(n):
+    for i in range(N):
         _r=random.rand()
         for i,_p in enumerate(cumulatives):
             if _r<=_p:
