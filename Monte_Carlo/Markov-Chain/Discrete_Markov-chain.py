@@ -75,7 +75,7 @@ for i in np.arange(N_tot):
     v=np.dot(Transition.T,v)
 
     '''
-    The next state in the simulation is determined by the multinomial distribution, which is included in numpy (how do you sample from the multinomial?).
+    The next state in the simulation is determined by the multinomial distribution, which is included in numpy ( you can find how to samlpe from the multinomial in misc/multinomial.py ).
     '''
     state= np.random.multinomial(1,np.dot(Transition.T,state))
     _visits+=state#Fortunately, all notations click together. Since states are defined in "binary", we can add them up to obtain the number of visits for each state.
