@@ -33,7 +33,7 @@ if EXAMPLE==2:
 Generate a random Markov Chain (with N_dim #states) and see if it reaches equilibrium (the most probable scenario is that it will, since I generate random rows
 with numbers that add up to 1)
 '''
-N_dim=30
+N_dim=5
 if EXAMPLE==3:
     Transition=np.random.dirichlet(np.ones(N_dim),N_dim)
 
@@ -41,7 +41,7 @@ if EXAMPLE==3:
 
 #=============================================================Begin
 #Number of steps in both the Iteration and Simulation.
-N_tot=500000
+N_tot=5000
 #Doing the following you start at state 0 automatically.
 len_T=len(Transition[0])
 init_s=np.zeros(len_T)
@@ -70,12 +70,15 @@ _visits=np.zeros(len(state))
 for i in np.arange(N_tot):
 
     '''
+    Iterative solution:
     Calculate v^{(n+1)}=P^{T}v^{(n)}
     '''
     v=np.dot(Transition.T,v)
 
     '''
-    The next state in the simulation is determined by the multinomial distribution, which is included in numpy ( you can find how to samlpe from the multinomial in misc/multinomial.py ).
+    Simulation:
+    The next state in the simulation is determined by the multinomial distribution,
+    which is included in numpy ( you can find how to samlpe from the multinomial in misc/multinomial.py ).
     '''
     state= np.random.multinomial(1,np.dot(Transition.T,state))
     _visits+=state#Fortunately, all notations click together. Since states are defined in "binary", we can add them up to obtain the number of visits for each state.
