@@ -51,7 +51,10 @@ class individual:
     def offspring(self,other):
         '''
         offspring takes two brains (parents) and returns one  (child).
-        The parents exchange some of their genes (wifgts and biases), and this makes a child.
+        The parents exchange some of their genes (weights and biases), and this makes a child.
+
+        The child is the updated version of self. So, I need to change that, in order to be able to
+        have more complex selection
         '''
 
         _child=self.brain
@@ -153,83 +156,24 @@ class population:
     which ones should be mixed, and generate a new population.
     '''
 
-    def __init__(self, _individuals,_size,_reproduction_rate,_survival_rate):
+    def __init__(self, _individuals,_size,_N_children,_mutation_probability):
         self.individuals=_individuals
         self.size=_size
-        self.reproduction_rate=_reproduction_rate
-        self.survival_rate=_survival_rate
+        self.N_childres=_N_children
+        self.mutation_probability=_mutation_probability
 
 
-    def rank(self):
+    def rank(self,_max=True):
         '''rank the individuals'''
 
         #calculate the abs of the total fitness score
         #self._tot=float(np_abs(np_sum([_in.fitness_score for _in in self.individuals ])))
 
-        #assign a probability to each individual and rank them
+        #rank the individuals (from max to min) if _max=True
         self.ranking=sorted([ (i,_in.fitness_score) for i,_in in enumerate(self.individuals) ] ,
-                         reverse=True,key=lambda _s:_s[1])
+                         reverse=_max,key=lambda _s:_s[1])
+
+
+
 
     def new_generation(self):
-        '''
-        evolves the individuals
-
-        As an example, we will take the first few (self.survival_rate) individuals and pass them to the
-        next generaton.
-        Also, we will take the next best few individuals (given by 2*self.reproduction_rate) and
-        make self.reproduction_rate childs. Then we will reset the rest
-        self.size-self.reproduction_rate-self.survival_rate
-
-
-        Note: missing mutation!
-        '''
-
-
-        ''''for i in range(self.size):
-            print i,': ',self.individuals[i].brain.biases
-            print '\n\n\n\n'''''
-
-        _srv=self.ranking[:self.survival_rate]
-        _srv=[i[0] for i in _srv]
-        #print _srv
-
-
-        #take the first self.reproduction_rate individuals to reproduce
-        #this is not the best I can do, but it's good for now
-        _rep=self.ranking[self.survival_rate:2*self.reproduction_rate+self.survival_rate]
-        _rep=[i[0] for i in _rep]
-
-
-        random.shuffle(_rep)
-        #print _rep
-        _rep=iter(_rep)
-        while True:
-            try:
-                p1=_rep.next()
-                p2=_rep.next()
-
-
-                #print self.individuals[p1].brain.biases
-
-                self.individuals[p1].offspring(self.individuals[p2])
-                self.individuals[p2].reset_brain()
-
-
-                #print self.individuals[p1].brain.biases
-
-
-            except:
-                break
-
-        _die=self.ranking[self.reproduction_rate+self.survival_rate:]
-        _die=[i[0] for i in _die]
-        #print _die
-        #choose which individuals will make a child
-        for i in _die:
-            self.individuals[i].reset_brain()
-
-
-
-        ''''for i in range(self.size):
-            print i,': ',self.individuals[i].brain.biases
-            print '\n\n\n\n'''''
