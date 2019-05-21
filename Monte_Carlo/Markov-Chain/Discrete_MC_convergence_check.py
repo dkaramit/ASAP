@@ -21,7 +21,7 @@ Transition=np.array([\
 
 
 #=============================================================Begin
-#Number of steps in both the Iteration and Simulation.
+#Number of steps in both the Iteration and (the maximum of) Simulation.
 N_tot=50000
 #Doing the following you start at state 0 automatically.
 len_T=len(Transition[0])
