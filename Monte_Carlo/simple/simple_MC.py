@@ -11,10 +11,15 @@ def MC_1D(func,Nt=1000):
     for i in range(Nt):
         x=np.random.rand()
         s.append(func(x))
+
+
+    #Remember that the variance of the estimator for the mean (\bar{x}=1/N /sum x_{i}) is Var[\bar{x}]=\sigma_{x}^2/N
+    #(N is the sample size, and x_{i} a certain outcome or the r.v. x).
+    #The variance of x itself (\sigma_{x}^2) can be estimated by S^{2}=1/(N-1) sum_{i} x_{i}.
     return np.mean(s), np.var(s,ddof=1)/Nt
 
-N_tot=2000
-N_batches=200
+N_tot=1000
+N_batches=300
 I=[]
 V=[]
 for i in np.arange(N_batches):
@@ -23,9 +28,10 @@ for i in np.arange(N_batches):
     V.append(_V)
 
 integral=np.mean(I)
-sigma= np.sqrt(np.mean(V))#the variance of the estimator I is sigma^2= 1/N_batches sum_i var(I_i) (the mean var(I_i))
+sigma= np.sqrt(np.mean(V))#the variance of the estimator I is sigma^2= 1/N_batches sum_i var(I_i) (same case as the discussion in MC_1D)
 print 'integral', integral
 print 'sigma', sigma
+#print 's', np.var(I,ddof=1)**0.5 #observe that sigma and s are very close. 
 
 
 chi=(I-np.mean(I))/np.sqrt(V)
