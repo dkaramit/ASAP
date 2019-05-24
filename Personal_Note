@@ -6,7 +6,7 @@ I'll try to write some scripts in python (maybe later I will translate them in s
 that perform some of various calculations.
 
 For the moment  I have successfully implemented the plain Monte Carlo (MC), Acceptance-Rejection MC flavours,
-Marcov-Chains (and some discrete for fun), and VEGAS (this is not complete, although the jupyter notebook for the
+Markov-Chains (and some discrete for fun), and VEGAS (this is not complete, although the jupyter notebook for the
 1-dimensional is very good). Also, I have some algorithms (Euler, inverse Euler, SDIRK-2-1-2, and ROS3w)
 for systems of differential equations (still need documentation and comments in these codes). I am preparing a code
 for artificial neural networks, where I have a working neural net, with an arbitrary number of hidden layers.
