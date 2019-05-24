@@ -1,4 +1,4 @@
-The C++ directory is here, in order to implement some of the python scripts in pure C++.
+The Cpp directory is here in order to implement some of the python scripts in pure C++.
 
 
 My problem with the translation from python to C++ is the use of numpy and some purely pythonic workarounds
