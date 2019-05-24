@@ -1,6 +1,18 @@
 #ifndef LU_HEADERS_H_INCLUDED
 #define LU_HEADERS_H_INCLUDED
 
+//---------------------------------------------------------------------//
+// NOTE: The definitions here agree with the rosetta code
+// examples, but not with scipy. Also, for very specific
+// systems, the L turns out with "nan" entries. As far I can
+// see, the pivoting is not correct. This is due to the way
+// pivot_matrix searches the matrix and changes rows. There
+// are several issues with the way it works now, such as The
+// fact that the the P is updated and A is not.
+//---------------------------------------------------------------------//
+
+
+
 #include <iostream>
 #include <iomanip>
 //#include <complex>
