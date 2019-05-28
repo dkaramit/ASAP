@@ -74,7 +74,7 @@ def Metropolis(Target,xin,N=10000,eps=[],burn_in=0,thinning=10,_fixed_interval=[
 accepted=Metropolis(Target=func,xin=[-0.,-0.4,0.1],N=500000,eps=[0.01,0.04,0.02],burn_in=50000,thinning=80,_fixed_interval=[(0,1),(-1,0),(0,1)])#then run this
 _len=len(accepted)
 _Dim=len(accepted[0])
-print _len
+print (_len)
 ##############################################################################
 
 
@@ -84,7 +84,7 @@ fig=plt.figure(figsize=(14,7))
 fig.subplots_adjust(bottom=0.025, left=0.025, top = 0.975, right=0.975)
 #=============================================================================#
 #traceplot of x (use it to determine burn_in).
-print '============== Trace-plots ==============='
+print ('============== Trace-plots ===============')
 
 sub = fig.add_subplot(2, 2, 1)
 for d in range(_Dim):
@@ -96,12 +96,12 @@ sub.set_ylabel('x position')
 sub.yaxis.set_label_coords(0.05, 0.85)
 sub.xaxis.set_label_coords(0.5, 0.05)
 
-print 'Done!'
+print ('Done!')
 #=============================================================================#
 
 #=============================================================================#
 #plot the autocorrelation function (ACF) (use it to determine the thinning)
-print '============== ACF ==============='
+print ('============== ACF ===============')
 def ACF(X,N,n=5):#returns the first N ACFs
     _mu=np.mean(X)
     _len=len(X)
@@ -119,9 +119,9 @@ if N>_len:
 n=1
 
 acf= [ ACF([i[d] for i in accepted],N,n) for d in range(_Dim) ]
-print 'ACF mean and variance for lag>10'
+print( 'ACF mean and variance for lag>10')
 for i in range(_Dim):
-    print i,':', np.mean(acf[i][10:]),np.sqrt(np.var(acf[i][10:],ddof=1))
+    print( i,':', np.mean(acf[i][10:]),np.sqrt(np.var(acf[i][10:],ddof=1)))
 
 sub = fig.add_subplot(2, 2, 2)
 
@@ -134,13 +134,13 @@ sub.set_xlabel('lag')
 sub.set_ylabel('ACF')
 sub.yaxis.set_label_coords(0.05, 0.5)
 sub.xaxis.set_label_coords(0.05, 0.05)
-print 'Done!'
+print ('Done!')
 #=============================================================================#
 
 #=============================================================================#
 #Plot sigma and mean of func (or x if you uncomment it) for various binning.
 #break the accepted in bins of NB length and plot the variance for a various number of bins.
-print '============== Bin Means ==============='
+print ('============== Bin Means ===============')
 
 means=[]
 vars=[]
@@ -153,7 +153,7 @@ for k in np.arange(0,50):
     if bins<5:
         break
 
-    print r'Points per bin=', points ,r'No. bins=', bins, r'Total points=',points*bins
+    print (r'Points per bin=', points ,r'No. bins=', bins, r'Total points=',points*bins)
 
     batch_means= [ np.mean([ func(  [accepted[batch*points+i][d] for d in np.arange(_Dim)]) for i in np.arange(points) ])  for batch in np.arange(bins)]
 
@@ -211,7 +211,7 @@ _xx.xaxis.set_label_coords(0.5, 0.95)
 
 
 
-print 'Done!'
+print ('Done!')
 #=============================================================================#
 plt.tight_layout()
 fig.suptitle(str(_Dim)+'D-Metropolis:'+str(_len)+' points',y=1)

@@ -142,7 +142,7 @@ class individual:
             l= random.randint(1,_c.layers+1)# b^{0}_{i}=0 (can't change)
             i= random.randint(_c.nodes[l])
 
-            print '{},{}'.format(l,i)
+            print( '{},{}'.format(l,i))
 
             _c.update_bias(l,i, random.choice([-1,1])*random.random()) # set a bias from -1 to 1
 
@@ -177,3 +177,4 @@ class population:
 
 
     def new_generation(self):
+        pass

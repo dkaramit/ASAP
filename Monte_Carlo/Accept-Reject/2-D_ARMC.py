@@ -32,4 +32,4 @@ for i in np.arange(N_tot):
         I+=wi/np.abs(wi)
 
 norm=N_acc/float(N_tot)*_max
-print  I/(N_acc/norm)
+print  (I/(N_acc/norm))

@@ -94,7 +94,7 @@ for i in np.arange(N_tot):
 norm=N_acc/float(N_tot)*_max
 
 #this is the integral!
-print  I/(N_acc/norm)
+print  (I/(N_acc/norm))
 
 
 

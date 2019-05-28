@@ -44,7 +44,7 @@ for i in range(N_batches):
 
 integral=np.mean(I)#The I's are still an average, so the central limit theorem still applies (appriximately, since N_acc is a random number).
 sigma=np.sqrt(np.var(I,ddof=1))#since I cannot calculate the variance of one batch, I use this to estimate the variance.
-print integral, sigma
+print (integral, sigma)
 
 
 

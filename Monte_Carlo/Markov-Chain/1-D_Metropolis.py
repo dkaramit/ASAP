@@ -67,7 +67,7 @@ def Metropolis(Target,xin,N=10000,eps=0.01,burn_in=0,thinning=10,_fixed_interval
 #run Metropolis
 accepted=Metropolis(Target=func,xin=0,N=50000,eps=0.01,burn_in=1000,thinning=50)
 _len=len(accepted)
-print _len
+print (_len)
 ##############################################################################
 
 
@@ -102,7 +102,7 @@ n=1
 
 acf=ACF(accepted,N,n)
 #acf=ACF(VF(accepted),N,n)
-print np.mean(acf[10:]),np.sqrt(np.var(acf[10:],ddof=1))
+print (np.mean(acf[10:]),np.sqrt(np.var(acf[10:],ddof=1)))
 ax[0,1].plot(np.arange(0,N,n),acf)
 ax[0,1].scatter(np.arange(0,N,n),acf,color=(0.1,0.1,0.1,1))
 ax[0,1].set_xlabel('lag')
@@ -124,7 +124,7 @@ for k in np.arange(0,50):
     if bins<2:
         break
 
-    print r'Points per bin=', NB ,r'No. bins=', bins, r'Total points=',NB*bins
+    print( r'Points per bin=', NB ,r'No. bins=', bins, r'Total points=',NB*bins)
 
     batch_means= [ np.mean([ func(accepted[batch*NB+i]) for i in np.arange(NB) ])  for batch in np.arange(bins)]
     #batch_means= [ np.mean([ accepted[batch*NB+i] for i in np.arange(NB) ])  for batch in np.arange(bins)]

@@ -85,13 +85,13 @@ for i in np.arange(N_tot):
 
 
 
-print "iterative=", v
+print( "iterative=", v)
 
 s=np.array(_visits)/float(N_tot)
-print 'simulation=', s#probabilities is the fraction of visits over time.
+print( 'simulation=', s)#probabilities is the fraction of visits over time.
 
 
-print r"Maximum discrepancy:", np.max(np.abs(v-s))/np.max(np.abs(v)),r"%"
+print( r"Maximum discrepancy:" , np.max(np.abs(v-s))/np.max(np.abs(v)) , r"%" )
 
 #=============================================================Done
 

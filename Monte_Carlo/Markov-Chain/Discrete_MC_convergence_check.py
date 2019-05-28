@@ -82,7 +82,7 @@ for transition in np.arange(1,N_tot+1):
     else:
         if np.var(means)/np.mean(means)<tolerance:
             s=equilibrium
-            print 'converged after {} transitions. Equilibrium state: {}'.format(transition, equilibrium)
+            print( 'converged after {} transitions. Equilibrium state: {}'.format(transition, equilibrium))
             #print v
             #find maximum discrepancy between iterative and simulated
             _md=0
@@ -93,10 +93,10 @@ for transition in np.arange(1,N_tot+1):
                     _diff=np.abs(e-equilibrium[i])/float(e)
                 if _md<_diff:
                     _md=_diff
-            print r"Maximum discrepancy between iterative and simulated equilibrium state:", _md
+            print( r"Maximum discrepancy between iterative and simulated equilibrium state:", _md)
 
             exit()
-        print transition , np.mean(means), np.var(means)
+        print( transition , np.mean(means), np.var(means))
 
 
 

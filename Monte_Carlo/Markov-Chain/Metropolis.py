@@ -38,7 +38,7 @@ for run_d in range(batches):
         x[i]=  np.random.rand()
 
     func_x=func(x)
-    for i in xrange(1,n):
+    for i in range(1,n):
 
         can=[]
         for d in range(Dim):
@@ -68,7 +68,7 @@ for run_d in range(batches):
 
 
 
-print len(samples)
+print( len(samples))
 
 x=[i[0] for i in samples]
 y=[i[1] for i in samples]

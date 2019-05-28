@@ -35,6 +35,6 @@ norm=float(N_acc)/float(N_tot)*_max
 
 
 I=np.mean( w/(abs_w/norm) )
-print I
+print (I)
 #Cannot find an estimator for the variance. In fact, this proccedure seems to be
 # one experiment. So I can do this many times, i.e. moving to batches!
