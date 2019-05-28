@@ -25,12 +25,12 @@ for i in np.arange(N_batches):
 
 integral=np.mean(I)
 sigma= np.sqrt(np.mean(V))#the variance of the estimator I is sigma^2= 1/N_batches sum_i var(I_i) (the mean var(I_i))
-print 'integral', integral
-print 'sigma', sigma
+print ('integral', integral)
+print ('sigma', sigma)
 
 
 chi=(I-np.mean(I))/np.sqrt(V)
-print 'chi^2/dof',np.sum(chi**2)/(N_batches-1.)
+print ('chi^2/dof',np.sum(chi**2)/(N_batches-1.))
 
 
 
