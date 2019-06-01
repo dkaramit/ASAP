@@ -3,6 +3,7 @@ Monte_Carlo/Random_Walk
 simulation*
 tests*
 *c++
+*.out
 *.DS_Store
 *.pdf
 *.DS_Store
