@@ -3,7 +3,8 @@ Numerical calculations *as simple as possible* (ASAP).
 
 ---
 
-##Personal note
+**Personal note**
+
 I'm trying to create a collection of programs and scripts that perform some of various calculations 
 with the goal of packaging everything together at some point. I'm doing this to understand (and show) 
 how various numerical tools work. Because python is slow for such things, I'll try to write some 
