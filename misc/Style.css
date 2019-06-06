@@ -1,0 +1,84 @@
+h1{
+    color: rgb(255, 255, 255);
+    font-size: 25pt;
+}
+
+
+/*Add style for the github link.*/
+.githubRef a 
+{            
+    display: table-cell;
+    
+    background-color:  rgb(119, 123, 187);
+    border: double;
+    border-color: rgb(0, 0, 0);
+    color: rgba(0, 0, 0, 1);
+    padding: 10px 10px;
+    text-align: center;
+    text-decoration: underline;
+    font-size: 20px;
+    margin: 4px 2px;
+    cursor: pointer;
+    align-self:"left";
+
+}
+/*Add style for the github link when the mouse is on the box.*/   
+.githubRef a:hover {
+    background-color: rgba(0, 0, 0, 1);
+    color: rgb(146, 146, 146);
+    }
+
+
+
+/*style for paragraphs*/
+p{
+    font-family: Arial, Helvetica, sans-serif;  
+    font-size: 14pt;
+}
+
+/*style for body*/
+body
+{
+    height: 100%;
+
+    overflow-x: auto;
+    overflow-y: auto;
+    background-color:  #2D383A;
+    color: #C8C8CD;
+}
+
+.Head{
+    background-color: rgb(192, 192, 192);
+    color: blue;
+}
+
+/*split the page*/
+.SplitLeft 
+{
+    height: 80%;
+    overflow-x: auto;
+    overflow-y: auto;
+    position: fixed;
+    width: 45%;
+    padding-top: 5px;
+    left:5%;
+}
+  
+.SplitRight 
+{  
+    height: 50%;
+    overflow-x: auto;
+    overflow-y: visible;
+    position: fixed;
+    width: 46%;
+    padding-top: 5px;
+    right: 2%;
+    border: 2px solid rgb(255, 255, 255);
+    background-color: #8B8680;
+    color: cyan;
+    
+    /* font-family: monospace ;
+    font-size: 15pt; */
+}
+  
+
