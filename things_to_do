@@ -8,10 +8,10 @@ make a class VEGAS, with all the functons needed,
 -Solve systems of differential equations (some classic examples along with ROS3W ready! They need some documentation.
 I'll also write other Rosenbrock ones.). Probably I'll do it in C++, because in python it is prohibitingly slow.
 Use xtensor for numpy-like arrays in C++. I have my own small implementation, that works fine and without any memory
-leakig, but xtensor is more complete! My goal afterall is to see how numerical algorithms work, and not to test my
-skills on polymorphsmism and these things.
+leaking, but xtensor is more complete! My goal afterall is to see how numerical algorithms work, and not to test my
+skills on polymorphism and these things.
 
--Artificial neural networks. ANN with arbitrary number of hidden layers ready. Also, a number of different options
+-Artificial neural networks. Ann with arbitrary number of hidden layers ready. Also, a number of different options
 for activation and loss functions available. I have started a more object oriented version (in order to reduce complexity
 and make it usable; same as in VEGAS).
 

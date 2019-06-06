@@ -2,6 +2,7 @@ import numpy as np
 import scipy.integrate as nint
 
 
+
 def func(x):
     return np.sin(x)**2+np.cos(x**2)
 
