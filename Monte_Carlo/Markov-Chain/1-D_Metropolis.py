@@ -10,7 +10,9 @@ def func(x):
     #return np.exp(-x)
 
 #vectorize func for convinience
-#use func to calculate autocorrelation and the mean/variance of func. In practice, one might have a physical quantity to be estimated.
+#use func to calculate autocorrelation and the 
+# mean/variance of func. In practice, one might have a physical 
+# quantity to be estimated.
 VF=np.vectorize(func)
 
 
@@ -36,7 +38,7 @@ def Metropolis(Target,xin,N=10000,eps=0.01,burn_in=0,thinning=10,_fixed_interval
 
                 #can=np.random.normal(x,eps)# Gaussian candidate position
                 can=(np.random.rand()*2-1)*eps+x# Uniform candidate position
-                if can<1 and can>0:#check if x stays inside [0,1] (for simplicity...)
+                if can<1 and can>0:#check if x stays inside [0,1] (not really needed)
                     break
         else:
             can=np.random.normal(x,eps)   #candidate position
