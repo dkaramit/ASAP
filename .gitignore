@@ -10,3 +10,4 @@ tests*
 *open.py
 *.pyc
 test*
+*.vscode
