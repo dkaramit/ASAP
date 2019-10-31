@@ -52,7 +52,11 @@ public:
         this->current_step=0;
         this->End=false;
         };
-    ~Euler(){};
+    ~Euler(){
+        // std::cout << "I'm done" << std::endl;
+        delete[] this->steps;
+        delete[] this->solution;
+    };
 
 
     void next_step(){
@@ -154,6 +158,5 @@ int main(int argc, const char** argv) {
         
             }
     
-
     return 0;
  }
