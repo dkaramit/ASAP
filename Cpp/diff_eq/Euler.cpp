@@ -155,7 +155,8 @@ int main(int argc, const char** argv) {
         f2 << "\n";
         t << System.steps[i] ;
         t << "\n";
-        
+        // std::cout<<System.steps[i]<<"\n";
+         
             }
     
     return 0;
