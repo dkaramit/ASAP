@@ -33,17 +33,17 @@ def LUP_dec(M,pivot=True):
     L=zeros_like(A)
     U=zeros_like(A)
     # Perform the LU Decomposition                                                                                                                                                                                                                     
-    for j in arange(n):
+    for j in range(n):
         # All diagonal entries of L are set to unity                                                                                                                                                                                                   
         L[j][j] = 1.0
 
-        for i in arange(j+1):
-            s1 = sum( U[k][j] * L[i][k] for k in xrange(i) )
+        for i in range(j+1):
+            s1 = sum( U[k][j] * L[i][k] for k in range(i) )
             
             U[i][j] = A[i][j] - s1
 
-        for i in arange(j, n):
-            s2 = sum(U[k][j] * L[i][k] for k in xrange(j))
+        for i in range(j, n):
+            s2 = sum(U[k][j] * L[i][k] for k in range(j))
             L[i][j] = (A[i][j] - s2) / U[j][j]
             
     return L,U,P
@@ -59,12 +59,12 @@ def Solve_LU(L,U,P,c):
     x=zeros_like(b)
     
     d[0]=b[0]
-    for i in arange(1,n):
-        d[i]=b[i]-sum(  [L[i][j]*d[j] for j in arange(i)] )
+    for i in range(1,n):
+        d[i]=b[i]-sum(  [L[i][j]*d[j] for j in range(i)] )
 
     x[n-1]  = d[n-1]/U[n-1][n-1]  
-    for i in arange(n-2,-1,-1):
-        x[i]=(d[i]-sum( [U[i][j]*x[j] for j in  arange(i+1,n)] ))/U[i][i]
+    for i in range(n-2,-1,-1):
+        x[i]=(d[i]-sum( [U[i][j]*x[j] for j in  range(i+1,n)] ))/U[i][i]
 
     return x
 
@@ -76,10 +76,10 @@ def jacobian(Funcs,x,h=1.e-8):
     n=len(x)
     x=array(x)
     J=zeros([n,n])
-    for i in arange(n):
-        for j in arange(n):
+    for i in range(n):
+        for j in range(n):
      
-            fi=lambda _y:Funcs( [x[i] if xi!=j else _y for xi in arange(n)] )[i]
+            fi=lambda _y:Funcs( [x[i] if xi!=j else _y for xi in range(n)] )[i]
             J[i][j]=deriv(fi,x[j],h)
     
     return J

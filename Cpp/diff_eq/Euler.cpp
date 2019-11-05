@@ -68,8 +68,13 @@ int main(int argc, const char** argv) {
         f2 << "\n";
         t << System.steps[i] ;
         t << "\n";
+<<<<<<< HEAD
         std::cout<<System.steps[i] <<"\n";
         
+=======
+        // std::cout<<System.steps[i]<<"\n";
+         
+>>>>>>> 9b9ecfa17800d70d3814d5412e6e459dda6df56f
             }
     
     return 0;
