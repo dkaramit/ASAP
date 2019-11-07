@@ -2,7 +2,6 @@ Monte_Carlo/Random_Walk
 *.ipynb_checkpoints*
 simulation*
 tests*
-*c++
 *.out
 *.DS_Store
 *.pdf
