@@ -14,10 +14,10 @@ public:
 //    complex(int , int );
 /*=========================Constructors=======================*/
     complex(){};
-    complex(double a, double b){this->re=0; this->im=b;};
-    complex(int a, double b){this->re=0; this->im=b;};
-    complex(double a, int b){this->re=0; this->im=b;};
-    complex(int a, int b){this->re=0; this->im=b;};
+    complex(double a, double b){this->re=a; this->im=b;};
+    complex(int a, double b){this->re=a; this->im=b;};
+    complex(double a, int b){this->re=a; this->im=b;};
+    complex(int a, int b){this->re=a; this->im=b;};
 /*=======================End of Constructors====================*/
     ~complex(){};
 
@@ -127,19 +127,19 @@ complex  conjugate(const complex&);
 
 
 /*overloading functions*/
+double  arg(const complex&);
+complex  log(const complex&);
+complex  tan(const complex&);
+
+complex  exp(const complex&);
 complex  pow(const double&, const complex&);
 complex  pow(const complex&, const complex&);
 complex  pow(const complex&, const double&);
 
+
 complex  cos(const complex&);
 complex  sin(const complex&);
-complex  tan(const complex&);
-
-complex  log(const complex&);
-complex  exp(const complex&);
-double  arg(const complex&);
 double  cabs(const complex&);
-
 
 
 
