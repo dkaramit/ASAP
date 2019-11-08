@@ -3,13 +3,31 @@
 
 #include <iostream>
 #include <fstream>
-#include <array>
 #include"Euler.hpp"
 
 
 // this is how the diffeq should look like
 #define n_eqs 2 //number of equations
+
+
+
+//-------------------------------typedef------------------------------------//
+//To define the various Arrays you may need, you can use    std::array as:
+
+// #define use_std_array  //uncomment to use std::array
+#ifdef use_std_array
+#include <array>
 typedef std::array<double, n_eqs> Array; //define an array type of length n_eqs
+#endif
+
+
+#ifndef use_std_array
+//or define it like this:
+typedef double Array[n_eqs];//define an array type of length n_eqs
+#endif
+//-------------------------------------------------------------------------//
+
+
 
  class diffeq
 {
@@ -56,10 +74,7 @@ int main(int argc, const char** argv) {
     f1.open ("data/y1.dat");
     f2.open ("data/y2.dat");
     t.open ("data/t.dat");
-    //myfile << "Writing this to a file.\n";
-    //myfile.close();
-
-
+   
     for (int i = 0; i < N; i++)
     {
         f1 << System.solution[0][i] ;
@@ -68,14 +83,10 @@ int main(int argc, const char** argv) {
         f2 << "\n";
         t << System.steps[i] ;
         t << "\n";
-<<<<<<< HEAD
-        std::cout<<System.steps[i] <<"\n";
-        
-=======
-        // std::cout<<System.steps[i]<<"\n";
+        std::cout<<System.steps[i]<<"\t"<< System.solution[0][i] << "\t"<< System.solution[1][i] <<"\n";
          
->>>>>>> 9b9ecfa17800d70d3814d5412e6e459dda6df56f
             }
     
+
     return 0;
  }

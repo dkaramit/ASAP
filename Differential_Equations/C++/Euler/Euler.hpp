@@ -4,10 +4,6 @@
 // around these differences.
 
 #include <cmath>
-// #include <iomanip>
-//#include <complex>
-// #include <cstdlib>
-// using namespace std;
 
 //The idea is to have a class with an overloaded "()" operator to be passed as a variable in the solver.
 //So, we need to use a template 
@@ -28,7 +24,9 @@ public:
     Array y0;//this is here to hold the current steps
     Array fy;//this is here to get dydt in each step
     
-    Euler(diffeq & dydt, Array  & init_cond , int N ){
+    Euler(diffeq & dydt, Array  & init_cond , int N=10000 ){
+        //N is an optional argument!
+
         this->step_size= 1./(N-1.);
 
         this->dydt=dydt;
