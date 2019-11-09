@@ -10,14 +10,13 @@
 #include <iostream>
 #include "complex_headers.hpp"
 
-#define println(x) std::cout<<++x<<std::endl;
-
 
 using namespace std;
 
 
 int main(){
 cout<<"=======Begin=======\n"<<endl;
+
 complex z=8+3.*Imag;
 double n=3.;
 
@@ -32,6 +31,6 @@ cout<<"e^"<<"("<<z<<") = "<<exp(z)<<endl;
 cout<<"arg"<<"("<<z<<") = "<<arg(z)<<endl;
 
 
-cout<<"=======End=======\n"<<endl;
+cout<<endl<<"=======End=======\n"<<endl;
 return 0;
 }
