@@ -1,4 +1,8 @@
-#include "../include/complex-headers.h"
+#ifndef COMPLEX_OP_INCLUDED
+#define COMPLEX_OP_INCLUDED
+
+
+#include "complex_headers.hpp"
 
 
 /*===================Operator overloading============================*/
@@ -6,90 +10,70 @@
 /*==================addition=========================================*/
 complex operator+(const complex& z1, const complex& z2)
 {
-    complex w;
-    w.SetRe(z1.Re()+z2.Re());
-    w.SetIm(z1.Im()+z2.Im());
+    complex w(z1.re+z2.re,z1.im+z2.im);
     return w;
 }
 
 complex operator+(const double& a, const complex& z)
 {
-    complex w;
-    w.SetRe(a+z.Re());
-    w.SetIm(z.Im());
-    return w;
+    complex w(a+z.re,z.im);
+
+    return  w ;
 }
 
 complex operator+(const int& a, const complex& z)
 {
-    complex w;
-    w.SetRe(a+z.Re());
-    w.SetIm(z.Im());
+    complex w(a+z.re,z.im);
+
     return w;
 }
 
 complex operator+(const complex& z, const double& a)
 {
-    complex w;
-    w.SetRe(a+z.Re());
-    w.SetIm(z.Im());
+    complex w(a+z.re,z.im);
     return w;
 }
 
 complex operator+(const complex& z, const int& a)
 {
-    complex w;
-    w.SetRe(a+z.Re());
-    w.SetIm(z.Im());
+    complex w(a+z.re,z.im);
     return w;
 }
 
 /*==================substraction=========================================*/
 complex operator-(const complex& z1, const complex& z2)
 {
-    complex w;
-    w.SetRe(z1.Re()-z2.Re());
-    w.SetIm(z1.Im()-z2.Im());
+    complex w(z1.re-z2.re,z1.im-z2.im);
     return w;
 }
 
 complex operator-(const double& a, const complex& z)
 {
-    complex w;
-    w.SetRe(a-z.Re());
-    w.SetIm(-z.Im());
+    complex w(a-z.re,-z.im);
     return w;
 }
 
 complex operator-(const int& a, const complex& z)
 {
-complex w;
-    w.SetRe(a-z.Re());
-    w.SetIm(-z.Im());
+complex w(a-z.re,-z.im);
     return w;
 }
 
 complex operator-(const complex& z, const double& a)
 {
-    complex w;
-    w.SetRe(z.Re()-a);
-    w.SetIm(z.Im());
+    complex w(z.re-a,z.im);
     return w;
 }
 
 complex operator-(const complex& z, const int& a)
 {
-    complex w;
-    w.SetRe(z.Re()-a);
-    w.SetIm(z.Im());
+    complex w(z.re-a,z.im);
     return w;
 }
 
 complex operator-(const complex& z)
 {
-    complex w;
-    w.SetRe(-z.Re());
-    w.SetIm(-z.Im());
+    complex w(-z.re,-z.im);
     return w;
 }
 
@@ -98,40 +82,40 @@ complex operator-(const complex& z)
 complex operator*(const complex& z1, const complex& z2)
 {
     complex w;
-    w.SetRe(z1.Re()*z2.Re() -z1.Im()*z2.Im()) ;
-    w.SetIm(z1.re*z2.Im()+z1.Im()*z2.Re());
+    w.re=(z1.re*z2.re -z1.im*z2.im) ;
+    w.im=(z1.re*z2.im+z1.im*z2.re);
     return w;
 }
 
 complex operator*(const double& a, const complex& z)
 {
     complex w;
-    w.SetRe(a*z.Re());
-    w.SetIm(a*z.Im());
+    w.re=(a*z.re);
+    w.im=(a*z.im);
     return w;
 }
 
 complex operator*(const int& a, const complex& z)
 {
     complex w;
-    w.SetRe(a*z.Re());
-    w.SetIm(a*z.Im());
+    w.re=(a*z.re);
+    w.im=(a*z.im);
     return w;
 }
 
 complex operator*(const complex& z, const double& a)
 {
     complex w;
-    w.SetRe(a*z.Re());
-    w.SetIm(a*z.Im());
+    w.re=(a*z.re);
+    w.im=(a*z.im);
     return w;
 }
 
 complex operator*(const complex& z, const int& a)
 {
     complex w;
-    w.SetRe(a*z.Re());
-    w.SetIm(a*z.Im());
+    w.re=(a*z.re);
+    w.im=(a*z.im);
     return w;
 }
 
@@ -147,33 +131,35 @@ complex operator/(const complex& z1, const complex& z2)
 complex operator/(const double& a, const complex& z)
 {
     complex w;
-    w.SetRe(a/(pow(cabs(z),2))*conjugate(z).Re());
-    w.SetIm(a/(pow(cabs(z),2))*conjugate(z).Im());
+    w.re=(a/(pow(cabs(z),2))*conjugate(z).re);
+    w.im=(a/(pow(cabs(z),2))*conjugate(z).im);
     return w;
 }
 
 complex operator/(const int& a, const complex& z)
 {
     complex w;
-    w.SetRe(a/(pow(cabs(z),2.))*conjugate(z).Re());
-    w.SetIm(a/(pow(cabs(z),2.))*conjugate(z).Im());
+    w.re=(a/(pow(cabs(z),2.))*conjugate(z).re);
+    w.im=(a/(pow(cabs(z),2.))*conjugate(z).im);
     return w;
 }
 
 complex operator/(const complex& z, const double& a)
 {
     complex w;
-    w.SetRe(z.Re()/a);
-    w.SetIm(z.Im()/a);
+    w.re=(z.re/a);
+    w.im=(z.im/a);
     return w;
 }
 
 complex operator/(const complex& z, const int& a)
 {
     complex w;
-    w.SetRe(z.Re()/(double)a);
-    w.SetIm(z.Im()/(double)a);
+    w.re=(z.re/(double)a);
+    w.im=(z.im/(double)a);
     return w;
 }
 
+
 /*============End of operator overloading=========================*/
+#endif

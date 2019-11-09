@@ -1,34 +1,35 @@
-// Thi is an example on how to use the complex library.
+// This is an example on how to use complex.
+//complile as:
+// g++ example.cpp -I ./include
 
-#include "include/complex-headers.h"
+//----------remember tha you can put the inclde folder anywhere. Then the compilation should happen as
+// g++ example.pp -I path-to-include
+
+
+
+#include <iostream>
+#include "complex_headers.hpp"
+
+#define println(x) std::cout<<++x<<std::endl;
 
 
 using namespace std;
 
+
 int main(){
 cout<<"=======Begin=======\n"<<endl;
+complex z=8+3.*Imag;
+double n=3.;
 
+cout<<n<<"^("<<z<<") = "<<pow(n,z)<<endl;
 
-complex w;
+cout<<"("<<z<<")^"<<n<<" = "<<pow(z,n)<<endl;
 
+cout<<"("<<z<<")^"<<"("<<z<<") = "<<pow(z,z)<<endl;
 
-//cin>>w;
-//cout<<pow(w,2)<<endl;
+cout<<"e^"<<"("<<z<<") = "<<exp(z)<<endl;
 
-
-complex z3;
-z3.SetRe(5);
-z3.SetIm(-55);
-cout<<z3<<endl;
-cout << conjugate(z3) << '\n';
-
-
-complex *X;
-X=&z3;
-cout << X->Re() << '\n';
-cout << (*X).Im() << '\n';
-
-
+cout<<"arg"<<"("<<z<<") = "<<arg(z)<<endl;
 
 
 cout<<"=======End=======\n"<<endl;
