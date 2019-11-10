@@ -6,7 +6,24 @@
 
 
 /*===================Operator overloading============================*/
+//equal
+complex& complex::operator=(const complex& z){
+    this->re=z.re;
+    this->im=z.im;
 
+    return *this;
+}
+
+complex& complex::operator=(const int& a){
+    this->re=a;
+    this->im=0;
+   return *this;
+}
+complex& complex::operator=(const double& a){
+    this->re=a;
+    this->im=0;
+   return *this;
+}
 /*==================addition=========================================*/
 complex operator+(const complex& z1, const complex& z2)
 {

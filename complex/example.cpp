@@ -5,8 +5,6 @@
 //----------remember tha you can put the inclde folder anywhere. Then the compilation should happen as
 // g++ example.pp -I path-to-include
 
-
-
 #include <iostream>
 #include "complex_headers.hpp"
 
@@ -17,7 +15,8 @@ using namespace std;
 int main(){
 cout<<"=======Begin=======\n"<<endl;
 
-complex z=8+3.*Imag;
+complex z=0.;
+z=8+3.*Imag;
 double n=3.;
 
 cout<<n<<"^("<<z<<") = "<<pow(n,z)<<endl;

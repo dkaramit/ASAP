@@ -23,6 +23,8 @@ class complex
         complex(int a, int b){this->re=a; this->im=b;};
         //define a copy constructor
         complex(const complex &z){this->re=z.re; this->im=z.im;};
+        complex(const double &a){this->re=a; this->im=0;};
+        complex(const int &a){this->re=a; this->im=0;};
     /*=======================End of Constructors====================*/
         ~complex(){
             //std::cout<<"delete...delete!"<<std::endl;
@@ -34,10 +36,18 @@ class complex
         I could use templates, but it becomes confusing for the user at some point.*/
         
 
-    /*----------------overloading operators--------------------------*/
     public:
         double re;
         double im;
+        
+        
+        /*----------------overloading operators--------------------------*/
+        // don't like the chains a=b=c;, so I don't want "=" to return complex.
+        complex& operator=(const complex&);
+        complex& operator=(const int&);
+        complex& operator=(const double&);
+
+
         //overload operators with friend
         complex friend operator+(const complex&,const complex&);
         complex friend operator+(const double&, const complex&);
@@ -62,6 +72,7 @@ class complex
         complex friend operator/(const int&, const complex&);
         complex friend operator/(const complex&,const double&);
         complex friend operator/(const complex&,const int&);
+
         /*-----------------------------------------------------*/
 
 
