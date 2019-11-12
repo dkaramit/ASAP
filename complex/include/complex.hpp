@@ -42,7 +42,6 @@ class complex
         
         
         /*----------------overloading operators--------------------------*/
-        // don't like the chains a=b=c;, so I don't want "=" to return complex.
         complex& operator=(const complex&);
         complex& operator=(const int&);
         complex& operator=(const double&);

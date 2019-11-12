@@ -29,6 +29,8 @@ cout<<"e^"<<"("<<z<<") = "<<exp(z)<<endl;
 
 cout<<"arg"<<"("<<z<<") = "<<arg(z)<<endl;
 
+cout<<"sqrt"<<"("<<z<<") = "<<pow(z,0.5)<<endl;
+
 
 cout<<endl<<"=======End=======\n"<<endl;
 return 0;
