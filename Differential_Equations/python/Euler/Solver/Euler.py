@@ -34,6 +34,8 @@ class Euler:
         
         self.y0=[0 for i in range(self.number_of_eqs)]#this is initiated to hold current steps
         
+        #initialize self.t0=0
+        self.t0=0
         
     
     def next_step(self):
@@ -46,8 +48,6 @@ class Euler:
             self.end=True 
         else:
             self.current_step+=1
-            t0=self.current_step*self.step_size
-            self.steps[self.current_step]=t0
             
             
             for eq_i in range(self.number_of_eqs):
@@ -55,8 +55,10 @@ class Euler:
                 
             for eq_i in range(self.number_of_eqs):
                 self.solution[eq_i][self.current_step]=self.solution[eq_i][self.current_step-1] \
-                + self.dydt(self.y0,t0)[eq_i]*self.step_size
+                + self.dydt(self.y0,self.t0)[eq_i]*self.step_size
                 
+            self.t0=self.current_step*self.step_size
+            self.steps[self.current_step]=self.t0
             
     def solve(self):
         '''

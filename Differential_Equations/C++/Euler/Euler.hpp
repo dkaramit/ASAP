@@ -15,7 +15,7 @@ private:
 public:
     int No_steps, number_of_eqs,current_step;
     bool End;
-    double step_size;
+    double step_size,t0;
     diffeq dydt;
     double* steps;
     
@@ -44,7 +44,7 @@ public:
             } 
          
 
-
+        this->t0=0;
         this->current_step=0;
         this->End=false;
         };
@@ -62,8 +62,6 @@ public:
         } else{
 
             this->current_step++;
-            double t0=this->current_step*this->step_size;
-            this->steps[this->current_step]=t0;
 
             for (int eq = 0; eq < this->number_of_eqs ; eq++){this->y0[eq]=this->solution[eq][this->current_step-1];}
 
@@ -72,6 +70,8 @@ public:
                 this->solution[eq][this->current_step]=this->solution[eq][this->current_step-1] + this->fy[eq]*this->step_size;
                 }
             
+            t0=this->current_step*this->step_size;
+            this->steps[this->current_step]=t0;
         }
         
 

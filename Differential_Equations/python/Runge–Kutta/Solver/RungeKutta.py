@@ -82,7 +82,9 @@ class exRK:
         self.k=[0 for i in range(self.number_of_eqs)]#this is initiated to hold all ks
         for eq_i in range(self.number_of_eqs):
             self.k[eq_i]=[0 for i in range(self.s)]
-        
+            
+        #initialize self.tn
+        self.tn=0
         
     # function to calculate the \sum_{i=1}^{current stage-1} a_{current stage,i} \vec{k}_{i}*step_size
     def sum_ak(self,stage):
@@ -110,8 +112,7 @@ class exRK:
             self.end=True 
         else:
             self.current_step+=1
-            tn=self.current_step*self.step_size
-            self.steps[self.current_step]=tn
+
             
             #define a list which holds previous point (makes the code slower, but more transparent) 
             for eq_i in range(self.number_of_eqs):
@@ -119,7 +120,7 @@ class exRK:
     
             #this is \vec{k}_1.  
             for eq_i in range(self.number_of_eqs):
-                self.k[eq_i][0]=self.dydt(self.yn,tn)[eq_i]
+                self.k[eq_i][0]=self.dydt(self.yn,self.tn)[eq_i]
             
             #once you have \vec{k}_1, find the others.
             for stage in range(1,self.s):
@@ -129,7 +130,7 @@ class exRK:
                 
                 #get a d\vec{y}/dt needed for \vec_{k}_{stage}
                 _dydt=self.dydt(  [self.yn[_eq]+_ak[_eq] for _eq in range(self.number_of_eqs)] ,
-                                tn+self.c[stage]*self.step_size )
+                                self.tn+self.c[stage]*self.step_size )
                 for eq_i in range(self.number_of_eqs):
                     self.k[eq_i][stage]=_dydt[eq_i]
                     
@@ -139,6 +140,9 @@ class exRK:
             for eq_i in range(self.number_of_eqs):
                 #calculate \vec{y}_{n+1}=\vec{y}_{n}+\sum_{i=1}^{s} b_{i} \vec{k}_{i}*step_size
                 self.solution[eq_i][self.current_step]=self.yn[eq_i]+_bk[eq_i]
+            
+            self.tn=self.current_step*self.step_size
+            self.steps[self.current_step]=self.tn
                 
             
                 
