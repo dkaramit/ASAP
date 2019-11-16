@@ -10,3 +10,4 @@ tests*
 *.pyc
 *.vscode
 *0-old*
+*.exe
