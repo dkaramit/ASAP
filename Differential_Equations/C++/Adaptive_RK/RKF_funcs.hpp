@@ -7,15 +7,14 @@
 //The constructor. Remember that N has default value
 template<class diffeq, class Array, class RKF_method>
 RKF<diffeq, Array, RKF_method>:: RKF(diffeq& dydt, Array& init_cond , 
-        double initial_h0, double minimum_h0 , double maximum_h0 ,
-        int maximum_No_steps , double relative_tolerance , double absolute_tolerance ,
-        double beta,double _TINY){
+        double initial_step_size, double minimum_step_size, double maximum_step_size,int maximum_No_steps, 
+        double relative_tolerance, double absolute_tolerance,double beta,double _TINY){
         // Initialize inputs
         this->dydt=dydt;
         this->N_eqs= this->dydt.n;
-        this->h0=initial_h0;
-        this->hmin=minimum_h0;
-        this->hmax=maximum_h0;
+        this->h0=initial_step_size;
+        this->hmin=minimum_step_size;
+        this->hmax=maximum_step_size;
         this->max_N=maximum_No_steps;
         this->rel_eps=relative_tolerance;
         this->abs_eps=absolute_tolerance;
@@ -122,36 +121,18 @@ void RKF<diffeq, Array, RKF_method>::calc_k(){
 }
 /*-----------------------End: calc_k---------------------------------*/
 
+/*----------------------------------------------define a Print to have easy acces to some info--------------------------------------------*/
+static int x=0;
+#define Print(m1,m2,m3,m4) std::cout<<x++<<"   "<<m1<<"   "<<m2<<"   "<<m3<<"   "<<m4<<std::endl; std::cin.get()
+/*----------------------------------------------------------------------------------------------------------------------------------------*/
+
+
 
 /*-----------------------Begin: step_control---------------------------------*/
 template<class diffeq, class Array, class RKF_method>
 void RKF<diffeq, Array, RKF_method>::step_control(){
-    double _delta=0;
-    double _r_delta=0;
-    for (int eq = 0; eq < this->N_eqs; eq++)
-    {
-        _delta= _delta + (this->abs_delta[eq])*(this->abs_delta[eq]);
-        _r_delta= _r_delta + (this->rel_delta[eq])*(this->rel_delta[eq]);
-        
-    }
-    _delta= sqrt( _delta );
-    _r_delta=sqrt( _r_delta );
-    std::cout<<_r_delta<<std::endl;
-    if (_r_delta < this->_TINY) {_r_delta = this->rel_eps;}
-    if (_delta < this->_TINY) {_delta = this->abs_eps;}
     
-    if (_delta>this->abs_eps or _r_delta>this->rel_eps)
-    {
-            this->h0=this->beta*this->h0*pow((this->abs_eps/_delta), (1./((this->method).p+1) ) );
-    }else{
-        this->h0=this->beta*this->h0*pow((this->abs_eps/_delta), (1./(this->method).p ) );
-        //this->err_n[0][this->current_step]=_delta;
-        //this->err_n[1][this->current_step]=_r_delta;
-        this->h_stop=true;
-    }
-        
-    if (this->h0>this->hmax){ this->h0=this->hmax; } 
-    if (this->h0<this->hmin) { this->h0=this->hmin; }
+    h_stop=true;
 
 }
 /*-----------------------End: step_control---------------------------------*/
@@ -163,7 +144,6 @@ void RKF<diffeq, Array, RKF_method>::next_step(){
         this->h_stop=false;
         //increase current_step
         (this->current_step)++;
-        
         
 
         //calculate ynext and ynext_star until h_stop=true 
@@ -185,15 +165,16 @@ void RKF<diffeq, Array, RKF_method>::next_step(){
 
                 this->abs_delta[eq]=(this->ynext[eq])-(this->ynext_star[eq]);
                                     
-                if( fabs(this->ynext[eq]) > fabs(this->_TINY) )
+                if( fabs(this->ynext[eq]) > this->_TINY )
                 {
-                    this->rel_delta[eq]=(this->ynext[eq]-this->ynext_star[eq])/this->ynext[eq];
+                    this->rel_delta[eq]=this->abs_delta[eq]/this->ynext[eq];
                 } else{
                     this->rel_delta[eq]=this->abs_delta[eq];
                 }
 
                 // call step_control to see if the error is acceptable
                 this->step_control();
+                
             }
 
         }
@@ -202,13 +183,11 @@ void RKF<diffeq, Array, RKF_method>::next_step(){
         {
             this->yn[eq]=this->ynext[eq];
             this->solution[eq][this->current_step]=this->ynext[eq];
+
         }
     
         this->tn= this->tn + this->h0;
-        if(this->tn > 1.)
-        {
-            this->tn=1;
-        }
+        
         
         this->steps[this->current_step] = this->tn;
 
@@ -223,12 +202,14 @@ void RKF<diffeq, Array, RKF_method>::next_step(){
 template<class diffeq, class Array, class RKF_method>
 void RKF<diffeq, Array, RKF_method>::solve(){
 
-        while (this->tn!=1  and this->current_step < this->max_N)
+        while (true )
         {
+            // std::cout<< current_step <<"  "<< tn <<"\n";
 
+            if( this->tn>=1.  or this->current_step == this->max_N  ) {break ;}
             this->next_step();
 
-            // std::cout<<this->tn<<std::endl;
+            
         }
 
     } 

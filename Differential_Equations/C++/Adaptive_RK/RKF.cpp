@@ -6,25 +6,23 @@
 
 
 
-//---this is fake RK method. I use it to see if the program runs
-struct RKfake{
+struct HeunEuler{
+    
     public:
-        int s=4;
-        int p=4;
-        double c[4]={0,0.5,0.5,1.};
-        double b[4]={1/6.,1/3.,1/3.,1/6.};
-        double bstar[4]={1/6.+0.01,1/3.-0.01,1/3.-0.01,1/6.+0.01};
-        double a[4][4];
-
-        RKfake(){
+        int s=2;
+        int p=2;
+        double c[2]={0,1};
+        double b[2]={1/2. , 1/2.};
+        double bstar[2]={1.,0.};
+        
+        double a[2][2];
+        
+        HeunEuler(){
             for (int i = 0; i <s ; i++) {for (int j = 0; j <s ; j++) {this->a[i][j]=0;}}
-            this->a[1][0]=0.5;
-            this->a[2][1]=0.5;
-            this->a[3][2]=1.;
+            this->a[1][0]=1;
         };
-        ~RKfake(){};
 
-
+        ~HeunEuler(){};
 };
 
 // this is how the diffeq should look like
@@ -50,6 +48,8 @@ class diffeq{
             //y is an array with values of y
             //t is the value of the variable t
             
+
+            //lhs[0]=t+y[0];
             lhs[0]=-20*y[0]*pow(t,3.);
             lhs[1]=5*y[0]*pow(t,2)+2*(-pow( y[1],2  )+pow( y[2],2 ) )*t;
             lhs[2]=15*y[0]*pow(t,2)+2*(pow( y[1],2  )-pow( y[2],2 ) )*t;
@@ -71,12 +71,26 @@ int main(int argc, const char** argv) {
     diffeq dydt;
 
 
-    RKF<diffeq,Array,RKfake> System(dydt,y0);
+    RKF<diffeq,Array,HeunEuler> System(dydt,y0);
     //System.max_N=10000;
     System.solve();
+    // 
+    
 
     #if 0
     for (int i = 0; i < System.max_N; i++)
+    {
+       System.next_step();
+
+       std::cout<<System.tn<<"\n";
+
+       if(System.tn==1){break;} 
+    }
+    #endif
+
+    
+    #if 1
+    for (int i = 0; i <= System.current_step; i++)
     {
         std::cout<<System.steps[i]<<"\t"<< System.solution[0][i] << "\t"<< System.solution[1][i] << "\t"<< System.solution[2][i] <<"\n";
         if(System.steps[i]==1){break;}

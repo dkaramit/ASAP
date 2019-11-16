@@ -161,6 +161,14 @@ class RKF:
             self.h=self.hmin
         
         
+        
+        if self.tn+self.h>1:#if tn+h becomes larger than 1, reduce h
+#             print(self.tn+self.h)
+            self.h=1-self.tn
+#             print(self.tn+self.h)
+            
+        
+        
         self.h0=self.h #h0 is redundant, but use it for clarity
         #print(self.h0,self.h_stop)
                 
@@ -217,12 +225,10 @@ class RKF:
                     self.yn[eq]=self.ynext[eq]
                     self.solution[eq][self.current_step+1]=self.ynext[eq]
             
-            self.tn+=self.h
-            if self.tn>1:
-                self.tn=1
-    
-            self.steps[self.current_step+1]=self.tn
             
+            
+            self.tn+=self.h   
+            self.steps[self.current_step+1]=self.tn
 
             self.current_step+=1
             

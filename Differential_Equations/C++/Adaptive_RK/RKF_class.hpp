@@ -39,8 +39,8 @@ public:
     Array fyn;//this is here to get dydt in each step
     
     RKF(diffeq & dydt, Array &init_cond, 
-        double initial_step_size=1e-1, double minimum_step_size=1e-40, double maximum_step_size=1e-1,int maximum_No_steps=10000, 
-        double relative_tolerance=1e-6, double absolute_tolerance=1e-6,double beta=1.,double _TINY=1e-20);
+        double initial_step_size=1e-3, double minimum_step_size=1e-15, double maximum_step_size=1e-3,int maximum_No_steps=5000, 
+        double relative_tolerance=1e-5, double absolute_tolerance=1e-5,double beta=1.,double _TINY=1e-20);
     
     ~RKF();
 
