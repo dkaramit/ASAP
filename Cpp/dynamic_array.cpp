@@ -93,7 +93,7 @@ void push_back(T e){
 
 
 // #define One //define oe to run 1-D DynArray or std::vector
-#define Two //define oe to run 2-D DynArray or std::vector
+// #define Two //define oe to run 2-D DynArray or std::vector
 
 int main(){
     

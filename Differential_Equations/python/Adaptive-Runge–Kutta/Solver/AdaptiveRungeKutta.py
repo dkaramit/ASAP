@@ -221,7 +221,7 @@ class RKF:
             if self.tn>1:
                 self.tn=1
     
-            self.steps[self.current_step]=self.tn
+            self.steps[self.current_step+1]=self.tn
             
 
             self.current_step+=1
@@ -236,14 +236,17 @@ class RKF:
         while not self.end:
             self.next_step()
         
-        self.t=self.steps[:self.current_step]
+        
+        self.t=self.steps[:self.current_step+1]
         self.deltas=[0,0]
-        self.deltas[0]=self.err_n[0][:self.current_step]
-        self.deltas[1]=self.err_n[1][:self.current_step]
+        self.deltas[0]=self.err_n[0][:self.current_step+1]
+        self.deltas[1]=self.err_n[1][:self.current_step+1]
         self.y=[0 for i in range(self.number_of_eqs)]
         for eq_i in range(self.number_of_eqs):
-            self.y[eq_i]=[0 for i in range(self.current_step)]
+            self.y[eq_i]=[0 for i in range(self.current_step+1)]
         
         for eq in range(self.number_of_eqs):
-            for step in range(self.current_step):
+            for step in range(self.current_step+1):
                 self.y[eq][step]=self.solution[eq][step]
+
+        
