@@ -29,7 +29,6 @@ class RKF:
     filling up the RAM. Alternatively, you could print directly to a file, but it would make the code 
     much slower. 
     
-    relative_tolerance: Relative error we aim for.
     
     absolute_tolerance: Absolute error we aim for.
     
@@ -39,7 +38,7 @@ class RKF:
     
     def __init__(self,diffeq,init_cond,RK_method,
                       initial_step_size=1e-2,minimum_step_size=1e-5,maximum_step_size=1e-1,
-                      maximum_No_steps=50000,relative_tolerance=1e-4,absolute_tolerance=1e-2,
+                      maximum_No_steps=50000,absolute_tolerance=1e-2,
                       beta=0.5):
         
         
@@ -53,7 +52,6 @@ class RKF:
         self.hmax=maximum_step_size
         self.max_N=maximum_No_steps
         self.abs_eps=absolute_tolerance
-        self.rel_eps=relative_tolerance
         self.beta=beta
         
         #get the parameters that define the method
@@ -65,7 +63,7 @@ class RKF:
         self.c=RK_method.c
         
         #initialize arrays
-        self.steps=[0]*self.max_N #this is faster that using a for 
+        self.steps=[0]*self.max_N #this is faster than using a for 
         self.k=[0 for i in range(self.number_of_eqs)]#this is initiated to hold all ks
         for eq_i in range(self.number_of_eqs):
             self.k[eq_i]=[0 for i in range(self.s)]
@@ -76,7 +74,7 @@ class RKF:
         for eq_i in range(self.number_of_eqs):
             self.solution[eq_i][0]=init_cond[eq_i]#the first step is the initial condition
             
-        self.err_n=[[0 for i in range(self.max_N)], [0 for i in range(self.max_N)]]
+        self.err_n=[0 for i in range(self.max_N)]
 
         #declare arrays and parameters you are going to need
         #self.ak=[0]*self.number_of_eqs
@@ -86,7 +84,6 @@ class RKF:
         self.ynext_star=[0]*self.number_of_eqs
         self.yn=[0]*self.number_of_eqs
         self.abs_delta=[0]*self.number_of_eqs
-        self.rel_delta=[0]*self.number_of_eqs
         
         
         #initialize a counter
@@ -103,7 +100,6 @@ class RKF:
             self.ynext[eq]=0
             self.ynext_star[eq]=0
             #self.abs_delta[eq]=0
-            #self.rel_delta[eq]=0
         
         self.h_stop=False
         self.h=self.h0
@@ -136,22 +132,17 @@ class RKF:
         _r_delta=0
         for eq in range(self.number_of_eqs):
             _delta+= self.abs_delta[eq]**2.
-            _r_delta+= self.rel_delta[eq]**2.
         _delta=_delta**0.5
-        _r_delta=_r_delta**0.5
         
-        if _r_delta<self.tiny:
-            _r_delta=self.rel_eps
         if _delta<self.tiny:
             _delta=self.abs_eps
 
         
-        if _delta>self.abs_eps or _r_delta>self.rel_eps:
-            self.h=self.beta*self.h0*(self.abs_eps/_delta)**(1./(self.p+1))
+        if _delta>self.abs_eps :
+            self.h=self.beta*self.h0*(self.h0*self.abs_eps/_delta)**(1./self.p)
         else:
-            self.h=self.beta*self.h0*(self.abs_eps/_delta)**(1./self.p )
-            self.err_n[0][self.current_step]=_delta
-            self.err_n[1][self.current_step]=_r_delta
+            self.h=self.beta*self.h0*(self.abs_eps/_delta)**(1./(self.p +1.) )
+            self.err_n[self.current_step]=_delta
             self.h_stop=False
             
         if self.h>self.hmax:
@@ -161,16 +152,11 @@ class RKF:
             self.h=self.hmin
         
         
-        
-        if self.tn+self.h>1:#if tn+h becomes larger than 1, reduce h
-#             print(self.tn+self.h)
+        #if tn+h becomes larger than 1, set h=1-tn
+        if self.tn+self.h>1:
             self.h=1-self.tn
-#             print(self.tn+self.h)
-            
-        
-        
+                    
         self.h0=self.h #h0 is redundant, but use it for clarity
-        #print(self.h0,self.h_stop)
                 
     def next_step(self):
         '''
@@ -178,15 +164,11 @@ class RKF:
         '''
         if not (self.tn<1. and self.current_step<self.max_N-1):
             self.end=True 
+#             print('end')
         else:
+            self.current_step+=1
             
-            while True:
-                
-
-                #define a list which holds previous point (makes the code slower, but more transparent) 
-                for eq_i in range(self.number_of_eqs):
-                    self.yn[eq_i]=self.solution[eq_i][self.current_step]
-
+            while True:                
                 #this is \vec{k}_1.  
                 for eq_i in range(self.number_of_eqs):
                     self.k[eq_i][0]=self.dydt(self.yn,self.tn)[eq_i]
@@ -212,25 +194,25 @@ class RKF:
                     
                     self.abs_delta[eq]=self.ynext[eq]-self.ynext_star[eq]
                     
-                    if self.ynext[eq]**2.>self.tiny**2.:
-                        self.rel_delta[eq]=(self.ynext[eq]-self.ynext_star[eq])/self.ynext[eq]
-                    else:
-                        self.rel_delta[eq]=self.abs_delta[eq]
+                    
                         
                 self.step_control()
                 if not self.h_stop:
                     break
             
+            
+            
             for eq in range(self.number_of_eqs):
                     self.yn[eq]=self.ynext[eq]
-                    self.solution[eq][self.current_step+1]=self.ynext[eq]
+                    self.solution[eq][self.current_step]=self.ynext[eq]
             
             
             
             self.tn+=self.h   
-            self.steps[self.current_step+1]=self.tn
+            self.steps[self.current_step]=self.tn
+            
 
-            self.current_step+=1
+            
             
         
                 
@@ -241,12 +223,13 @@ class RKF:
         '''
         while not self.end:
             self.next_step()
+            
+#             print(self.tn)
         
         
         self.t=self.steps[:self.current_step+1]
-        self.deltas=[0,0]
-        self.deltas[0]=self.err_n[0][:self.current_step+1]
-        self.deltas[1]=self.err_n[1][:self.current_step+1]
+        
+        self.deltas=self.err_n[:self.current_step+1]
         self.y=[0 for i in range(self.number_of_eqs)]
         for eq_i in range(self.number_of_eqs):
             self.y[eq_i]=[0 for i in range(self.current_step+1)]

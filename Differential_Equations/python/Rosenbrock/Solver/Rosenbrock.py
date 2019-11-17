@@ -45,7 +45,6 @@ class Ros:
     filling up the RAM. Alternatively, you could print directly to a file, but it would make the code 
     much slower. 
     
-    relative_tolerance: Relative error we aim for.
     
     absolute_tolerance: Absolute error we aim for.
     
@@ -55,7 +54,7 @@ class Ros:
     
     def __init__(self,diffeq,init_cond,RK_method,Jacobian,
                       initial_step_size=1e-2,minimum_step_size=1e-5,maximum_step_size=1e-1,
-                      maximum_No_steps=50000,relative_tolerance=1e-4,absolute_tolerance=1e-2,
+                      maximum_No_steps=50000,absolute_tolerance=1e-2,
                       beta=1):
         
         
@@ -69,7 +68,6 @@ class Ros:
         self.hmax=maximum_step_size
         self.max_N=maximum_No_steps
         self.abs_eps=absolute_tolerance
-        self.rel_eps=relative_tolerance
         self.beta=beta
         
         
@@ -105,14 +103,13 @@ class Ros:
         for eq_i in range(self.number_of_eqs):
             self.solution[eq_i][0]=init_cond[eq_i]#the first step is the initial condition
             
-        self.err_n=[[0 for i in range(self.max_N)], [0 for i in range(self.max_N)]]
+        self.err_n=[0 for i in range(self.max_N)]
 
         #declare arrays and parameters you are going to need
         self.ynext=[0]*self.number_of_eqs
         self.ynext_star=[0]*self.number_of_eqs
         self.yn=[0]*self.number_of_eqs
         self.abs_delta=[0]*self.number_of_eqs
-        self.rel_delta=[0]*self.number_of_eqs
         
         
         #initialize a counter
@@ -129,7 +126,6 @@ class Ros:
             self.ynext[eq]=0
             self.ynext_star[eq]=0
             #self.abs_delta[eq]=0
-            #self.rel_delta[eq]=0
         
         self.h_stop=False
         self.h=self.h0
@@ -218,25 +214,23 @@ class Ros:
     #adjust h. There are more refined ways to do this, but this is a start.  
     def step_control(self):
         _delta=0
-        _r_delta=0
+        
         for eq in range(self.number_of_eqs):
             _delta+= self.abs_delta[eq]**2.
-            _r_delta+= self.rel_delta[eq]**2.
+            
         _delta=_delta**0.5
-        _r_delta=_r_delta**0.5
         
-        if _r_delta<self.tiny:
-            _r_delta=self.rel_eps
+        
+        
         if _delta<self.tiny:
             _delta=self.abs_eps
 
         
-        if _delta>self.abs_eps or _r_delta>self.rel_eps:
-            self.h=self.beta*self.h0*(self.abs_eps/_delta)**(1./(self.p+1.))
+        if _delta>self.abs_eps :
+            self.h=self.beta*self.h0*(self.h0*self.abs_eps/_delta)**(1./self.p)
         else:
-            self.h=self.beta*self.h0*(self.abs_eps/_delta)**(1./self.p )
-            self.err_n[0][self.current_step]=_delta
-            self.err_n[1][self.current_step]=_r_delta
+            self.h=self.beta*self.h0*(self.abs_eps/_delta)**(1./(self.p +1.) )
+            self.err_n[self.current_step]=_delta
             self.h_stop=False
             
         if self.h>self.hmax:
@@ -260,11 +254,10 @@ class Ros:
         if not (self.tn<1. and self.current_step<self.max_N-1):
             self.end=True 
         else:
+            self.current_step+=1
             
             while True:
-                #define a list which holds previous point (makes the code slower, but more transparent) 
-                for eq_i in range(self.number_of_eqs):
-                    self.yn[eq_i]=self.solution[eq_i][self.current_step]
+                
                 #this is \vec{k}_1.  
                 self.calc_k()
                 
@@ -280,27 +273,23 @@ class Ros:
                     self.abs_delta[eq]=self.ynext[eq]-self.ynext_star[eq]
 
                     
-                    if self.ynext[eq]**2.>self.tiny**2.:
-                        self.rel_delta[eq]=(self.ynext[eq]-self.ynext_star[eq])/self.ynext[eq]
-                    else:
-                        self.rel_delta[eq]=self.abs_delta[eq]
-                        
+                    
                 self.step_control()
                 if not self.h_stop:
                     break
             
             for eq in range(self.number_of_eqs):
                     self.yn[eq]=self.ynext[eq]
-                    self.solution[eq][self.current_step+1]=self.ynext[eq]
+                    self.solution[eq][self.current_step]=self.ynext[eq]
             
             self.tn+=self.h
             if self.tn>1:
                 self.tn=1
     
-            self.steps[self.current_step+1]=self.tn
+            self.steps[self.current_step]=self.tn
             
 
-            self.current_step+=1
+            
             
         
                 
@@ -314,15 +303,17 @@ class Ros:
         
         
         self.t=self.steps[:self.current_step+1]
-        self.deltas=[0,0]
-        self.deltas[0]=self.err_n[0][:self.current_step+1]
-        self.deltas[1]=self.err_n[1][:self.current_step+1]
+        
+        self.deltas=self.err_n[:self.current_step+1]
         self.y=[0 for i in range(self.number_of_eqs)]
+        
         for eq_i in range(self.number_of_eqs):
             self.y[eq_i]=[0 for i in range(self.current_step+1)]
         
         for eq in range(self.number_of_eqs):
             for step in range(self.current_step+1):
                 self.y[eq][step]=self.solution[eq][step]
+
+        
 
         
