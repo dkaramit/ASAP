@@ -92,7 +92,7 @@ int main(int argc, const char** argv) {
         f3 << "\n";
         t << System.steps[i] ;
         t << "\n";
-        //std::cout<<System.steps[i]<<"\t"<< System.solution[0][i] << "\t"<< System.solution[1][i] << "\t"<< System.solution[2][i] <<"\n";
+        // std::cout<<System.steps[i]<<"\t"<< System.solution[0][i] << "\t"<< System.solution[1][i] << "\t"<< System.solution[2][i] <<"\n";
     }
 
     f1.close();

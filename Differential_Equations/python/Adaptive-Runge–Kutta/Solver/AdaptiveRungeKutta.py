@@ -37,9 +37,9 @@ class RKF:
     '''
     
     def __init__(self,diffeq,init_cond,RK_method,
-                      initial_step_size=1e-2,minimum_step_size=1e-5,maximum_step_size=1e-1,
-                      maximum_No_steps=50000,absolute_tolerance=1e-2,
-                      beta=0.5):
+                      initial_step_size=1e-3,minimum_step_size=1e-5,maximum_step_size=1e-2,
+                      maximum_No_steps=50000,absolute_tolerance=1e-5,relative_tolerance=1e-5,
+                      beta=0.85,fac_max=2.):
         
         
         self.tiny=1e-20#define a tiny number. Below this, errors are ignored..
@@ -51,7 +51,9 @@ class RKF:
         self.hmin=minimum_step_size
         self.hmax=maximum_step_size
         self.max_N=maximum_No_steps
-        self.abs_eps=absolute_tolerance
+        self.abs_tol=absolute_tolerance
+        self.rel_tol=relative_tolerance
+        self.fac_max=fac_max
         self.beta=beta
         
         #get the parameters that define the method
@@ -124,33 +126,31 @@ class RKF:
             for i in range(self.s):
                 self.bk[eq_i]+=self.b[i]*self.k[eq_i][i]*self.h
                 self.bstark[eq_i]+=self.bstar[i]*self.k[eq_i][i]*self.h
+            
 
     
     #adjust h. There are more refined ways to do this, but this is a start.  
     def step_control(self):
         _delta=0
-        _r_delta=0
         for eq in range(self.number_of_eqs):
-            _delta+= self.abs_delta[eq]**2.
-        _delta=_delta**0.5
+            scale=self.abs_tol+self.rel_tol*max(abs( self.ynext[eq] ), abs( self.ynext_star[eq] ))
+            _delta+= (self.abs_delta[eq]/scale)**2.
         
-        if _delta<self.tiny:
-            _delta=self.abs_eps
-
+        _delta=(1./self.number_of_eqs*_delta)**0.5
         
-        if _delta>self.abs_eps :
-            self.h=self.beta*self.h0*(self.h0*self.abs_eps/_delta)**(1./self.p)
-        else:
-            self.h=self.beta*self.h0*(self.abs_eps/_delta)**(1./(self.p +1.) )
-            self.err_n[self.current_step]=_delta
-            self.h_stop=False
+        if(_delta<1):
+            h_stop=False 
+            self.err_n[self.current_step]=_delta 
+        
+        fac=min( (1/_delta) ** 1./(self.p+1)  , self.fac_max );
             
+        self.h= self.beta*self.h0*fac 
+        
         if self.h>self.hmax:
             self.h=self.hmax
             
         if self.h<self.hmin:
             self.h=self.hmin
-        
         
         #if tn+h becomes larger than 1, set h=1-tn
         if self.tn+self.h>1:
@@ -191,9 +191,8 @@ class RKF:
                 for eq in range(self.number_of_eqs):
                     self.ynext[eq]=self.yn[eq]+ self.bk[eq]
                     self.ynext_star[eq]=self.yn[eq]+ self.bstark[eq]
-                    
                     self.abs_delta[eq]=self.ynext[eq]-self.ynext_star[eq]
-                    
+                   
                     
                         
                 self.step_control()
