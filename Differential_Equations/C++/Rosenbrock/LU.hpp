@@ -93,6 +93,7 @@ void Map(FuncType F, double *L, int N, double *FL){
 
 /*--------------------------------------------------------------------------------------------------------------*/
 
+/*-----------------------------LUP decompositioning--------------------------------------------------------*/
 
 template<const int N>
 void LUP(double (&M)[N][N], double (&L)[N][N] ,double (&U)[N][N], int (&P)[N], double _tiny=1e-25){
@@ -149,3 +150,50 @@ void LUP(double (&M)[N][N], double (&L)[N][N] ,double (&U)[N][N], int (&P)[N], d
     }}
     
 }
+/*-------------------------------------------------------------------------------------------------------------------*/
+
+#define Print(x) std::cout<<x<<std::endl;
+/*------------------------------------------------Solve-LU----------------------------------------------------------*/
+template<const int N>
+void Solve_LU(double (&L)[N][N] ,double (&U)[N][N], int (&P)[N], double (&b)[N] , double (&x)[N] ){
+    /*
+    This solves M*x=b
+    Input:
+    L,U,P= LUP decomposition of M, which is the output of the function LUP.
+
+    b=the right hand side of the equation
+    N=the number of equations
+
+    x=an array to store the solution of M*x=b
+    */    
+
+    double d[N], bp[N];
+    double tmps=0;
+
+    apply_permutations_vector(b,P,N,bp);
+
+
+    d[0]=bp[0];
+
+    for(int i=1; i<N  ; i++){
+        tmps=0;
+        for (int j = 0; j < i; j++){ tmps +=L[i][j]*d[j]; }
+        
+        d[i]=bp[i]-tmps;
+    }
+    
+
+
+    x[N-1]  = d[N-1]/U[N-1][N-1] ;
+    for (int i = N-2; i > -1; i--)
+    {
+        tmps=0;
+        for (int j = i+1; j < N; j++){ tmps += U[i][j]*x[j];  }
+        x[i]=(d[i]-tmps )/U[i][i];
+    }
+    // for(double i : x ){Print(i)}
+    // Print("=====================")
+
+    
+}
+/*-------------------------------------------------------------------------------------------------------------------*/
