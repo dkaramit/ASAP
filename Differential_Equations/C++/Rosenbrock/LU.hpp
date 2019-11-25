@@ -19,21 +19,6 @@ int ind_max(double *row , int N){
 
 
 
-double Sum(double *List, int N){
-    /*
-    Calculates the sum of a List of size N
-    */
-
-    int s=0;
-    for (int i=0 ; i<N ; i++)
-    {
-        s+=List[i];
-    }
-
-
-    return s;
-
-}
 
 
 void index_swap(double *A, int index_1, int index_2){
@@ -152,7 +137,6 @@ void LUP(double (&M)[N][N], double (&L)[N][N] ,double (&U)[N][N], int (&P)[N], d
 }
 /*-------------------------------------------------------------------------------------------------------------------*/
 
-#define Print(x) std::cout<<x<<std::endl;
 /*------------------------------------------------Solve-LU----------------------------------------------------------*/
 template<const int N>
 void Solve_LU(double (&L)[N][N] ,double (&U)[N][N], int (&P)[N], double (&b)[N] , double (&x)[N] ){
@@ -191,9 +175,6 @@ void Solve_LU(double (&L)[N][N] ,double (&U)[N][N], int (&P)[N], double (&b)[N] 
         for (int j = i+1; j < N; j++){ tmps += U[i][j]*x[j];  }
         x[i]=(d[i]-tmps )/U[i][i];
     }
-    // for(double i : x ){Print(i)}
-    // Print("=====================")
 
-    
 }
 /*-------------------------------------------------------------------------------------------------------------------*/

@@ -1,18 +1,17 @@
 #include<iostream>
 #include "LU.hpp"
-
+#include<cmath>
 
 using std::cout;
 using std::endl;
+
 
 
 // #define indmax // run ind_max test
 
 // #define swap //run index_swap test
 
-// #define sum //run Som test
-
-// #define map //run Som test
+// #define map //run Map test
 
 // #define perm //run permutation test
 
@@ -22,6 +21,20 @@ using std::endl;
 
 // #define solve2 //run Solve_LU test
 
+// #define _rand //run random tests of Solve_LU
+
+#ifdef _rand
+    #include <cstdlib>
+    template<const int N>
+    void dot(double (&M)[N][N], double (&b)[N] , double (&v)[N]){
+    for (int i = 0; i < N; i++){
+            v[i]=0;
+        for (int j = 0; j < N; j++){
+            v[i]+=M[i][j]*b[j];
+        }
+    }
+    }
+#endif
 
 int main(){
 
@@ -31,12 +44,10 @@ int main(){
         cout<<ind_max(x,5)<<endl;
     #endif
 
-    #ifdef sum
-        double x[]={2,1,-1,2,50};
-        cout<<Sum(x,5)<<endl;
-    #endif
+
     
     #ifdef swap
+        double x[]={2,1,-1,2,50};
         index_swap(x,4,1);
         for( double i : x ){ cout<<i<<endl;}
     #endif
@@ -153,6 +164,52 @@ int main(){
     for( double l : x ){ cout<< l <<' ';}
     cout<<endl;
     
+    #endif
+
+    #ifdef _rand
+        /* 
+            Random tests for Solve_LU. Basically run "runs" tests of Solve_LU with N number 
+            of equations (with random coefficients of magnitude up to 100), and if 
+            (M*x-b)/b < 1e-11, print it.
+        */    
+        int runs=10000;
+        double err[runs];
+
+
+        const int N=10;
+        double M[N][N], b[N];
+        double U[N][N], L[N][N] , x[N];
+        int P[N];
+        
+        double tmp[N];
+        
+        double tmpE;
+
+        for(int _r=0; _r<runs ; _r++){
+            for (int i = 0; i < N; i++) { for (int j = 0; j < N; j++)  {
+                M[i][j]= ( rand()/ ((double) RAND_MAX ) -0.5 ) *100 ;  } 
+                b[i]= (rand()/ ((double) RAND_MAX ) -0.5 ) *100 ;  
+            } 
+        
+            LUP<N>(M,L,U,P);
+            Solve_LU<N>(L,U,P,b,x);
+
+            err[_r]=0;
+            for (int i = 0; i < N; i++){
+                dot<N>(M,x,tmp);
+                tmpE= fabs((tmp[i] - b[i])/b[i]) ;
+                if(tmpE>err[_r] ) {err[_r] = tmpE ;}
+
+            }
+        
+        
+        }
+
+        for(double _err: err){  
+            if(_err>1e-11){ cout<<_err<<endl;} 
+        }
+        
+
     #endif
 
     
