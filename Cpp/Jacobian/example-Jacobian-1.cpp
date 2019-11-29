@@ -93,7 +93,7 @@ int main()
     //Calling sys like this, calculates dxdt[0] and dxdt[1] for x={3.,-0.2} and t=2. as
 
 
-    Jacobian<Sys> jac(eqs,1e-6,Ns);//declare the Jacobian (with h=10^-6 and dim=Ns)
+    Jacobian<Sys> jac(eqs,1e-9,Ns);//declare the Jacobian (with h=10^-6 and dim=Ns)
     //jac.sys(x,dxdt,0.);//You can also call sys like this. It does the same thing as sys!
 
     Matrix J(Ns,Ns);
