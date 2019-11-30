@@ -1,41 +1,60 @@
 #include<iostream>
 #include"Jacobian.hpp"
 
+// #define _class //run it with class with overloaded operator()
+#define _function //run it with function pointer
+
+
+
 
 // this is how the diffeq should look like
 #define n_eqs 2 //number of equations
 typedef double Array[n_eqs];//define an array type of length n_eqs
-// typedef double Matrix[n_eqs][n_eqs];//define an matrix type of length n_eqs*n_eqs
 //-------------------------------------------------------------------------//
+
+
+
+#ifdef _function
+typedef void (*diffeq)(Array &lhs, Array &y  , double t); // define function pointer
+void sys(Array &lhs, Array &y  , double t)
+{
+
+    lhs[0]=y[1]*y[0]*t;
+    lhs[1]=y[0]*y[1]+t;
+
+}
+#endif
+
+
+#ifdef _class
+class Cdiffeq{
+    public:
+    Cdiffeq(){};
+    ~Cdiffeq(){};
+    void operator()(Array &lhs, Array &y  , double t)
+    {
+        lhs[0]=y[1]*y[0]*t;
+        lhs[1]=y[0]*y[1]+t;
+    }
+
+
+};
+#endif
+
 
 using std::cout;
 using std::endl;
 
-class diffeq{
-    public:
-        int n;//number of equations
-        diffeq(){
-            n=n_eqs;
-        };
-        ~diffeq(){};
-        
-        
-        //Overloading the braket operator.
-        void operator()( Array &lhs, Array &y  , double t )
-        {
-            
-            
-            lhs[0]=y[1]*y[0]*t;
-            lhs[1]=y[0]*y[1]+t;
-        }
-
-
-};
-
 
 int main(){
-    diffeq sys;
-    Jacobian<diffeq,Array,double [n_eqs][n_eqs]> jac(sys);
+    #ifdef _class
+        Cdiffeq dydt;
+        Jacobian<Cdiffeq,n_eqs> jac(dydt);
+    #endif
+
+    #ifdef _function
+        Jacobian<diffeq,n_eqs> jac(sys);
+    #endif
 
     Array dfdt;
     // Matrix J={{0,0},{0,0}};

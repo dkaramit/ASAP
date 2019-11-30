@@ -29,21 +29,10 @@ struct RK4{
 // this is how the diffeq should look like
 #define n_eqs 3 //number of equations
 typedef double Array[n_eqs];//define an array type of length n_eqs
+typedef void (*diffeq)(Array &lhs, Array &y  , double t );
 //-------------------------------------------------------------------------//
 
-
-
-class diffeq{
-    public:
-        int n;//number of equations
-        diffeq(){
-            this->n=n_eqs;
-        };
-        ~diffeq(){};
-        
-        
-        //Overloading the braket operator.
-        void operator()( Array &lhs, Array &y  , double t )
+void sys( Array &lhs, Array &y  , double t )
         {
             //lhs is an array that gets the return value (the left hand side of the equation)
             //y is an array with values of y
@@ -53,10 +42,8 @@ class diffeq{
             lhs[1]=5*y[0]*pow(t,2)+2*(-pow( y[1],2  )+pow( y[2],2 ) )*t;
             lhs[2]=15*y[0]*pow(t,2)+2*(pow( y[1],2  )-pow( y[2],2 ) )*t;
 
-        }
+        };
 
-
-};
 
 
 
@@ -67,13 +54,13 @@ int main(int argc, const char** argv) {
     y0[0]=5;
     y0[1]=10;
     y0[2]=0;
-    diffeq dydt;
+    diffeq dydt=sys;
 
     //dydt(lhs,y0,5.2);
     //std::cout << lhs[1] << std::endl;
     //definition with N
     int N=5000;
-    RK<diffeq,Array,RK4> System(dydt,y0,N);
+    RK<diffeq,n_eqs,RK4> System(sys,y0,N);
     System.solve();
 
     std::ofstream f1,f2,f3,t;

@@ -5,7 +5,7 @@
 // a system of differential equations in the interval [0,1].
 
 
-template<class diffeq, class Array, class RK_method> //Note that you can use template to pass the method
+template<class diffeq, int number_of_eqs, class RK_method> //Note that you can use template to pass the method
 class RK
 {
     /*
@@ -18,7 +18,7 @@ class RK
 private://There is no reason to make things private (if you break it it's not my fault)... 
     
 public:
-    int No_steps, number_of_eqs,current_step;
+    int No_steps, current_step;
     bool End;
     double step_size,tn;
     diffeq dydt;
@@ -34,10 +34,10 @@ public:
     double* ak;
     double* bk;
 
-    Array yn;//this is here to hold the current steps
-    Array fyn;//this is here to get dydt in each step
+    double yn[number_of_eqs];//this is here to hold the current steps
+    double fyn[number_of_eqs];//this is here to get dydt in each step
     
-    RK(diffeq & , Array  &  , int N=10000);
+    RK(diffeq dydt , double  (&init)[number_of_eqs]  , int N=10000);
     ~RK();
 
     /*-------------------it would be nice to have a way to define these sums more generaly-----------------*/

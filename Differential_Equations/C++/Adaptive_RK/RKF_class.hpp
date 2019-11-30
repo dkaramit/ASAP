@@ -5,7 +5,7 @@
 // a system of differential equations in the interval [0,1].
 
 
-template<class diffeq, class Array, class RK_method> //Note that you can use template to pass the method
+template<class diffeq, int N_eqs, class RK_method> //Note that you can use template to pass the method
 class RKF
 {
     /*      */
@@ -19,7 +19,7 @@ public:
     int max_N;
     
     //things that we'll need
-    int N_eqs,current_step;
+    int current_step;
     bool h_stop;//h_stop becomes true when suitable stepsize is found.    
     double tn;
     double *steps, *err;
@@ -35,10 +35,10 @@ public:
     double *ynext;//this is here to hold the prediction
     double *ynext_star;//this is here to hold the second prediction
 
-    Array yn;//thi i here to hold accepted ynext (redundant, I'll remove it later)
-    Array fyn;//this is here to get dydt in each step
+    double yn[N_eqs];//thi i here to hold accepted ynext (redundant, I'll remove it later)
+    double fyn[N_eqs];//this is here to get dydt in each step
     
-    RKF(diffeq & dydt, Array &init_cond, 
+    RKF(diffeq  dydt, double (&init_cond)[N_eqs], 
         double initial_step_size=1e-5, double minimum_step_size=1e-11, double maximum_step_size=1e-3,int maximum_No_steps=1000000, 
         double absolute_tolerance=1e-15,double relative_tolerance=1e-15,double beta=0.85,double fac_max=3);
     

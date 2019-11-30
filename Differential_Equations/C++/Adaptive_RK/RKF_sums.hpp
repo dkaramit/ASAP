@@ -3,8 +3,8 @@
 #include "RKF_class.hpp"
 
 /*-----------------------Begin: sum_ak---------------------------------*/
-template<class diffeq, class Array, class RKF_method>
-void RKF<diffeq, Array, RKF_method>::sum_ak(int stage){
+template<class diffeq, int N_eqs, class RKF_method>
+void RKF<diffeq, N_eqs, RKF_method>::sum_ak(int stage){
     // this function stores sum_{j}^{stage-1}a_{stage,j}\vec{k}_j*h in ak, so we first need to make all elements zero, and then take the sum for each component
     // for (int eq = 0; eq <N_eqs ; eq++){ak[eq]=0.;  }//again redundant but it is more clear this way
     for (int eq = 0; eq <N_eqs ; eq++){
@@ -17,8 +17,8 @@ void RKF<diffeq, Array, RKF_method>::sum_ak(int stage){
 /*-----------------------End: sum_ak---------------------------------*/
 
 /*-----------------------Begin: sum_bk---------------------------------*/
-template<class diffeq, class Array, class RKF_method>
-void RKF<diffeq, Array, RKF_method>::sum_bk(){
+template<class diffeq, int N_eqs, class RKF_method>
+void RKF<diffeq, N_eqs, RKF_method>::sum_bk(){
     // this function stores sum_{i}^{s}b_{i}\vec{k}_i*h in bk and sum_{i}^{s}b_{i}^{\star}\vec{k}_i*h in bstark  
     for (int eq = 0; eq <N_eqs ; eq++){
         bk[eq]=0.;

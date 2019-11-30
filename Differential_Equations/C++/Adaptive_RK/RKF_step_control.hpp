@@ -13,8 +13,8 @@ static int x=0;
 
 
 /*-----------------------Begin: step_control---------------------------------*/
-template<class diffeq, class Array, class RKF_method>
-void RKF<diffeq, Array, RKF_method>::step_control(){
+template<class diffeq, int N_eqs, class RKF_method>
+void RKF<diffeq, N_eqs, RKF_method>::step_control(){
     
     //calculate the absolute value of delta
     

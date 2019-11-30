@@ -3,8 +3,8 @@
 #include "RKF_class.hpp"
 
 /*-----------------------Begin: calc_k---------------------------------*/
-template<class diffeq, class Array, class RKF_method>
-void RKF<diffeq, Array, RKF_method>::calc_k(){
+template<class diffeq, int N_eqs, class RKF_method>
+void RKF<diffeq, N_eqs, RKF_method>::calc_k(){
             // You can first calculate the first stage and then the rest of them, since the first one does not need ak. 
 
             // Or for the shake of simplicity, calculae all of them in one loop (shouldn't be slower since the sum_ak for stage=0 should'n realy do anything).

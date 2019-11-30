@@ -34,46 +34,27 @@ class ROS3w{
 // this is how the diffeq should look like
 #define n_eqs 3 //number of equations
 typedef double Array[n_eqs];//define an array type of length n_eqs
-typedef double Matrix[n_eqs][n_eqs];//define an matrix type of length n_eqs*n_eqs
+typedef void (*diffeq)(Array &lhs, Array &y  , double t );
 //-------------------------------------------------------------------------//
 
-
-
-class diffeq{
-    public:
-        int n;//number of equations
-        diffeq(){
-            n=n_eqs;
-        };
-        ~diffeq(){};
-        
-        
-        //Overloading the braket operator.
-        void operator()( Array &lhs, Array &y  , double t )
+void sys( Array &lhs, Array &y  , double t )
         {
             //lhs is an array that gets the return value (the left hand side of the equation)
             //y is an array with values of y
             //t is the value of the variable t
             
-
-            lhs[0]=-20*y[0]*pow(t,3);
+            lhs[0]=-20*y[0]*pow(t,3.);
             lhs[1]=5*y[0]*pow(t,2)+2*(-pow( y[1],2  )+pow( y[2],2 ) )*t;
             lhs[2]=15*y[0]*pow(t,2)+2*(pow( y[1],2  )-pow( y[2],2 ) )*t;
-            
-            // lhs[0]=sin(8*y[0])*t;
-            // lhs[1]=y[0];
-            // lhs[2]=y[0];
-        }
 
-
-};
+        };
 
 #define initial_step_size 1e-4 
-#define minimum_step_size 1e-11 
+#define minimum_step_size 1e-7
 #define maximum_step_size 1e-2
 #define maximum_No_steps 1000000
-#define absolute_tolerance 1e-15
-#define relative_tolerance 1e-15
+#define absolute_tolerance 1e-7
+#define relative_tolerance 1e-7
 #define beta 0.85
 #define fac_max 3
 
@@ -86,11 +67,10 @@ int main(int argc, const char** argv) {
     y0[0]=5;
     y0[1]=10;
     y0[2]=0;
-    diffeq dydt;
-    Jacobian<diffeq,Array,Matrix> jac(dydt);
+    Jacobian<diffeq,n_eqs> jac(sys);
 
     // this is not looing good.. Just pass the number of equations as argument to get rid of Array and Matrix...
-    Ros<diffeq,Array,Matrix,ROS3w,Jacobian<diffeq,Array, Matrix> > System(dydt,y0, 
+    Ros<diffeq,n_eqs, ROS3w,Jacobian<diffeq,n_eqs> > System(sys,y0, 
      initial_step_size,  minimum_step_size,  maximum_step_size, maximum_No_steps, 
      absolute_tolerance, relative_tolerance, beta, fac_max);
     // System.next_step();
@@ -124,11 +104,11 @@ int main(int argc, const char** argv) {
 
 
     std::ofstream f1,f2,f3,t,err;
-    f1.open ("./test/y1.dat");
-    f2.open ("./test/y2.dat");
-    f3.open ("./test/y3.dat");
-    t.open ("./test/t.dat");
-    err.open ("./test/err.dat");
+    f1.open ("./0-test/y1.dat");
+    f2.open ("./0-test/y2.dat");
+    f3.open ("./0-test/y3.dat");
+    t.open ("./0-test/t.dat");
+    err.open ("./0-test/err.dat");
     
 
    

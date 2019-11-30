@@ -13,8 +13,8 @@ static int x=0;
 
 
 /*-----------------------Begin: step_control---------------------------------*/
-template<class diffeq, class Array, class Matrix, class RK_method, class jacobian>
-void Ros<diffeq, Array,Matrix, RK_method, jacobian>::step_control(){
+template<class diffeq, int  N_eqs, class RK_method, class jacobian>
+void Ros<diffeq,  N_eqs, RK_method, jacobian>::step_control(){
     
     //calculate the absolute value of delta
     
