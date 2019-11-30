@@ -11,8 +11,10 @@ for such things, I'll try to write some scripts in python first, and later trans
 
 For the moment  I have successfully implemented the plain Monte Carlo (MC), Acceptance-Rejection MC flavours,
 Markov-Chains (and some discrete for fun), and VEGAS (this is not complete, although the jupyter notebook for the
-1-dimensional is very good). Also, I have worked out some algorithms for systems of differential equations, 
-and started to put some documentation (I'm also rewriting the code in a more transparent object-oriented way). 
+1-dimensional is good). I have also implemented some algorithms for systems of differential equations, in python and C++.
+The explanations can be found in the corresponding jupyter notebooks, while both python and C++ have an abundance of comments.
+If you are interested in how the work, look for the python versions first. The C++ ones are translations of the python scripts,
+but they have C++ specific things that can make them difficult to understand at first.
 I am preparing a code for artificial neural networks (slowly), where I have a working neural net, with an arbitrary 
 number of hidden layers. Again, the code needs "cleaning" and documentation.  So, it may take some time until I upload it. From time to 
 time I'll update this note, with my progress, but one should expect that it is always outdated, because most of the work is done at 
