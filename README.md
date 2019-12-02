@@ -2,7 +2,8 @@
 Numerical calculations *as simple as possible* (ASAP).
 
 ---
-
+![GitHub repo size](https://img.shields.io/github/repo-size/dkaramit/ASAP?color=red&style=flat-square)
+--
 **Personal note**
 
 I'm trying to create a collection of programs and scripts that perform various calculations.
