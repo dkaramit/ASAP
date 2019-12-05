@@ -57,7 +57,7 @@ public:
     double fyn[N_eqs],rhs[N_eqs];
 
     // to make it more clear, we are going to separate the rhs in three different parts
-    double rhs1[N_eqs],rhs2[N_eqs],rhs3[N_eqs];
+    double rhs1[N_eqs],rhs2[N_eqs];
 
     //lu_sol will capture the sulution of (I-\gamma*h*J)* k = rhs (it is basically k)
     double lu_sol[N_eqs];

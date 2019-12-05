@@ -59,16 +59,12 @@ void Ros<diffeq,  N_eqs, RK_method, jacobian>::calc_k(){
         /*--- Get the rhs terms ---*/
         // first term
         dydt(rhs1, yn  , tn+method.c[stage]*h0 );
-        for(int eq=0; eq<N_eqs ; eq++) { rhs1[eq]*=h0;  }
         // second term
         for(int eq=0; eq<N_eqs ; eq++) { rhs2[eq] =  (h0*h0)*(method.gamma+sum_gamma[stage])*dfdt[eq]   ;  }
         // third term
         calc_Jk();
-        dydt(rhs1, yn  , tn+method.c[stage]*h0 );
-        for(int eq=0; eq<N_eqs ; eq++) { rhs3[eq]= Jk[eq]*h0;  }
-        
         // then the rhs becomes
-        for(int eq=0; eq<N_eqs ; eq++) { rhs[eq]= rhs1[eq] + rhs2[eq] + rhs3[eq]  ;  }
+        for(int eq=0; eq<N_eqs ; eq++) { rhs[eq]= rhs1[eq]*h0 + rhs2[eq] + Jk[eq]*h0  ;  }
         /*------------------------*/
 
         Solve_LU<N_eqs>(L,U,P,rhs, lu_sol);
