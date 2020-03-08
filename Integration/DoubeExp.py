@@ -18,7 +18,7 @@ class DoubleExp:
         For the moment take derivatives numerically. 
         Later I will do the derivatives of g analytically, but for the moment should be fine.
         '''
-        return (self.F(t+_h )- 2 * self.F(t ) +  self.F(t -_h ))/(2.*_h**2.)
+        return (self.F(t+_h )- 2 * self.F(t ) +  self.F(t -_h ))/(_h**2.)
         
         
         
