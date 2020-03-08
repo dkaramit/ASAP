@@ -22,7 +22,7 @@ class DoubleExp:
         
         
         
-    def __init__(self,func,_exp=1,_exp_max=15,rtol=1e-5,atol=1e-5,p=10,Nmax=1000):
+    def __init__(self,func,_exp=1,_exp_max=15,rtol=1e-5,atol=1e-5,p=10):
         '''
         func: function to be integrated in the interval [-1,1].
         exp: initial value of h=2^-exp
@@ -60,13 +60,6 @@ class DoubleExp:
         self.integral=self.func( self.g(0) ) *self.dgdt(0)
         self.err=self.d2Fdt(0)
         
-
-    def error(self,_h=1e-8):
-        '''find the absolute error take derivatives numerically. 
-        Later I will do the derivatives of g analytically, but for the moment should be fine.
-        '''
-        pass
-    
     def N_start(self):
         '''
         Find an appropriate N to start.
