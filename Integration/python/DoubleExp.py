@@ -45,9 +45,9 @@ class DoubleExp:
         self.atol=atol
         self.eps=10**(-p)
         
-        #initialize N
-        self.N=0
-        
+        #initialize N. Start with N=0. This way we avoid not updating N with h if N_start gives N=0.
+        self.N=2
+        self.N_init=False
         
         #eval will tell us if we have already evaluated the integral for given N and h (no need to sum thingswe already have)
         self.eval=True
@@ -67,7 +67,7 @@ class DoubleExp:
         '''
         
         #start from this. 
-        tmp_N=1
+        tmp_N=self.N+1
         while True:
             #remember that x_j=-x_{-j}, w_j = w_{-j}
             _x=self.g(self.h*tmp_N)
@@ -76,13 +76,14 @@ class DoubleExp:
             _f2= _w*self.func(-_x)
             
             if abs(_f1)<self.eps and abs(_f2 )<self.eps :
+                self.N_init=True
                 self.eval=False
                 break
             else:
                 
                 self.integral+=_f1+_f2
                 self.err+=self.d2Fdt( tmp_N*self.h)
-                                
+                    
                 self.N=tmp_N
                 tmp_N+=1
         
@@ -96,8 +97,6 @@ class DoubleExp:
         Note for later: since we update h->h/2, we just need to update the sum including only the new
         addition we make. That is, you only calculate for odd j! 
         '''
-#         if self.eval:
-#             for j in range(1,self.N,2):
         j=1
         while self.eval:
             _x=self.g(self.h*j)
@@ -133,7 +132,7 @@ class DoubleExp:
 
 
     def integrate(self):
-        if self.N==0:
+        if self.N_init==False:
             self.N_start()
         
         while self.h_stop==False:
@@ -153,7 +152,7 @@ if __name__ == "__main__":
         return 1/((1+x)**0.5 +(1-x)**0.5 +2  )
 
 
-    DE=DoubleExp(func=F,_exp=5,p=8,rtol=1e-8,atol=1e-8)
+    DE=DoubleExp(func=F,_exp=5,_exp_max=20,p=8,rtol=1e-8,atol=1e-8)
 
     print(
         'result: {0[0]} \nerror: {0[1]} \nexact: {1}'.format(

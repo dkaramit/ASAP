@@ -15,7 +15,7 @@ public:
 
     LD _exp, _exp_max, h, hmin, rtol, atol, eps;
     int N;
-    bool eval, h_stop;
+    bool N_init,eval, h_stop;
     LD integral, err, result, error;
 
     DoubleExp(func F, LD _exp = 5, LD _exp_max = 15, LD rtol = 1e-5, LD atol = 1e-5, int p = 10);
@@ -45,7 +45,8 @@ DoubleExp<func, LD>::DoubleExp(func f, LD _exp, LD _exp_max, LD rtol, LD atol, i
     this->atol = atol;
     this->eps = pow(10, -p);
 
-    this->N = 0;
+    this->N = 2; //it's better to start with N=2, because if N=0 (after N_start), then N can't be updated (N*2=0!) 
+    this->N_init=false;//check if N_start() is finished.
     this->eval = true;
     this->h_stop = false;
 
@@ -56,7 +57,7 @@ DoubleExp<func, LD>::DoubleExp(func f, LD _exp, LD _exp_max, LD rtol, LD atol, i
 Tem
 void DoubleExp<func, LD>::N_start()
 {
-    int tmp_N = 1;
+    int tmp_N = this->N+1;
     LD _x, _w, _f1, _f2;
     while (true)
     {
@@ -68,14 +69,13 @@ void DoubleExp<func, LD>::N_start()
         if (fabs(_f1) < this->eps and fabs(_f2) < this->eps)
         {
             this->eval = false;
+            N_init=true;
             break;
         }
         else
         {
-
             this->integral += _f1 + _f2;
             this->err += this->d2Fdt(tmp_N * this->h);
-
             this->N = tmp_N;
             tmp_N += 1;
         }
@@ -116,8 +116,8 @@ void DoubleExp<func, LD>:: h_control(){
     else{
         if (this->h<this->hmin){this->h_stop=true;}
         else{
-            this->h=this->h/2;
-            this->N=this->N*2;
+            this->h/=2;
+            this->N*=2.;
             this->eval=true;
             }
     }
@@ -125,7 +125,7 @@ void DoubleExp<func, LD>:: h_control(){
 
 Tem
 LD DoubleExp<func, LD>::integrate(){
-        if (this->N==0){this->N_start();}
+        if (N_init==false){this->N_start();}
         
         while (this->h_stop==false){
             this->h_control();
