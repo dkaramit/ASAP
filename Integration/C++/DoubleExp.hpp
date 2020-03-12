@@ -45,7 +45,7 @@ DoubleExp<func, LD>::DoubleExp(func f, LD _exp, LD _exp_max, LD rtol, LD atol, i
     this->atol = atol;
     this->eps = pow(10, -p);
 
-    this->N = 2; //it's better to start with N=2, because if N=0 (after N_start), then N can't be updated (N*2=0!) 
+    this->N = 0;  
     this->N_init=false;//check if N_start() is finished.
     this->eval = true;
     this->h_stop = false;
@@ -57,7 +57,7 @@ DoubleExp<func, LD>::DoubleExp(func f, LD _exp, LD _exp_max, LD rtol, LD atol, i
 Tem
 void DoubleExp<func, LD>::N_start()
 {
-    int tmp_N = this->N+1;
+    int tmp_N = 1;
     LD _x, _w, _f1, _f2;
     while (true)
     {
@@ -66,7 +66,7 @@ void DoubleExp<func, LD>::N_start()
         _f1 = _w * this->f(_x);
         _f2 = _w * this->f(-_x);
 
-        if (fabs(_f1) < this->eps and fabs(_f2) < this->eps)
+        if (fabs(_f1) < this->eps and fabs(_f2) < this->eps  and this->N>1)//it's better to start N!=0, because we update it by N=N*2.
         {
             this->eval = false;
             N_init=true;

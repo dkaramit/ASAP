@@ -45,8 +45,8 @@ class DoubleExp:
         self.atol=atol
         self.eps=10**(-p)
         
-        #initialize N. Start with N=0. This way we avoid not updating N with h if N_start gives N=0.
-        self.N=2
+        #initialize N. Start with N=0. 
+        self.N=0
         self.N_init=False
         
         #eval will tell us if we have already evaluated the integral for given N and h (no need to sum thingswe already have)
@@ -75,7 +75,9 @@ class DoubleExp:
             _f1=_w*self.func(_x) 
             _f2= _w*self.func(-_x)
             
-            if abs(_f1)<self.eps and abs(_f2 )<self.eps :
+            #Note that we want N to start as N>0. This way we make sure that N gets updated correctly 
+            #(if N starts at 0, it's not going to be updated).
+            if abs(_f1)<self.eps and abs(_f2 )<self.eps and self.N>1:
                 self.N_init=True
                 self.eval=False
                 break
@@ -152,7 +154,7 @@ if __name__ == "__main__":
         return 1/((1+x)**0.5 +(1-x)**0.5 +2  )
 
 
-    DE=DoubleExp(func=F,_exp=5,_exp_max=20,p=8,rtol=1e-8,atol=1e-8)
+    DE=DoubleExp(func=F,_exp=10,_exp_max=50,p=20,rtol=1e-10,atol=1e-10)
 
     print(
         'result: {0[0]} \nerror: {0[1]} \nexact: {1}'.format(

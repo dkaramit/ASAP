@@ -5,11 +5,11 @@
 
 
 
-#define starting_exponent 12
-#define maximum_exponent 30
-#define relative_tolerance 1e-12
-#define absolute_tolerance 1e-12
-#define precision 15
+#define starting_exponent 10
+#define maximum_exponent 50
+#define relative_tolerance 1e-10
+#define absolute_tolerance 1e-10
+#define precision 20
 
 // #define LD  double
 #define LD long double
@@ -18,8 +18,8 @@
 
 typedef LD (*func)(LD);
 
-LD f(LD x){return exp( -pow(x  , 2 )/1e-15  ) ;}
-// LD f(LD x){return 1/(sqrt(1+x) +sqrt(1-x) +2  );}
+// LD f(LD x){return exp( -pow(x  , 2 )/1e-15  ) ;}
+LD f(LD x){return 1/(sqrt(1+x) +sqrt(1-x) +2  );}
 
 
 int main(){
