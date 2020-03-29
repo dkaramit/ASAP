@@ -24,7 +24,7 @@ LD f(LD x){return 1/(sqrt(1+x) +sqrt(1-x) +2  );}
 
 int main(){
 
-    DoubleExp<func,double> DE( f,starting_exponent, maximum_exponent,
+    DoubleExp<func,LD> DE( f,starting_exponent, maximum_exponent,
     relative_tolerance,absolute_tolerance, precision  );
     DE.integrate();
  

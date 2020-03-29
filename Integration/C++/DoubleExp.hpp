@@ -27,9 +27,9 @@ public:
     LD d2Fdt(LD t, LD _h = 1e-8);
 
     void N_start();
-    LD evaluate();
+    void evaluate();
     void h_control();
-    LD integrate();
+    void integrate();
 };
 Tem
 LD DoubleExp<func, LD>::d2Fdt(LD t, LD _h) { return (F(t + _h) - 2 * F(t) + F(t - _h)) / (_h * _h); }
@@ -85,7 +85,7 @@ void DoubleExp<func, LD>::N_start()
 
 
 Tem
-LD DoubleExp<func, LD>::evaluate(){
+void DoubleExp<func, LD>::evaluate(){
 
         int j=1;
         LD _x , _w ;
@@ -124,7 +124,7 @@ void DoubleExp<func, LD>:: h_control(){
 }
 
 Tem
-LD DoubleExp<func, LD>::integrate(){
+void DoubleExp<func, LD>::integrate(){
         if (N_init==false){this->N_start();}
         
         while (this->h_stop==false){
