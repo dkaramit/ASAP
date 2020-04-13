@@ -3,7 +3,6 @@
 
 
 
-
 if [ "$#" -lt "3" ]
 then
     echo "Number of parameters passed must be 3 or 4."
@@ -25,6 +24,13 @@ done < $3
 
 
 cpus=$2
+
+if [ "$cpus" -gt  "$tot" ]
+then
+    cpus=$tot
+fi
+
+
 N_batches=`python -c "print(  int( $tot / $cpus)  )"`
 R_batches=`python -c "print( $tot - $N_batches * $cpus  )"`
 
