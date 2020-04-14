@@ -22,7 +22,6 @@ class VEGAS{
 
         int NGridPoints;
         // Notice that N number of bins need N+1 points to be defined
-        LD RandPoints[Nbins][PointsPerBin];
         LD Grid[Dim][Nbins+1];
 
         VEGAS(int NPoints);
@@ -31,20 +30,24 @@ class VEGAS{
         //get a random point in [min,max]
         LD Random(LD min , LD max);
         
-        // sample for dimention-dim  
-        void RandomGrid(int dim);
 
         // Calculate the integral of one bin of dim (and in the entire [0,1] for other dims)
         LD BinIntegrate(int dim , int bin);
 
         //---These are for the auxiliary functions. You can remove them with no effect.
+        
         // prints binpoints of dim
         void PrintGrid(int dim);
         // prints all binpoints
         void PrintGrid();
 
-        void PrintRandomGrid();// Prints RandPoints.
+        LD RandPoints[Nbins][PointsPerBin];
         int last_dim;//get the last  dimention to get RandomGrid
+        
+        // sample for dimention-dim  
+        void RandomGrid(int dim);
+
+        void PrintRandomGrid();// Prints RandPoints.
         
         // Calculate the mean of RandPoints[last_dim][bin]
         LD BinMean(int bin);

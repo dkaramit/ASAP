@@ -5,6 +5,33 @@
 
 
 // Define functions that help with getting some feedback for the Grid
+
+
+VEGAS_Template  
+void VEGAS_Namespace::RandomGrid(int dim){
+       last_dim=dim; //used in auxiliary function. 
+
+       
+        for (int bin=0 ; bin< Nbins  ; ++bin)
+        {
+            for(int Rpoint =0; Rpoint < PointsPerBin  ; ++Rpoint){
+                this->RandPoints[bin][Rpoint]=  Random( Grid[dim][bin] , Grid[dim][bin+1]  );
+            }
+        }
+    
+
+}
+
+
+
+
+
+
+
+
+
+
+
 VEGAS_Template
 void VEGAS_Namespace::PrintGrid(){
     for( int dim=0 ; dim<Dim ; ++dim ){

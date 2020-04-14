@@ -28,7 +28,7 @@ void f( LD x[Dim], LD retrn[Dim] ) {
 
 int main(){
     VEGAS<LD,Func,Dim,Nbins,PointsPerBin> Integral(10);
-    // Integral.PrintGrid();
+    Integral.PrintGrid();
     // Integral.PrintGrid(0);
     // Integral.PrintGrid(1);
     // std::cout<<Integral.Random(1e-8,2e-4)<<std::endl;
