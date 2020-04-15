@@ -4,11 +4,13 @@
 #include<random>
 
 
+
+
 #include"VEGAS_Class.hpp"
 #include"VEGAS_Rnd.hpp"
 #include"VEGAS_Const.hpp"
 #include"VEGAS_Aux.hpp"
-#include"VEGAS_BinInt.hpp"
+#include"VEGAS_IntDim.hpp"
 
 
 

@@ -4,10 +4,14 @@
 
 
 VEGAS_Template
-VEGAS_Namespace::VEGAS(int max_iterations){
+VEGAS_Namespace::VEGAS(Func function, int PointsPerBin, int NPoints){
     // points per bin
-    this->max_iterations=max_iterations;
+    this->NPoints=NPoints;
+    this->PointsPerBin=PointsPerBin;
+    this->Integrand=function;
 
+    std::uniform_int_distribution<> _UnInt(0, Nbins-1);
+    this-> UnInt =_UnInt;
     // initialize the Grid. Each entry is the point where the Bin starts.
     // For example Grid[1][3] is the point where the 4th bin of 2nd dimension begins.
     // That is  for dimension Dim the ith bin is the interval [Grid[Dim-1][i-1] , Grid[Dim-1][i]]
