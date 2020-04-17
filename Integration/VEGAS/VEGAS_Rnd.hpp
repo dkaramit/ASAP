@@ -14,31 +14,10 @@ LD VEGAS_Namespace::Random(LD min, LD max){
 }
 
 VEGAS_Template
-int VEGAS_Namespace::RandomBin(int dim){
+int VEGAS_Namespace::RandomBin(){
     RndE.seed( RndDiv () );
     return UnInt(RndE);
 }
-
-
-VEGAS_Template
-void VEGAS_Namespace::Sample(LD point[Dim]){
-
-}
-
-
-VEGAS_Template
-void VEGAS_Namespace::SampleDim(int dim, LD point[Dim-1]){
-
-}
-
-
-
-VEGAS_Template
-LD VEGAS_Namespace::Distribution(LD point[Dim]){
-
-
-}
-
 
 
 #endif

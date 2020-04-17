@@ -1,10 +1,17 @@
 #ifndef VEGAS_class
 #define VEGAS_class
 
+// Just a thought: use different number of points for the wheights, and different for the integral.
+
+
+// for memset:
+#include<cstring>
 
 // define some macros
-#define VEGAS_Template template<class LD, class Func, int Dim, int Nbins>
-#define VEGAS_Namespace VEGAS<LD,Func,Dim,Nbins>
+
+
+#define VEGAS_Template template<class LD, class Func, int NDim, int NBin>
+#define VEGAS_Namespace VEGAS<LD,Func,NDim,NBin>
 
 
 
@@ -16,11 +23,13 @@ class VEGAS{
 
 
         Func Integrand;
-        LD rel_var, max_iterations;
+        int NPoints;
+        LD rel_var, max_iterations, K_const, alpha ;
 
-        int PointsPerBin,NPoints;
         // Notice that N number of bins need N+1 points to be defined
-        LD Grid[Dim][Nbins+1];
+        LD Grid[NDim][NBin+1];
+        LD weights[NDim][NBin];
+
 
         std::random_device RndDiv;
         std::default_random_engine RndE;
@@ -28,48 +37,47 @@ class VEGAS{
         std::uniform_int_distribution<> UnInt;
 
 
-        VEGAS( Func function, int PointsPerBin ,int NPoints);
+        VEGAS( Func function, int NPoints, int K_const=1000, LD alpha=0.9);
         ~VEGAS(){};
 
         //get a random point in [min,max]
         LD Random(LD min , LD max);
-        // get random bin in dimention dim
-        int RandomBin(int dim);
+        // get random bin in NDimention NDim
+        int RandomBin();
 
 
-        /*----I don't think we'll need  Sample, SampleBin, and Distribution----*/
-        //take a sample according to the Grid. Returns the point as an array  point[Dim]
-        void Sample(LD point[Dim]);
-        //take a sample according to the Grid excluding dim (we could overload Sample, but it is more clear this way). 
-        void SampleDim(int dim , LD point[Dim-1]);
-        // The Gid defines a distribution. In order to apply Monte Carlo, we need to find the value of this 
-        // distribution at a given point.
-        LD Distribution( LD point[Dim] );
-        /*------------------------------------------------------------------------------*/
 
+        // Claculate the partial integrals. Returns \int|f|*NPoints. This is what we need to 
+        // get the regulated weights. 
+        LD PartialIntegrals();
+        // Update the weights
+        void UpdateBins();
 
-        // Calculate the integral in the subvilume volume defined by removing the dimention dim (at a given x for this dim).
-        //  Basically this caclulates \int_0^1 d^{dim}t f( \vec{t} )  \delta( t_{dim} - x ) ,  
-        LD IntegrateDim(int dim ,   LD x  );
-        
-        // Calculate the 1-D integral of dim in bin at a given point for the other dimentions 
-        LD Integrate1D(int dim , int bin , LD point[Dim] );
-        
-        // Overloaded Integrate1D.
-        // Calculate the 1-D integral of dim at a given point for the other dimentions.
-        // Sums all bins  in Integrate1D(int dim , int bin , LD point[Dim] )
-        LD Integrate1D(int dim  , LD point[Dim] );
+        // take the integral in [0,1]
+        LD IntegrateTot();
+        LD IntegrateTot(LD *var);
+
+        // Use this to take batches
+        LD Integrate();
+        LD Integrate(LD *var);
+
 
         //---These are for the auxiliary functions. You can remove them with no effect.
         
-        // prints binpoints of dim
+        // prints binpoints of NDim
         void PrintGrid(int dim);
         // prints all binpoints
         void PrintGrid();
+        
+        // 
+        void PrintDist();
 
-
-
-
+        void PrintWeights();
+        
+        // Calculate the  weights. Just to check that the algorithm works. In practice we only need the partial integrals.
+        LD CalculateWeights();
+        // check that the sum of wieghts in each dimension is 1; (this is in CalcWeights-Check.hpp)
+        void CheckWeights();
 };
 
 #endif

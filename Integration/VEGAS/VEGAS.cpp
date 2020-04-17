@@ -2,73 +2,55 @@
 #include"VEGAS.hpp"
 // 
 
-#define Dim 6
-#define Nbins 50
-#define PointsPerBin 100000
+#define NDim 5
+#define NBin 12
+#define _NPoints 1000
 
-#define LD double
+#define LD  long double
 
 
 // define the type of function to be used in VEGAS template
-typedef void (*Func) (LD x[Dim], LD *retrn );
+typedef void (*Func) (LD x[NDim], LD *retrn );
 
 // Define a function
-void f( LD x[Dim], LD *retrn ) {
+void f( LD x[NDim], LD *retrn ) {
     (*retrn)=1  ;
 
-    for( int i=0; i<Dim ; ++i  ) {  (*retrn)*=x[i] ; }
+    for( int i=0; i<NDim ; ++i  ) {  (*retrn)*=-exp(- pow(x[i] - 0.9,2)*50. ); }
     
 
 }
 
-void G(LD x[1], LD r[1]){
-
-    r[0]=sin(x[0])*sin(x[0]);
-}
 
 
-#define for_all for( int i=0; i<Dim ; ++i  ) for( int j=0; j<Nbins ; ++j  )
-#define for_dim for( int i=0; i<Dim ; ++i  ) 
-#define for_bin for( int j=0; j<Nbins ; ++j  )
+#define for_all for( int i=0; i<NDim ; ++i  ) for( int j=0; j<NBin ; ++j  )
+#define for_dim for( int i=0; i<NDim ; ++i  ) 
+#define for_bin for( int j=0; j<NBin ; ++j  )
 
 int main(){
-    VEGAS<LD,Func,Dim,Nbins> Integral(f, PointsPerBin, 10);
-    // Integral.PrintGrid();
+    VEGAS<LD,Func,NDim,NBin> Integral(f,_NPoints,150,0.1);
     // Integral.PrintGrid(0);
     // Integral.PrintGrid(1);
     // std::cout<<Integral.Random(1e-8,2e-4)<<std::endl;
     // std::cout<<Integral.RandomBin(0)<<std::endl;
-    // Integral.IntegrateDim( 0,0 );
-    
-    
+    // std::cout<<Integral.IntegrateTot()<<std::endl;
+    // Integral.CalculateWeights();
+    // Integral.PartialIntegrals();
+    // Integral.CheckWeights();
+    // Integral.PrintWeights();
 
-    // -- Example of both Integrate1D 
-    #if 1
-    LD point[Dim];
-    for_dim point[i]=i+1; 
-    int dim=1, bin=3;
+    std::cout<<"============================================"<<std::endl;
+    Integral.PrintGrid();
+    std::cout<<Integral.IntegrateTot()<<std::endl;
 
-    point[dim]=0;//this is updated in Integrate1D
-    
-    std::cout<<"integral in ("<<Integral.Grid[dim][bin]<< ", "<<Integral.Grid[dim][bin+1]<<" ): for dimension "<<dim<<std::endl;
-    std::cout<<Integral.Integrate1D(dim,bin,point)<<std::endl;// \int_{0}^{bin} dx f( point )
-    std::cout<<"integral in (0,1) for dimension "<<dim<<" :"<<std::endl;
-    std::cout<<Integral.Integrate1D(dim,point)<<std::endl;// \int_{0}^{1} dx f( point )
-    // 
-    
-    // point[dim]=1;
-    // std::cout<<Integral.IntegrateDim(dim, point[dim] )<<std::endl;// \int_{0}^{1} dx f( point )
-    #endif
-
-
-    
+    for (int i=0 ; i<50; ++i){Integral.UpdateBins();}   
+    std::cout<<Integral.IntegrateTot()<<std::endl;
+    std::cout<<"============================================"<<std::endl;
+    Integral.PrintGrid();
 
 
 
 
 
 
-
-
-    return 0;
 }
