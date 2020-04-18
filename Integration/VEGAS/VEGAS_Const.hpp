@@ -4,15 +4,19 @@
 
 
 VEGAS_Template
-VEGAS_Namespace::VEGAS(Func function, int NPoints, int K_const, LD alpha){
+VEGAS_Namespace::VEGAS(Func function, int NPoints, int NBatches, int K_const, LD alpha){
     this->Integrand=function;
     this->NPoints=NPoints;
+    this->NBatches=NBatches;
+
     this->K_const=K_const;
     this->alpha=alpha;
 
 
+    // start with weights=0. At the end of UpdateBins() this is set again to 0.
+    memset(weights , 0 ,sizeof  weights);// They say is the fastest way to set an array to 0;
 
-
+    // This is the distribution that gets random bins
     std::uniform_int_distribution<> _UnInt(0, NBin-1);
     this-> UnInt =_UnInt;
 

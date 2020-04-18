@@ -31,4 +31,53 @@ LD VEGAS_Namespace::IntegrateTot( ){
     return IntTot/NPoints;
 }
 
+
+
+
+
+// Get the integral and pass the result and the variance as references.
+
+VEGAS_Template
+void VEGAS_Namespace::IntegrateTot(LD *IntMean, LD *IntVariance ){
+    LD FuncPoint, point[NDim];
+    
+    int bin;
+    
+    LD inv_dist,Int_i;
+
+    (*IntMean)=0;
+    (*IntVariance)=0;
+
+    for(int np=0 ; np <NPoints ;++np){
+        inv_dist=1;
+        
+        for(int dim = 0 ; dim < NDim ; ++dim){
+            bin=RandomBin();
+            point[dim] = Random( Grid[dim][bin] , Grid[dim][bin+1] ); 
+            inv_dist*=NBin*(Grid[dim][bin+1] - Grid[dim][bin]);
+        }
+        Integrand( point , &FuncPoint );
+        
+        Int_i=FuncPoint * inv_dist;//contribution to the integral: f(x_i)/p(x_i)
+
+        (*IntMean) +=  Int_i/NPoints;
+
+        (*IntVariance)+= Int_i*Int_i/NPoints;
+    }
+
+    (*IntVariance)=( (*IntVariance) - (*IntMean)*(*IntMean) )/(NPoints-1) ;
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
 #endif

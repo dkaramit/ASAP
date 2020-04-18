@@ -13,6 +13,7 @@
 #include"VEGAS_UpBin.hpp"
 
 #include"VEGAS_IntTot.hpp"
+#include"VEGAS_Batch.hpp"
 
 // can be removed with no effect. Should keep them to check the code
 #include"VEGAS_CalcWeights.hpp"

@@ -15,7 +15,8 @@ LD VEGAS_Namespace::PartialIntegrals( ){
     LD inv_dist;
     LD AbsInt=0;
 
-    memset(weights , 0 ,sizeof  weights);// They say is the fastest way to set an array to 0;
+    // you can reset the weights at the end of UpdateBins(), so you don't need to reset them here.
+    // memset(weights , 0 ,sizeof  weights);// They say is the fastest way to set an array to 0;
 
     // you get NPoints number of points
     for(int np=0 ; np <NPoints ;++np){
@@ -27,22 +28,23 @@ LD VEGAS_Namespace::PartialIntegrals( ){
         // Also in order to get the weight from this, you need to know in what bin is every point[dim].
         for(int dim = 0 ; dim < NDim ; ++dim){
             bins[dim]=RandomBin();
+
             point[dim] = Random( Grid[dim][bins[dim]] , Grid[dim][bins[dim]+1] ); 
             inv_dist*=NBin*(Grid[dim][bins[dim]+1] - Grid[dim][bins[dim]]);
         }
         Integrand( point , &FuncPoint );
         AbsInt +=  fabs(FuncPoint) * inv_dist;
-    
+        
         // This is the partial integral ( in the bin of dim, and [0,1] for all other dims). 
         // In each bin of each dim you just sum the contribution |f|/p.
         // You don't double-count anything because the dimensions are independent.
         for(int dim = 0 ; dim < NDim ; ++dim)
         {
-            weights[dim][bins[dim]]+=fabs(FuncPoint) * inv_dist ;
+            weights[dim][bins[dim]]+=fabs(FuncPoint) * inv_dist;
         }
     }
     return AbsInt;
-}
+}   
 
 
 
