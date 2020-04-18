@@ -19,7 +19,7 @@ LD VEGAS_Namespace::PartialIntegrals( ){
     // memset(weights , 0 ,sizeof  weights);// They say is the fastest way to set an array to 0;
 
     // you get NPoints number of points
-    for(int np=0 ; np <NPoints ;++np){
+    for(int np=0 ; np <AdaptPoints ;++np){
         
         // The contribution of each point is |f(x)|/p(x), and 1/p(x)=Nbins*binsize (you extract this information when you get the point). 
         inv_dist=1;

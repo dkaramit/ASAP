@@ -4,13 +4,17 @@
 
 
 VEGAS_Template
-VEGAS_Namespace::VEGAS(Func function, int NPoints, int NBatches, int K_const, LD alpha){
-    this->Integrand=function;
-    this->NPoints=NPoints;
-    this->NBatches=NBatches;
+VEGAS_Namespace::VEGAS( Func function, int NPoints, int NBatches, 
+        int NAdapts, int AdaptPoints, int constK, LD alpha){
+    this->Integrand = function;
+    this->NPoints = NPoints;
+    this->NBatches = NBatches;
+    this->NAdapts = NAdapts;
+    this->AdaptPoints = AdaptPoints;
 
-    this->K_const=K_const;
-    this->alpha=alpha;
+
+    this->constK = constK;
+    this->alpha = alpha;
 
 
     // start with weights=0. At the end of UpdateBins() this is set again to 0.

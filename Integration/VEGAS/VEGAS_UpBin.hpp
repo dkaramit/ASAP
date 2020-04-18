@@ -5,7 +5,9 @@
 
 VEGAS_Template
 void VEGAS_Namespace::UpdateBins(){
+
     LD AbsInt = PartialIntegrals();
+    
     LD dx0,dxi;
     LD binsizes[NBin];
     
@@ -20,14 +22,18 @@ void VEGAS_Namespace::UpdateBins(){
             // delta x'_0 = delta x_0/(m_0+1)*\sum_{i=0}^{NBin}( delta x_i/(m_i+1) )^{-1}.
             // At the same time save the binsizes in order to update Grid directly
             dx0=0;
+            
+
+            // w0=1+constK*pow(weights[dim][0]/AbsInt,alpha);
             // this is weights[dim][0] (the regulated one) for bin=m of this dim.
-            w0=1+K_const * pow(weights[dim][0]/AbsInt * log( weights[dim][0]/AbsInt + 1 ),alpha  );;
+            w0=1+ pow(1+weights[dim][0]/AbsInt * log(constK*weights[dim][0]/AbsInt + 1 ),alpha  );
 
             for( int bin = 0 ; bin < NBin ; ++bin)
             {
 
                 binsizes[bin]=Grid[dim][bin+1]-Grid[dim][bin];
-                weights[dim][bin]=1+K_const * pow(weights[dim][bin]/AbsInt * log( weights[dim][bin]/AbsInt + 1 ),alpha  );
+                // weights[dim][bin]=1+constK*pow(weights[dim][bin]/AbsInt,alpha);
+                weights[dim][bin]=1+ pow(1+weights[dim][bin]/AbsInt * log(constK*weights[dim][bin]/AbsInt + 1 ),alpha  );
                 
                 dx0+=w0/binsizes[0]*(binsizes[bin]/weights[dim][bin]);
             }

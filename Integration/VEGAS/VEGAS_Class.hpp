@@ -23,8 +23,8 @@ class VEGAS{
 
 
         Func Integrand;
-        int NPoints,NBatches;
-        LD  K_const, alpha ;
+        int NPoints,NBatches,NAdapts,AdaptPoints;
+        LD  constK, alpha ;
 
         // Notice that N number of bins need N+1 points to be defined
         LD Grid[NDim][NBin+1];
@@ -37,7 +37,8 @@ class VEGAS{
         std::uniform_int_distribution<> UnInt;
 
 
-        VEGAS( Func function, int NPoints, int NBatches, int K_const=1, LD alpha=0.9);
+        VEGAS( Func function, int NPoints, int NBatches, 
+        int NAdapts, int AdaptPoints, int constK=1, LD alpha=0.9);
         ~VEGAS(){};
 
         //get a random point in [min,max]
@@ -60,6 +61,10 @@ class VEGAS{
         // Use this to take batches. IntMean is the result, IntSigma is sqrt(Var).
         // It returns chi^2/(NBathes-1) which should be close to 1.
         LD IntegrateBatch(LD *IntMean, LD *IntSigma);
+
+        // Combine everything together. First adapt, and then run  IntegrateBatch
+        LD Integrate(LD *IntMean, LD *IntSigma);
+
 
 
         //---These are for the auxiliary functions. You can remove them with no effect.
