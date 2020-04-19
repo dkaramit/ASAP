@@ -19,11 +19,6 @@ I am preparing a code for artificial neural networks (slowly), where I have a wo
 Anything that seems to be useful (in C++ which is faster), will be moved to a different resopitory to further develope it beyond just showing how it works. For the moment the diffrential equation solvers are in [NaBBODES](https://github.com/dkaramit/NaBBODES), while the VEGAS integrator is is [BB_VEGAS](https://github.com/dkaramit/BB_VEGAS).
 
 
-Since I am self-taught on these subjects, I cannot give you my word that the codes work as indented (although I'm using some of them 
-for my research for cross-checking). So, If you are looking for something that works better, ASAP may not be for you.  However, if you 
-are trying to understand what makes these tools work, maybe you will find ASAP helpful. If you have questions or suggestions feel free 
-to contact me. Since I am a postdoc, I'm busy with my research, so if I don't answer any questions, it's nothing personal.
-
 I'll try to use packages like scipy as little as possible, but for some simple things (e.g. products, sums etc.) 
 I'll use some of the ready-to-use packages for convenience and for testing my results against reliable algorithms. 
 So, in order to  run these scripts without any issues, you should have at least scipy and matplotlib installed (python 2.7 and 3+ should both work).
