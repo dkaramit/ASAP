@@ -1,8 +1,10 @@
 import numpy as np
 
 
-class SimAn:
-    def __init__(self, func, dim , x0 ,  T0, k, IterationT, MinT, sigma,Convergence):
+
+
+class SimulatedAnnealing:
+    def __init__(self, func, dim , x0 ,  T0, k, IterationT, MinT, sigma, tol, Nstar):
         '''
         func: the function to be minimized
         dim: the number of arguments that func takes
@@ -11,7 +13,7 @@ class SimAn:
         IterationT: number of iterations per temperature
         MinT:  stop when the temperature becomes MinT
         sigma: new neighbours are found between x+-sigma/2
-        Convergence: Stops when the acceptance probability drops below this
+        tol,Nstar: SA Stops when |\Delta E |<tol for Nstar successive iterations
         '''
         
         self.func=func
@@ -23,15 +25,11 @@ class SimAn:
         self.IterationT=IterationT
         self.MinT=MinT
         self.sigma=sigma
-        self.Convergence=Convergence
+        self.tol=tol
+        self.Nstar=Nstar
         
         self.E=self.func(x0)
-        
-        self.xnew=self.x
-        
-        self.Acceptanced=0
-        self.TotalCheck=0
-        
+            
     def nextT(self):
         '''Update the temperature'''
 #         self.T=self.T/(1+k*self.T)
@@ -39,8 +37,8 @@ class SimAn:
         
     def PickNeighbour(self):
         '''Pick a neighbour'''
-#         self.xnew=self.x+np.random.rand(dim)*sigma-sigma/2
-        self.xnew=self.x+np.random.normal(self.sigma,size=self.dim)#the normal seems to work nicely. 
+#         return self.x+np.random.rand(dim)*sigma-sigma/2
+        return self.x+np.random.normal(self.sigma,size=self.dim)#the normal seems to work nicely. 
             
     
     def BoltzmannP(self,Enew):
@@ -48,32 +46,59 @@ class SimAn:
         return np.exp(-(Enew-self.E)/self.T)
     
     def runT(self):
-        for _ in range(self.IterationT):
-            self.TotalCheck+=1
-
-            self.PickNeighbour()
-            Enew=self.func(self.xnew)
-            if Enew<self.E:
-                self.E=Enew
-                self.x=self.xnew
-                self.Acceptanced+=1
-            else:
-                if self.BoltzmannP(Enew) > np.random.rand() :
-                    self.E=Enew
-                    self.x=self.xnew
-                    self.Acceptanced+=1
-                
-    def run(self):
-        '''Iterate until the temperature reaches MinT'''
+        #use these to find the mean Delta E for a temperature 
+        self.DE=0
+        acc=0
         
-        while self.T>self.MinT:
+        for _ in range(self.IterationT):
+            xnew=self.PickNeighbour()
+            Enew=self.func(xnew)
+            
+            
+            if Enew<self.E or self.BoltzmannP(Enew) > np.random.rand():
+                self.DE+=Enew
+                acc+=1
+                
+                self.E=Enew
+                self.x=xnew
+                
+        
+        if acc==0:
+            self.DE=0
+        else:
+            self.DE=np.abs(self.DE/acc-self.E) 
+                
+    def run(self, CList=False):
+        '''
+        Iterate until the temperature reaches MinT or until it reaches convergence
+        CList=True stores E and IterConv values for all temperatures in self.ListIC and self.ListE
+        '''
+        
+        
+        IterConv=0
+        
+        if CList:
+            self.ListIC=[]
+            self.ListE=[]
+            
+        while self.T>self.MinT and self.Nstar>IterConv:
             self.runT()
 
-            if self.Acceptanced/self.TotalCheck<self.Convergence:
-                break
+            if self.DE<tol:
+                IterConv+=1
+            
+            if self.DE>tol and IterConv>0:
+                IterConv=0
+            
+            
+            if CList:
+                self.ListIC.append(IterConv)
+                self.ListE.append(self.E)
+            
+            
             
             self.nextT()
 
-        return self.x,self.func(self.x)
+        return self.x,self.E
 
                         
