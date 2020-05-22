@@ -1,8 +1,6 @@
 import numpy as np
 
 
-
-
 class SimulatedAnnealing:
     def __init__(self, func, dim , x0 ,  T0, k, IterationT, MinT, sigma, tol, Nstar):
         '''
@@ -84,10 +82,10 @@ class SimulatedAnnealing:
         while self.T>self.MinT and self.Nstar>IterConv:
             self.runT()
 
-            if self.DE<tol:
+            if self.DE<self.tol:
                 IterConv+=1
             
-            if self.DE>tol and IterConv>0:
+            if self.DE>self.tol and IterConv>0:
                 IterConv=0
             
             
