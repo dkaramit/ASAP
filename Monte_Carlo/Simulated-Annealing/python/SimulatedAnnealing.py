@@ -1,7 +1,6 @@
 import numpy as np
-
 class SimulatedAnnealing:
-    def __init__(self, func, dim , x0 ,  T0, k, IterationT, MinT, sigma, tol, Nstar, p0,N0,k0):
+    def __init__(self, func, dim, region , x0 ,  T0, k, IterationT, MinT, sigma, tol, Nstar, p0,N0,k0):
         '''
         func: the function to be minimized
         
@@ -25,6 +24,7 @@ class SimulatedAnnealing:
         
         self.func=func
         self.dim=dim
+        self.region=region
         self.x=x0
         self.T=T0
         self.k=k
@@ -40,7 +40,11 @@ class SimulatedAnnealing:
         self.k0=k0
         
         self.E=self.func(x0)
-            
+        
+        #use these to store the abolute minimum. At the end Emin and E should be close.
+        self.E_min=self.E
+        self.x_min=x0
+        
     def nextT(self):
         '''Update the temperature'''
 #         self.T=self.T/(1+k*self.T)
@@ -48,8 +52,19 @@ class SimulatedAnnealing:
         
     def PickNeighbour(self):
         '''Pick a neighbour'''
-#         return self.x+np.random.rand(dim)*sigma-sigma/2
-        return self.x+np.random.normal(self.sigma,size=self.dim)#the normal seems to work nicely. 
+        x=[]
+        for d in range(self.dim):
+            x.append(self.x[d] + np.random.rand()*self.sigma[d]-self.sigma[d]/2)
+            
+            dx_max=self.region[d][1] - x[d] 
+            dx_min= x[d] - self.region[d][0] 
+            if dx_max<0 :
+                x[d]=self.region[d][0] - dx_max
+            if dx_min <0:
+                x[d]= self.region[d][1] + dx_min
+            # x.append(np.random.normal(self.sigma,size=self.dim)) 
+        x=np.array(x)
+        return x
             
     
     def BoltzmannP(self,Enew):
@@ -93,7 +108,7 @@ class SimulatedAnnealing:
                 
 
         
-        
+       
     def run(self, CList=False):
         '''
         Iterate until the temperature reaches MinT or until it reaches convergence (Nstart times with AccProb<tol)
@@ -109,26 +124,37 @@ class SimulatedAnnealing:
             self.ListProb=[]
             self.ListIC=[]
             self.ListE=[]
-            
+            self.ListEmin=[]
+        
+        self.points=[]
         while self.T>self.MinT and self.Nstar>IterConv:
             self.runT()
+            #store the abolute minimum you've found so far
+            if self.E<self.E_min:
+                self.E_min=self.E
+                self.x_min=self.x
 
             if self.AccProb<self.tol:
                 IterConv+=1
+                self.points.append(self.x)
             
             if self.AccProb>self.tol and IterConv>0:
                 IterConv=0
+                self.points=[]
             
             
             if CList:
                 self.ListProb.append(self.AccProb)
                 self.ListIC.append(IterConv)
                 self.ListE.append(self.E)
+                self.ListEmin.append(self.E_min)
             
             
             
             self.nextT()
-
+            
+        self.points=np.array(self.points)
+        self.x,self.E= self.x_min,self.E_min
         return self.x,self.E
-
+    
                         
