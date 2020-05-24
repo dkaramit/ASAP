@@ -1,10 +1,14 @@
 import numpy as np
+
+
 class SimulatedAnnealing:
     def __init__(self, func, dim, region , x0 ,  T0, k, IterationT, MinT, sigma, tol, Nstar, p0,N0,k0):
         '''
         func: the function to be minimized
         
         dim: the number of arguments that func takes
+        
+        region: the search region
         
         x0: starting point
         
@@ -31,7 +35,14 @@ class SimulatedAnnealing:
         
         self.IterationT=IterationT
         self.MinT=MinT
+        
+        #sigma must be smaller than (region[d][1]- region[d][0])*2 
         self.sigma=sigma
+        for d in range(dim):
+            if ( self.sigma[d] > (region[d][1]- region[d][0])*2 ):
+                self.sigma[d] =  (region[d][1]- region[d][0])*2
+        
+        
         self.tol=tol
         self.Nstar=Nstar
         
@@ -44,7 +55,15 @@ class SimulatedAnnealing:
         #use these to store the abolute minimum. At the end Emin and E should be close.
         self.E_min=self.E
         self.x_min=x0
+        self.T0=T0
         
+        
+        self.ListProb=[]
+        self.ListIC=[]
+        self.ListE=[]
+        self.ListEmin=[]
+    
+    
     def nextT(self):
         '''Update the temperature'''
 #         self.T=self.T/(1+k*self.T)
@@ -58,6 +77,7 @@ class SimulatedAnnealing:
             
             dx_max=self.region[d][1] - x[d] 
             dx_min= x[d] - self.region[d][0] 
+            
             if dx_max<0 :
                 x[d]=self.region[d][0] - dx_max
             if dx_min <0:
@@ -82,6 +102,11 @@ class SimulatedAnnealing:
             xnew=self.PickNeighbour()
             Enew=self.func(xnew)
             
+            #store the abolute minimum you've found so far
+            if self.E<self.E_min:
+                self.E_min=self.E
+                self.x_min=self.x
+
             
             if Enew<self.E or self.BoltzmannP(Enew) > np.random.rand():
                 self.AccProb+=1
@@ -89,7 +114,7 @@ class SimulatedAnnealing:
                 self.x=xnew
                 
         self.AccProb=self.AccProb/self.IterationT
-
+    
         
     def InitT(self):
         '''Find an appropriace initial temperature'''
@@ -109,30 +134,25 @@ class SimulatedAnnealing:
 
         
        
-    def run(self, CList=False):
+    def run(self, CList=False, restart = False):
         '''
         Iterate until the temperature reaches MinT or until it reaches convergence (Nstart times with AccProb<tol)
         CList=True stores acceptance probabilities, IterConv, E values for all temperatures 
         in self.ListProb self.ListIC, self.ListE
         '''
-        #run to find initial temperature that has large acceptance probability 
-        self.InitT()
+        if restart:
+            self.T=self.T0;
+        else:
+            self.InitT()
+            self.T0=self.T;
         
         IterConv=0
         
-        if CList:
-            self.ListProb=[]
-            self.ListIC=[]
-            self.ListE=[]
-            self.ListEmin=[]
+        
         
         self.points=[]
         while self.T>self.MinT and self.Nstar>IterConv:
             self.runT()
-            #store the abolute minimum you've found so far
-            if self.E<self.E_min:
-                self.E_min=self.E
-                self.x_min=self.x
 
             if self.AccProb<self.tol:
                 IterConv+=1
