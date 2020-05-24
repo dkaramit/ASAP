@@ -1,6 +1,5 @@
 import numpy as np
 
-
 class SimulatedAnnealing:
     def __init__(self, func, dim, region , x0 ,  T0, k, IterationT, MinT, sigma, tol, Nstar, p0,N0,k0):
         '''
@@ -38,9 +37,10 @@ class SimulatedAnnealing:
         
         #sigma must be smaller than (region[d][1]- region[d][0])*2 
         self.sigma=sigma
-        for d in range(dim):
-            if ( self.sigma[d] > (region[d][1]- region[d][0])*2 ):
-                self.sigma[d] =  (region[d][1]- region[d][0])*2
+        
+#         for d in range(dim):
+#             if ( self.sigma[d] > (region[d][1]- region[d][0])*2 ):
+#                 self.sigma[d] =  (region[d][1]- region[d][0])*2
         
         
         self.tol=tol
@@ -69,20 +69,26 @@ class SimulatedAnnealing:
 #         self.T=self.T/(1+k*self.T)
         self.T*=self.k
         
+    # we need the mod function to keep x in the search region in case sigma is too large 
+    def mod(self,x,y):
+        return float(x) - int(float(x)/float(y)) *float(y)
     def PickNeighbour(self):
         '''Pick a neighbour'''
         x=[]
         for d in range(self.dim):
             x.append(self.x[d] + np.random.rand()*self.sigma[d]-self.sigma[d]/2)
             
-            dx_max=self.region[d][1] - x[d] 
-            dx_min= x[d] - self.region[d][0] 
-            
-            if dx_max<0 :
-                x[d]=self.region[d][0] - dx_max
-            if dx_min <0:
-                x[d]= self.region[d][1] + dx_min
-            # x.append(np.random.normal(self.sigma,size=self.dim)) 
+            if self.region[d][1]<x[d] :
+                dx=x[d]-self.region[d][1]          
+                dx=self.mod(dx,self.region[d][1]-self.region[d][0])
+                x[d]=self.region[d][0] + dx
+                
+            if x[d] <self.region[d][0] :
+                dx= self.region[d][0] - x[d]
+                dx=  self.mod(dx,self.region[d][1]-self.region[d][0]) 
+                x[d]= self.region[d][1] - dx
+
+                
         x=np.array(x)
         return x
             
