@@ -20,7 +20,7 @@ class SimulatedAnnealing{
     // variables we'll need 
     LD xnew[dim], xmin[dim],_x[dim];
     LD E,Enew,Emin;
-    LD AccProb, dx_min,dx_max;
+    LD AccProb, dx;
     LD T0;
 
     // define these for monitoring 
@@ -43,6 +43,7 @@ class SimulatedAnnealing{
 
     LD  Random(int d);
     LD Random( );
+    LD mod(LD x,LD y); //c++ has issues with mod...
     void PickNeighbour();
     void nextT();
     void runT();

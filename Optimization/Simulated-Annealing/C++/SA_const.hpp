@@ -28,9 +28,9 @@ SA_Namespace::SimulatedAnnealing(Func func, LD region[dim][2],
 
         // sigma must be smaller (region[d][1]- region[d][0])*2, otherwise you get out of the boundary
         this->sigma[d]=sigma[d];
-        if ( this->sigma[d] > (region[d][1]- region[d][0])*2 ){
-            this->sigma[d] =  (region[d][1]- region[d][0])*2;
-        }
+        // if ( this->sigma[d] > (region[d][1]- region[d][0])*2 ){
+        //     this->sigma[d] =  (region[d][1]- region[d][0])*2;
+        // }
     }
 
     this->T0=T0;

@@ -15,6 +15,13 @@ LD SA_Namespace::Random( ){
     }
 
 
+
+// You need a modulus function to make x stay in the search region
+SA_Template
+LD SA_Namespace::mod(LD x, LD y) {
+    return x - (int)(x/y) * y;
+}
+
 SA_Template
 void SA_Namespace:: PickNeighbour(){
     
@@ -25,12 +32,16 @@ void SA_Namespace:: PickNeighbour(){
         _x[d] = x[d]+Random(d);
         
         // make sure you stay in region (if you leave the boundary, you go to the otherside, like a closed surface)
-        dx_max=region[d][1] - _x[d] ;
-        dx_min= _x[d] - region[d][0] ;
-
-
-        if (dx_max<0){ _x[d]= region[d][0] - dx_max ;}
-        if (dx_min<0){ _x[d]= region[d][1] + dx_min ;}
+        if (region[d][1] < _x[d]){ 
+            dx=_x[d]-region[d][1];
+            dx=mod(dx, region[d][1]- region[d][0]);
+            _x[d]= region[d][0] + dx ;
+            }
+        if (_x[d] < region[d][0] ){
+            dx=region[d][0] - _x[d];
+            dx=mod(dx, region[d][1]- region[d][0]);
+            _x[d]= region[d][1] - dx ;
+            }
         
  
         xnew[d]=_x[d];

@@ -1,5 +1,5 @@
-#ifndef SA_ran
-#define SA_ran
+#ifndef SA_run
+#define SA_run
 #include"SA.hpp"
 
 
