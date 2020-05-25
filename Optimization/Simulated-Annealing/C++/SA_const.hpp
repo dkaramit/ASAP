@@ -14,6 +14,9 @@ SA_Namespace::SimulatedAnnealing(Func func, LD region[dim][2],
     this->p0=p0 ; 
     this->k0=k0;
 
+
+     
+
     this->IterationT=IterationT;
     this->Nstar=Nstar;
     this->N0=N0;

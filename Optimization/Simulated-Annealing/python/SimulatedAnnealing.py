@@ -76,7 +76,8 @@ class SimulatedAnnealing:
         '''Pick a neighbour'''
         x=[]
         for d in range(self.dim):
-            x.append(self.x[d] + np.random.rand()*self.sigma[d]-self.sigma[d]/2)
+            # x.append(self.x[d] + np.random.rand()*self.sigma[d]-self.sigma[d]/2)
+            x.append(self.x[d] + np.random.normal(0,self.sigma[d]) ) 
             
             if self.region[d][1]<x[d] :
                 dx=x[d]-self.region[d][1]          

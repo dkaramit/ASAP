@@ -33,6 +33,7 @@ class SimulatedAnnealing{
     std::random_device RndDiv;
     std::default_random_engine RndE;
     std::uniform_real_distribution<LD> UnDist;
+    std::normal_distribution<LD> NGauss;
 
 
     SimulatedAnnealing(Func func, LD region[dim][2],
