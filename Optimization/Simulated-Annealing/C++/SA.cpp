@@ -15,14 +15,14 @@ using std::endl;
 
 
 
-#define dim 10
+#define dim 6
 typedef LD (*func)(LD x[dim]) ;
 
 
 LD f(LD x[dim]){
     LD r=0;
-    // for(int d ; d<dim ; ++d){ r+=pow(x[d],2);}
-    for(int d ; d<dim-1 ; ++d){ r+=  pow(1-x[d],2) +500*pow(x[d+1]-x[d]*x[d],2) ;}
+    // for(int d = 0 ; d<dim ; ++d){ r+=pow(x[d],2);}
+    for(int d = 0 ; d < dim-1 ; ++d){ r+=  pow(1-x[d],2) +500*pow(x[d+1]-x[d]*x[d],2) ;}
 
     return r  ;
 }
@@ -33,7 +33,7 @@ int main(){
     LD sigma[dim];
     
     LD x0[dim];
-    for(int d ; d<dim ; ++d) { 
+    for(int d = 0 ; d<dim ; ++d) { 
         x0[d]=0.2; sigma[d]=1e-3; 
         region[d][0]=-20;
         region[d][1]=20;
@@ -47,13 +47,13 @@ int main(){
     // first run
     SA.run(false,false );
     cout<<SA.T<<"  "<<SA.AccProb<<"  "<<"  "<<SA.E <<endl; 
-    for(int d ; d<dim ; ++d){ cout<<SA.x[d]<<endl;}
+    for(int d = 0 ; d<dim ; ++d){ cout<<SA.x[d]<<endl;}
 
     // restart with smaller sigma 
-    for(int d ; d<dim ; ++d) { SA.sigma[d]=1e-6;}
+    for(int d = 0 ; d<dim ; ++d) { SA.sigma[d]=1e-6;}
     SA.run(false,true );
     cout<<SA.T<<"  "<<SA.AccProb<<"  "<<"  "<<SA.E <<endl; 
-    for(int d ; d<dim ; ++d){ cout<<SA.x[d]<<endl;}
+    for(int d = 0 ; d<dim ; ++d){ cout<<SA.x[d]<<endl;}
 
     return 0;
 }

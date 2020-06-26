@@ -38,6 +38,8 @@ SA_Namespace::SimulatedAnnealing(Func func, LD region[dim][2],
     this->Emin=this->E;
     this->AccProb=0.;
 
+    std::random_device RndDiv;
+    this->RndE.seed( RndDiv() );
 
 
 

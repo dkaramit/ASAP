@@ -30,7 +30,6 @@ class SimulatedAnnealing{
     // std::vector<LD> points[dim];
 
     // for random number generation (assume uniform distribution) 
-    std::random_device RndDiv;
     std::default_random_engine RndE;
     std::uniform_real_distribution<LD> UnDist;
     std::normal_distribution<LD> NGauss;

@@ -4,19 +4,15 @@
 
 SA_Template
 LD SA_Namespace::Random(int d ){
-        RndE.seed(RndDiv () );
-        
-        // return UnDist( RndE )*sigma[d] -sigma[d]/2.  ;
-
-        NGauss=std::normal_distribution<LD>(0,sigma[d]);
-        return  NGauss(RndE);
-    }
+    // return UnDist( RndE )*sigma[d] -sigma[d]/2.  ;
+    NGauss=std::normal_distribution<LD>(0,sigma[d]);
+    return  NGauss(RndE);
+}
 
 SA_Template
 LD SA_Namespace::Random( ){
-        RndE.seed(RndDiv () );
         return UnDist( RndE ) ;
-    }
+}
 
 
 

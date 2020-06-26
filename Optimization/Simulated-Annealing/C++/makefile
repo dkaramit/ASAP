@@ -14,7 +14,7 @@ FLG=  -std=c++17  -I "$(Path)" -lm   -DLONG=$(LONG)  -O3
 all: SA.run
 
 SA.run: makefile SA_class.hpp  SA_const.hpp  SA_neighbour.hpp SA_temp.hpp SA_run.hpp SA.hpp  SA.cpp
-	$(CC) -o "$(Path)/SA.run" "$(Path)/SA.cpp" $(FLG) 
+	$(CC) -o "$(Path)/SA.run" "$(Path)/SA.cpp" $(FLG) -Wall
 
 
 clean:
