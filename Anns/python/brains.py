@@ -6,21 +6,25 @@ class brains:
     Class for definition of (feed-forward) neural network.
     '''
 
-    def __init__(self,_inputs,_outputs,_layers,_hidden_nodes):
+    def __init__(self,_inputs,_outputs,_layers,_hidden_nodes, _hidden_func, _output_func):
         '''
-        Constractor.
+        Constructor for the class.
 
         _inputs: number of input nodes
         _outputs: number of ouput nodes
         _layers: number of hidden layers
         _nodes: list of number of layers in each hidden node
+        _hidden_func,_output_func: activation functions for hidden layers and output, respectively
 
         Example
-        ann=brains(2,1,3,[2,5,3])
+        ann=brains(2,1,3,[2,5,3],lambda x : sin(x), lambda x : x)
         is a neural network with:
         2 inputs, 1 output, and 3 layers.
         The first layer has 2 nodes, the second 5. and the third 3.
         '''
+
+
+
         self.inputs=_inputs
 
         self.outputs=_outputs
@@ -29,17 +33,19 @@ class brains:
 
         self.total_layers=2+_layers
 
+        self.hidden_func=_hidden_func
+        self.output_func=_output_func
+
         '''
-        self.nodes represent the network as a list of nodes.
+        self.nodes represents the network as a list of nodes.
         That is if self.nodes gives [8,3,2,2], the network has 8 inputs,
         2 ouputs, 2 hidden layers with 3 and 2 nodes, respectively.
 
         Example:
-        ann=brains(8,2,2,[4,5])
+        ann=brains(8,2,2,[4,5],func1,func2)
 
         gives:
         self.nodes -> [8,4,5,2]
-
         '''
 
         self.nodes=[0 for __i in range(self.total_layers)]
@@ -57,6 +63,9 @@ class brains:
         self.total_nodes=np_sum(self.nodes)#the total number of nodes, to be passed to the individual class
 
 
+        self.init_biases()
+        self.init_weights()
+
 
     #========================initializations========================#
     def init_weights(self):
@@ -71,8 +80,6 @@ class brains:
                 _tmp2=[]
                 for n_next in range(self.nodes[l+1]):
                     #_tmp2.append( 'w^({0})_{1}{2}'.format(l,n_current,n_next) )
-
-                    #just put random numbers from -1 to 1 for the moment
                     _tmp2.append(random.choice([-1,1])*random.random() )
                 _tmp1.append(_tmp2)
             self.weights.append(_tmp1)
@@ -98,15 +105,11 @@ class brains:
 
 
     #============activation functions============#
-    '''
-    Later I should add the option to change the activation functions
-    using a member function like set_hidden_activation.
-    '''
     def hidden_activation(self,x):
-        return x
+        return self.hidden_func(x)
 
     def output_activation(self,x):
-        return x
+        return self.output_func(x)
     #============================================#
 
     #========================input========================#
@@ -148,15 +151,15 @@ class brains:
 
     #========================update========================#
 
-    def update_weight(self,l,i,j,weight):
+    def update_weight(self,l,i,j,value):
         '''
-        Change the value of w^{l}_{ij} to weight
+        Change the value of w^{l}_{ij} to value
         '''
-        self.weights[l][i][j]=weight
+        self.weights[l][i][j]=value
 
-    def update_bias(self,l,i,bias):
+    def update_bias(self,l,i,value):
         '''
-        Change the value of b^{l}_{i} to bias
+        Change the value of b^{l}_{i} to value
         '''
-        self.biases[l][i]=bias
+        self.biases[l][i]=value
     #======================================================#
