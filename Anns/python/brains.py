@@ -3,12 +3,7 @@ from numpy import sum as np_sum
 
 class brains:
     '''
-    this class describes a neural network.
-    It will be used by path, to move it.
-
-    It should include layers, each with various nodes.
-    The weights and biases are the genes in thi case, so we should
-    be able to, somehow, breed them.
+    Class for definition of (feed-forward) neural network.
     '''
 
     def __init__(self,_inputs,_outputs,_layers,_hidden_nodes):
@@ -33,7 +28,6 @@ class brains:
         self.layers=_layers
 
         self.total_layers=2+_layers
-
 
         '''
         self.nodes represent the network as a list of nodes.
@@ -67,7 +61,7 @@ class brains:
     #========================initializations========================#
     def init_weights(self):
         '''
-        function that initializes the weights.
+        Function that initializes the weights.
         '''
 
         self.weights=[]
@@ -85,8 +79,8 @@ class brains:
 
     def init_biases(self):
         '''
-        function that initializes the biases.
-        for simplicity I define input zero biases (redundant, but I'll figure it out later).
+        Function that initializes the biases.
+        For simplicity I define input  biases to zero (redundant, but I'll figure it out later).
         '''
         self.biases=[]
         for l in range(self.total_layers):
@@ -104,8 +98,10 @@ class brains:
 
 
     #============activation functions============#
-    #later I should add the option to change the activation functions
-    #by a member function (eg set_hidden_activation).
+    '''
+    Later I should add the option to change the activation functions
+    using a member function like set_hidden_activation.
+    '''
     def hidden_activation(self,x):
         return x
 
@@ -122,8 +118,10 @@ class brains:
 
     #========================feed forward function========================#
     def feed_forward(self):
-        '''calculates the output of the network.
-        Also sets the signals (for later use)'''
+        '''
+        Calculates the output of the network.
+        Also sets the signals (for later use)
+        '''
 
         self.signals=[]
 
