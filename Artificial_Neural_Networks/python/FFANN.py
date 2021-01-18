@@ -3,8 +3,8 @@ from numpy import sum as np_sum
 
 class FFANN:
     def __init__(self, _inputs,_outputs,_hidden_nodes, 
-                 _hidden_func=lambda x:x, _hidden_func_deriv=lambda x:1,
-                 _output_func=lambda x:x, _output_func_deriv=lambda x:1):
+                 _hidden_func=lambda x:x,
+                 _output_func=lambda x:x):
         '''
         Constructor for the class.
 
@@ -13,7 +13,6 @@ class FFANN:
         
         _hidden_nodes: list of number of layers in each hidden node
         _hidden_func,_output_func: activation functions for hidden layers and output, respectively
-        _hidden_func_deriv,_output_func_deriv: derivatives of activation functions for hidden layers and output, respectively
         '''
         
         self.inputs=_inputs
@@ -22,9 +21,7 @@ class FFANN:
         self.total_layers=2+self.layers #total layers = No. layers + input layer + output layer
         
         self.hidden_activation=_hidden_func
-        self.hidden_activation_deriv=_hidden_func_deriv
         self.output_activation=_output_func
-        self.output_activation_deriv=_output_func_deriv
 
         #an array to hold number of nodes at each layer
         self.nodes=[_inputs]
