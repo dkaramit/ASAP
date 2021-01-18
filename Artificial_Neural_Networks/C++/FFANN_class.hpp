@@ -17,11 +17,6 @@ class FFANN{
     // vector with number of hidden nodes in each layer
     std::vector<int> hidden_nodes; 
     
-    // output and hidden layer activation
-    Func hidden_activation, output_activation;
-
-
-
     //We will need the following:
 
     // We will need the number of hidden layers (the ntotal number of layers is #hidden layers+2)
@@ -29,7 +24,11 @@ class FFANN{
 
     //vector that stores the number of nodes in each layer
     std::vector<int> nodes;
-        
+
+    // The biases and activations are defined so that the lth layer element has index l-1 (because they are not defined for l=0)
+    //vector that stores the activation functions of each layer 
+    std::vector<Func> activations;
+
     // vectors for signals and biases
     typedef std::vector< std::vector<LD> > vector2;
     vector2 signals,biases;
@@ -42,19 +41,36 @@ class FFANN{
 
     // constructor
     FFANN(){};
-    FFANN(int inputs, int outputs, std::vector<int> hidden_nodes, 
-                Func hidden_activation, Func output_activation);
+    FFANN(int inputs, int outputs, std::vector<int> hidden_nodes, std::vector<Func> activations);
     // destructor
     ~FFANN();
 
+    // initialize weights and biases
+    void init_params(LD min=-1, LD max=1);
 
+    // read input
+    void input_signal(std::vector<LD> x);
+    // calculate signal from neuron
+    void calc_signal(int l,int j);
+    // feed-forward
+    void feed_forward();
+
+
+    // functions for updating the parameters
+    void update_weight(int l, int j, int i, LD value);
+    void update_bias(int l, int j, LD value);
+
+    // Functions to read and write parameters in a column vector
+    void write_params(std::vector<LD> *X);
+    void read_params(std::vector<LD> *X);
+
+    // Functions for checking what happens inside the network (found in FFANN_aux.hpp).
+    void print_weights();
+    void print_biases();
+    void print_signals();
 
 };
-
-
-// for random number generation (for initialization) 
-// std::default_random_engine RndE;
-// std::uniform_real_distribution<LD> UnDist;
+ 
 
 
 

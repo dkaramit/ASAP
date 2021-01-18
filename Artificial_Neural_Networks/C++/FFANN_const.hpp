@@ -5,15 +5,12 @@
 
 
 FFANN_Template
-FFANN_Namespace::FFANN(int inputs, int outputs, std::vector<int> hidden_nodes, 
-                Func hidden_activation, Func output_activation){
+FFANN_Namespace::FFANN(int inputs, int outputs, std::vector<int> hidden_nodes, std::vector<Func> activations){
 
     this->inputs = inputs; 
     this->outputs = outputs; 
     this->hidden_nodes = hidden_nodes;
-    this->hidden_activation=hidden_activation;
-    this->output_activation=output_activation;
-
+    this->activations=activations;
 
     // number of hidden layers and number of total layers 
     this->hidden_layers=(this->hidden_nodes).size();
@@ -24,10 +21,7 @@ FFANN_Namespace::FFANN(int inputs, int outputs, std::vector<int> hidden_nodes,
     for(int _:hidden_nodes){nodes.push_back(_);}
     this->nodes.push_back(outputs);
 
-
-
-
-    // self.signals=[ [0 for j in range(self.nodes[l])]  for l in range(self.total_layers)]
+    // initialize the signals to 0
     for(int l=0; l<this->total_layers; l++ ){    
         {
             std::vector<LD> tmpV;
@@ -35,9 +29,12 @@ FFANN_Namespace::FFANN(int inputs, int outputs, std::vector<int> hidden_nodes,
             this->signals.push_back(tmpV);
         }
     }
+    
+    }
 
 
-}
+
+
 
 FFANN_Template
 FFANN_Namespace::~FFANN(){}

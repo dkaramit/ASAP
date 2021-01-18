@@ -3,8 +3,7 @@ from numpy import sum as np_sum
 
 class FFANN:
     def __init__(self, _inputs,_outputs,_hidden_nodes, 
-                 _hidden_func=lambda x:x,
-                 _output_func=lambda x:x):
+                 activations=[]):
         '''
         Constructor for the class.
 
@@ -12,7 +11,7 @@ class FFANN:
         _outputs: number of ouput nodes
         
         _hidden_nodes: list of number of layers in each hidden node
-        _hidden_func,_output_func: activation functions for hidden layers and output, respectively
+        activations: list of activation functions for hidden layers and output
         '''
         
         self.inputs=_inputs
@@ -20,8 +19,10 @@ class FFANN:
         self.layers=len(_hidden_nodes)
         self.total_layers=2+self.layers #total layers = No. layers + input layer + output layer
         
-        self.hidden_activation=_hidden_func
-        self.output_activation=_output_func
+        if len(activations)==0:
+            self.activations=[lambda x:x for _ in range(self.total_layers-1)]
+        else:
+            self.activations=[_ for _ in activations]
 
         #an array to hold number of nodes at each layer
         self.nodes=[_inputs]
@@ -58,16 +59,16 @@ class FFANN:
         self.init_params()#initialize the weights and biases
                 
     #========================initializations========================#
-    def init_params(self):
+    def init_params(self,_min=-1,_max=1):
         '''
         Function that initializes the weights and biasesby some random numbers.
         '''
         for l in range(self.layers+1):
             for j in range(self.nodes[l+1]):
                 #You see, we defined biases in this way in order to manipulate them with the weights at the same loop. 
-                self.biases[l][j] = (random.choice([-1,1])*random.random() )
+                self.biases[l][j] = (random.choice([_min,_max])*random.random() )
                 for i in range(self.nodes[l]):
-                    self.weights[l][j][i] = (random.choice([-1,1])*random.random() )
+                    self.weights[l][j][i] = (random.choice([_min,_max])*random.random() )
     
     
     def write_params(self):
@@ -108,16 +109,10 @@ class FFANN:
             print('for l=0 run self.input_signal')
             return 0
         
-        sum_wx = np_sum( [ self.weights[l-1][j][i] * xi for i,xi in enumerate(self.signals[l-1]) ] ) 
-        
         #Notice that self.biases[l-1][j] correspond to the bias of node j and layer l.
-        if l == self.total_layers-1:
-            self.signals[l][j] =  self.output_activation( sum_wx + self.biases[l-1][j]  )
-            return 0
-        
-        if l < self.total_layers-1:
-            self.signals[l][j] = self.hidden_activation( sum_wx + self.biases[l-1][j]  )
-            return 0    
+        sum_wx = np_sum( [ self.weights[l-1][j][i] * xi for i,xi in enumerate(self.signals[l-1]) ] ) 
+        self.signals[l][j] =  self.activations[l-1]( sum_wx + self.biases[l-1][j]  )
+
     
     #========================Feed-Forward========================#
     
@@ -147,3 +142,31 @@ class FFANN:
         '''
         self.biases[l][j]=value
     #======================================================#
+
+
+    #print
+    def print_weights(self):
+        for l in range(len(self.weights)):
+            print('l=',l,':')
+            for j in range(len(self.weights[l])):
+                
+                for i in range(len(self.weights[l][j])):
+                    print(self.weights[l][j][i],'\t', end =" ")
+                print('')
+            print('============')
+    
+    def print_biases(self):
+        for l in range(len(self.biases)):
+            print('l=',l+1,':')
+            for j in range(len(self.biases[l])):
+                print(self.biases[l][j],'\t', end =" ")
+            print('')
+            print('============')
+
+    def print_signals(self):
+        for l in range(len(self.signals)):
+            print('l=',l,':')
+            for j in range(len(self.signals[l])):
+                print(self.signals[l][j],'\t', end =" ")
+            print('')
+            print('============')
