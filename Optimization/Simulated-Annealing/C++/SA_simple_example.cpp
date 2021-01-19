@@ -31,7 +31,7 @@ LD f(vector<LD> x){
 int main(){
     vector< array<LD,2> > region{{-1,1},{-1,1}};
     vector<LD> x0{1,1};
-    vector<LD>sigma{30,30};
+    vector<LD>sigma{1e-2,1e-2};
 
 
     LD T0=std::abs(f(x0)*10+1), k=1-1e-3, MinT=0.,  tol=1e-5 , p0=0.8 ,k0=1.1;
