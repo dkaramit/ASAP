@@ -1,11 +1,9 @@
 import numpy as np
 
 class SimulatedAnnealing:
-    def __init__(self, func, dim, region , x0 ,  T0, k, IterationT, MinT, sigma, tol, Nstar, p0,N0,k0):
+    def __init__(self, func, region , x0 ,  T0, k, IterationT, MinT, sigma, tol, Nstar, p0,N0,k0):
         '''
         func: the function to be minimized
-        
-        dim: the number of arguments that func takes
         
         region: the search region
         
@@ -26,7 +24,6 @@ class SimulatedAnnealing:
         '''
         
         self.func=func
-        self.dim=dim
         self.region=region
         self.x=x0
         self.T=T0
@@ -49,6 +46,7 @@ class SimulatedAnnealing:
         self.p0=p0
         self.N0=N0
         self.k0=k0
+        self.dim=len(x0)
         
         self.E=self.func(x0)
         
