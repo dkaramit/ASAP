@@ -14,9 +14,7 @@ class GradientDescent:
         tol, step_break: stop when the gradient becomes smaller than tol/alpha for step_break consecutive steps
         '''
         
-        self.function=target
-        
-        self.gradFunction=target.Grad
+        self.target=target
         
         self.alpha=alpha
         self.tol=tol
@@ -25,12 +23,11 @@ class GradientDescent:
         
         self.x0=[_ for _ in x0]
         self.x=[_ for _ in x0]
-        
-        self.grad=[0 for _ in x0]
+
         
         
     def update(self):
-        self.gradFunction(self.x,self.grad)
+        self.grad=self.target.Grad(self.x)
         self.x = [ self.x0[i] - self.alpha*grad for i,grad in enumerate(self.grad)]
     
     def run(self):
@@ -44,7 +41,6 @@ class GradientDescent:
             
             _check= np_sqrt(np_sum([_**2 for _ in self.grad] ))
             
-            self.x0 = [ _ for _ in self.x]
             
             self.steps.append(self.x)
             
@@ -56,27 +52,26 @@ class GradientDescent:
             if _s>self.step_break:
                 break
         
+            self.x0 = [ _ for _ in self.x]
         
         return self.x
 
 
-
 #the target function class (you can also write your own if you know the gradient analytically)
 class targetFunc:
-    def __init__(self,func,dim,h=1e-5):
+    def __init__(self,func,h=1e-5):
         self.function =func
-        self.dimension=dim
         self.h=h
         
     def __call__(self,x):
         return self.function(x)
     
-    def Grad(self,x,Grad):#Grad is "passed by reference" and stores the Gradient
+    def Grad(self,x):
         x0=[_ for _ in x]
         x1=[_ for _ in x]
         
-        
-        for dim in range(self.dimension):
+        grad=[]
+        for dim in range(len(x)):
             x0[dim]=x[dim]-self.h
             x1[dim]=x[dim]+self.h
             
@@ -86,8 +81,11 @@ class targetFunc:
             x0[dim]=x[dim]
             x1[dim]=x[dim]
             
-            Grad[dim]=(dfdx1-dfdx0)/(2*self.h)
+            grad.append((dfdx1-dfdx0)/(2*self.h))
+        
+        return grad
             
+                    
 
 
 #example:
