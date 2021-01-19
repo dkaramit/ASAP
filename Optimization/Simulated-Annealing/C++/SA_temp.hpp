@@ -16,6 +16,7 @@ LD SA_Namespace:: BoltzmannP(){
 // Find next E for the current temperature
 SA_Template
 void SA_Namespace::runT(){
+
     AccProb=0;
     for(int itT=0 ; itT<IterationT ; ++itT){
         PickNeighbour();
@@ -24,18 +25,14 @@ void SA_Namespace::runT(){
         // Update the point so far if Enew<Emin
         if(Enew<Emin){ 
             Emin=Enew ; 
-            for(int d = 0 ; d<dim ; ++d){
-                xmin[d]=xnew[d]; 
-            }
+            xmin=xnew;
 
         }
 
         if (Enew<E or BoltzmannP() > Random() ){
             AccProb++;
             E=Enew;
-            for(int d = 0 ; d<dim ; ++d){
-                x[d]=xnew[d]; 
-            }
+            x=xnew;
         }
 
     }

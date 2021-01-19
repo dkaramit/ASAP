@@ -1,8 +1,8 @@
 #ifndef SA_class
 #define SA_class
 
-#define SA_Template template<class LD, class Func, const int dim>
-#define SA_Namespace SimulatedAnnealing<LD,Func,dim>
+#define SA_Template template<class LD, class Func>
+#define SA_Namespace SimulatedAnnealing<LD,Func>
 
 
 SA_Template
@@ -10,19 +10,21 @@ class SimulatedAnnealing{
     public:
     // These are the inputs
     Func func;
-    LD region[dim][2];
+    // LD region[dim][2];
+    std::vector<std::array<LD,2>> region;
 
-    LD x[dim], sigma[dim];
+    std::vector<LD> x, sigma;
     LD  T, k, MinT,  tol , p0 ,k0;
     int IterationT, N0, Nstar;
 
 
     // variables we'll need 
-    LD xnew[dim], xmin[dim],_x[dim];
+    std::vector<LD> xnew, xmin,_x;
     LD E,Enew,Emin;
     LD AccProb, dx;
     LD T0;
-
+    unsigned int dim;
+    
     // define these for monitoring 
     std::vector<LD> ListProb,ListE,ListEmin;
     
@@ -35,8 +37,9 @@ class SimulatedAnnealing{
     std::normal_distribution<LD> NGauss;
 
 
-    SimulatedAnnealing(Func func, LD region[dim][2],
-    LD x0[dim] ,  LD T0, LD k, int IterationT, LD MinT, LD sigma[dim], LD tol, int Nstar, LD p0, int N0, LD k0 );
+    SimulatedAnnealing(Func func, std::vector<std::array<LD,2>> region,
+    std::vector<LD> x0 ,  LD T0, LD k, int IterationT, LD MinT, std::vector<LD> sigma, LD tol, int Nstar, 
+    LD p0, int N0, LD k0 );
     ~SimulatedAnnealing();
 
 

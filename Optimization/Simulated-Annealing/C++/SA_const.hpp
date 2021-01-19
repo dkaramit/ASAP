@@ -3,8 +3,9 @@
 #include"SA.hpp"
 
 SA_Template
-SA_Namespace::SimulatedAnnealing(Func func, LD region[dim][2],
-    LD x0[dim] ,  LD T0, LD k, int IterationT, LD MinT, LD sigma[dim], LD tol, int Nstar, LD p0, int N0, LD k0 ){
+SA_Namespace::SimulatedAnnealing(Func func, std::vector<std::array<LD,2>> region,
+    std::vector<LD> x0 ,  LD T0, LD k, int IterationT, LD MinT, std::vector<LD> sigma, 
+    LD tol, int Nstar, LD p0, int N0, LD k0 ){
 
     this->func = func;
     this->T=T0 ;
@@ -21,16 +22,14 @@ SA_Namespace::SimulatedAnnealing(Func func, LD region[dim][2],
     this->Nstar=Nstar;
     this->N0=N0;
 
-    for(int d = 0 ; d<dim ; ++d){
-        this->region[d][0]=region[d][0];
-        this->region[d][1]=region[d][1];
+    this->region=region;
+    this->x=x0;
+    this->_x=x0;
+    this->xnew=x0;
+    this->xmin=x0;
+    this->sigma=sigma;
 
-        this->x[d]=x0[d];
-        this->xnew[d]=x0[d];
-        this->xmin[d]=x0[d];
-
-        this->sigma[d]=sigma[d];
-    }
+    this->dim=x0.size();
 
     this->T0=T0;
     this->E=func(x0);

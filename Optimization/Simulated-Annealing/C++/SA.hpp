@@ -3,6 +3,8 @@
 
 #include<cmath>
 #include<random>
+#include<vector>
+#include<array>
 
 #include"SA_class.hpp"
 #include"SA_const.hpp"

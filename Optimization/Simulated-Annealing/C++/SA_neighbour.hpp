@@ -24,10 +24,8 @@ LD SA_Namespace::mod(LD x, LD y) {
 
 SA_Template
 void SA_Namespace:: PickNeighbour(){
-    
 
-
-    for(int d =0 ; d<dim ; ++d){
+    for(unsigned int d =0 ; d<dim ; ++d){
         // move randomly
         _x[d] = x[d]+Random(d);
         

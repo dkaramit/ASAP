@@ -6,10 +6,12 @@
 
 SA_Template
 void SA_Namespace::run(bool CList, bool restart){
+
     //if you don't restart, run initT otherwise set T=T0 (the output of the first initT). 
     if (restart){ T=T0;}
     else{InitT();T0=T;}
     
+            
 
     int IterConv=0;
 
@@ -35,7 +37,7 @@ void SA_Namespace::run(bool CList, bool restart){
 
 
     E=Emin;
-    for(int d = 0 ; d<dim ; ++d){
+    for(unsigned int d = 0 ; d<dim ; ++d){
                 x[d]=xmin[d]; 
             }
 }
