@@ -1,5 +1,4 @@
+*.ipynb linguist-detectable=false
 *.cpp linguist-language=C++
+*.hpp linguist-language=C++
 *.py linguist-language=python
-*.ipynb linguist-language=python
-*.html linguist-detectable=false
-*.css linguist-detectable=false
