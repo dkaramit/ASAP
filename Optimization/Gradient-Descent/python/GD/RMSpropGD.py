@@ -5,7 +5,7 @@ from numpy   import sqrt as np_sqrt
 class RMSpropGD(GradientDescent):
     '''Implementation of RMSprop.'''
     
-    def __init__(self,target,x0,gamma=0.95,epsilon=1e-6,alpha=1):
+    def __init__(self,target,x0,gamma=0.95,epsilon=1e-6,alpha=1e-2):
         '''
         target: the target function to be minimized, with target.Gard its gradient
         x0: starting point

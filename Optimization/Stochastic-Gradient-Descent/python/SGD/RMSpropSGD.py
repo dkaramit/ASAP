@@ -8,7 +8,7 @@ from numpy   import sqrt as np_sqrt
 class RMSpropSGD(StochasticGradientDescent):
     '''Implementation of RMSprop.'''
 
-    def __init__(self,loss,data,gamma=0.95,epsilon=1e-6,alpha=1e-3):
+    def __init__(self,loss,data,gamma=0.95,epsilon=1e-6,alpha=1e-2):
         '''
         loss: the loss function
         data: the data to be used in order to minimize the loss
