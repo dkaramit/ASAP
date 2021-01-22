@@ -33,7 +33,7 @@ class SimulatedAnnealing{
 
 
     SimulatedAnnealing(Func func, std::vector<std::array<LD,2>> region,
-    std::vector<LD> x0 ,  LD T0, LD k, std::vector<LD> sigma);
+    std::vector<LD> x0 ,  LD T0, std::vector<LD> sigma);
     ~SimulatedAnnealing();
 
 
@@ -42,12 +42,12 @@ class SimulatedAnnealing{
     LD Random( );
     LD mod(LD x,LD y); //c++ has issues with mod...
     void PickNeighbour();
-    void nextT();
+    void nextT(LD k);
     void runT(int IterationT);
     LD BoltzmannP();
     void InitT(int IterationT, int N0, int k0, LD p0);
 
-    void run(bool CList, LD tol, LD MinT, LD Nstar=5000, int IterationT=100,
+    void run(bool CList, LD tol, LD MinT, LD k=1-1e-2,LD Nstar=5000, int IterationT=100,
             int N0=500, int k0=1+1e-2, LD p0=0.8);
  
 

@@ -4,7 +4,7 @@
 
 // Decrease the temperature
 SA_Template
-void SA_Namespace::nextT(){
+void SA_Namespace::nextT(LD k){
     T*=k;
 }
 

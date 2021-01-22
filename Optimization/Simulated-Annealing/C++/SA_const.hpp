@@ -4,11 +4,10 @@
 
 SA_Template
 SA_Namespace::SimulatedAnnealing(Func func, std::vector<std::array<LD,2>> region,
-    std::vector<LD> x0 , LD T0, LD k, std::vector<LD> sigma){
+    std::vector<LD> x0 , LD T0, std::vector<LD> sigma){
 
     this->func = func;
     this->T=T0 ;
-    this->k=k ;
 
 
      

@@ -47,16 +47,16 @@ int main(){
     LD T0=f(x0)*10+1, k=1-5e-3, MinT=0.,  tol=1e-3 , p0=0.8 ,k0=1.1;
     int IterationT=250, Nstar=150, N0=50;
 
-    SimulatedAnnealing<LD,func> SA(f,region,x0,T0,k,sigma);
+    SimulatedAnnealing<LD,func> SA(f,region,x0,T0,sigma);
 
     // first run
-    SA.run(false,tol,MinT,Nstar,IterationT,N0,k0,p0);
+    SA.run(false,tol,MinT,k,Nstar,IterationT,N0,k0,p0);
     for(auto _:SA.x){ cout<<_<<endl;}
     cout<<SA.T<<"  "<<SA.AccProb<<"  "<<"  "<<SA.E <<endl; 
 
     // restart with smaller sigma 
     for(int d = 0 ; d<dim ; ++d) { SA.sigma[d]=1e-6;}
-    SA.run(false,tol,MinT,Nstar,IterationT,0);
+    SA.run(false,tol,MinT,k,Nstar,IterationT,0);
     for(auto _:SA.x){ cout<<_<<endl;}
     cout<<SA.T<<"  "<<SA.AccProb<<"  "<<"  "<<SA.E <<endl; 
 

@@ -5,7 +5,7 @@
 
 
 SA_Template
-void SA_Namespace::run(bool CList, LD tol, LD MinT, LD Nstar, int IterationT,
+void SA_Namespace::run(bool CList, LD tol, LD MinT, LD k, LD Nstar, int IterationT,
                         int N0, int k0, LD p0){
 
     //if you put N0=0, this->run will first run initT  otherwise set T=T0.
@@ -30,7 +30,7 @@ void SA_Namespace::run(bool CList, LD tol, LD MinT, LD Nstar, int IterationT,
             ListEmin.push_back(Emin);
         }        
         
-        nextT();
+        nextT(k);
 
     }
 

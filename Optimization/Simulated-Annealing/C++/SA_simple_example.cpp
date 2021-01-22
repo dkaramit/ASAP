@@ -36,10 +36,10 @@ int main(){
     LD T0=std::abs(f(x0)*10+1), k=1-1e-3, MinT=0.,  tol=1e-8 , p0=0.8 ,k0=1.1;
     int IterationT=50, Nstar=150, N0=100;
 
-    SimulatedAnnealing<LD,func> SA(f,region,x0,T0,k,sigma);
+    SimulatedAnnealing<LD,func> SA(f,region,x0,T0,sigma);
 
 
-    SA.run(false,tol,MinT,Nstar,IterationT,N0,k0,p0);
+    SA.run(false,tol,MinT,k,Nstar,IterationT,N0,k0,p0);
     
     for(auto _:SA.x){ cout<<_<<endl;}
 
