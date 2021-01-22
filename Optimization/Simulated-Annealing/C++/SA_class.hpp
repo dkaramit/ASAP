@@ -10,12 +10,10 @@ class SimulatedAnnealing{
     public:
     // These are the inputs
     Func func;
-    // LD region[dim][2];
     std::vector<std::array<LD,2>> region;
 
     std::vector<LD> x, sigma;
-    LD  T, k, MinT,  tol , p0 ,k0;
-    int IterationT, N0, Nstar;
+    LD  T, k;
 
 
     // variables we'll need 
@@ -28,9 +26,6 @@ class SimulatedAnnealing{
     // define these for monitoring 
     std::vector<LD> ListProb,ListE,ListEmin;
     
-    // not sure if this is helpful
-    // std::vector<LD> points[dim];
-
     // for random number generation (assume uniform distribution) 
     std::default_random_engine RndE;
     std::uniform_real_distribution<LD> UnDist;
@@ -38,8 +33,7 @@ class SimulatedAnnealing{
 
 
     SimulatedAnnealing(Func func, std::vector<std::array<LD,2>> region,
-    std::vector<LD> x0 ,  LD T0, LD k, int IterationT, LD MinT, std::vector<LD> sigma, LD tol, int Nstar, 
-    LD p0, int N0, LD k0 );
+    std::vector<LD> x0 ,  LD T0, LD k, std::vector<LD> sigma);
     ~SimulatedAnnealing();
 
 
@@ -49,11 +43,12 @@ class SimulatedAnnealing{
     LD mod(LD x,LD y); //c++ has issues with mod...
     void PickNeighbour();
     void nextT();
-    void runT();
+    void runT(int IterationT);
     LD BoltzmannP();
-    void InitT();
+    void InitT(int IterationT, int N0, int k0, LD p0);
 
-    void run(bool CList, bool restart);
+    void run(bool CList, LD tol, LD MinT, LD Nstar=5000, int IterationT=100,
+            int N0=500, int k0=1+1e-2, LD p0=0.8);
  
 
 

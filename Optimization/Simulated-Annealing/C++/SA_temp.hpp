@@ -15,7 +15,7 @@ LD SA_Namespace:: BoltzmannP(){
 
 // Find next E for the current temperature
 SA_Template
-void SA_Namespace::runT(){
+void SA_Namespace::runT(int IterationT){
 
     AccProb=0;
     for(int itT=0 ; itT<IterationT ; ++itT){
@@ -26,7 +26,6 @@ void SA_Namespace::runT(){
         if(Enew<Emin){ 
             Emin=Enew ; 
             xmin=xnew;
-
         }
 
         if (Enew<E or BoltzmannP() > Random() ){
@@ -44,10 +43,10 @@ void SA_Namespace::runT(){
 
 // Find an initial temperature with high acceptance probability
 SA_Template
-void SA_Namespace::InitT(){
+void SA_Namespace::InitT(int IterationT, int N0, int k0, LD p0){
     int IterT0=0;
     while (IterT0<N0){
-        runT(); 
+        runT(IterationT); 
         
         if (AccProb>p0){IterT0+=1;}        
         if (AccProb<p0 and IterT0>0){IterT0=0;}

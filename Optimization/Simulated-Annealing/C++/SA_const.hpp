@@ -4,23 +4,15 @@
 
 SA_Template
 SA_Namespace::SimulatedAnnealing(Func func, std::vector<std::array<LD,2>> region,
-    std::vector<LD> x0 ,  LD T0, LD k, int IterationT, LD MinT, std::vector<LD> sigma, 
-    LD tol, int Nstar, LD p0, int N0, LD k0 ){
+    std::vector<LD> x0 , LD T0, LD k, std::vector<LD> sigma){
 
     this->func = func;
     this->T=T0 ;
     this->k=k ;
-    this->MinT=MinT ;  
-    this->tol=tol ; 
-    this->p0=p0 ; 
-    this->k0=k0;
 
 
      
 
-    this->IterationT=IterationT;
-    this->Nstar=Nstar;
-    this->N0=N0;
 
     this->region=region;
     this->x=x0;
