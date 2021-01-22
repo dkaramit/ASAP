@@ -11,3 +11,4 @@ tests*
 *.vscode
 *0-old*
 *.exe
+*.run
