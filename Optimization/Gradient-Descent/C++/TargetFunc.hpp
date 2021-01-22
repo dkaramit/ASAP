@@ -32,9 +32,9 @@ class targetFunc{
 
     LD operator()(std::vector<LD> x){ return this->target(x);}
     
-    std::vector<LD> Grad(std::vector<LD> x){
+    void Grad(const std::vector<LD> &x, std::vector<LD> &grad){
         LD dfdx0,dfdx1;
-        std::vector<LD> x0,x1,Grad;
+        std::vector<LD> x0,x1;
 
         for(LD _:x){
             x0.push_back(_);
@@ -51,14 +51,8 @@ class targetFunc{
             x0[dim]=x[dim];
             x1[dim]=x[dim];
             
-            Grad.push_back((dfdx1-dfdx0)/(2*this->h));
+            grad.push_back((dfdx1-dfdx0)/(2*this->h));
         }
-
-        return Grad;
-
-
-
-
     };
 };
 
