@@ -1,8 +1,8 @@
 #include<iostream>
 
-#include"GD_base/GD.hpp"
+#include"GD.hpp"
 
-#include"VanillaGD/VanillaGD.hpp"
+#include"VanillaGD.hpp"
 
 #include"TargetFunc.hpp"
 

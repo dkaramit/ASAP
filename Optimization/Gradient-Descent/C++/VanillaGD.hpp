@@ -9,7 +9,7 @@ VanillaGD is a class rderived from GradientDescent
 #include<vector>
 #include<cmath>
 
-#include"../GD_base/GD.hpp"
+#include"GD.hpp"
 
 #define Vanilla_GD_Template template<class LD, class Func>
 #define Vanilla_GD_Namespace VanillaGD<LD,Func>
