@@ -20,7 +20,9 @@ class AdaDeltaGD(GradientDescent):
         self.alpha=alpha
         
         self.steps=[]
+        self.steps.append(x0[:])
         self.x=[_ for _ in x0]
+        self.dim=len(x0)
         
         # counters for the decaying means of the gradient and dx         
         self.gE=[0 for _ in self.x]
@@ -29,27 +31,33 @@ class AdaDeltaGD(GradientDescent):
         #lists to store the changes in x         
         self.dx=[0 for _ in self.x]
 
-    def update(self):
-        '''The updating procedure of AdaDelta'''
+    def update(self,abs_tol=1e-5, rel_tol=1e-3):
+        '''
+        update should return a number that when it is smaller than 1
+        the main loop stops. Here I choose this number to be:
+        sqrt(1/dim*sum_{i=0}^{dim}(grad/(abs_tol+x*rel_tol))_i^2)
+        '''
         grad=self.target.Grad(self.x)
 
         
-        _g2=0
+        _check=0
         _x2=0
 
         for i,g in enumerate(grad):
             self.gE[i]=self.gamma*self.gE[i] + (1-self.gamma)*g**2 
-            self.dx[i]=np_sqrt( (self.dxE[i]+self.epsilon)/(self.gE[i]+self.epsilon)  )*g*self.alpha
+            self.dx[i]=np.sqrt( (self.dxE[i]+self.epsilon)/(self.gE[i]+self.epsilon)  )*g*self.alpha
             
             self.dxE[i]=self.gamma*self.dxE[i] + (1-self.gamma)*self.dx[i]**2
             
             self.x[i]=self.x[i] - self.dx[i]
             
             
-            _g2+=self.dx[i]**2
-            _x2+=self.x[i]**2
-        
-        _g2=np_sqrt(_g2/_x2)
+            _x2=abs_tol + self.x[i] * rel_tol
+            _check+=(g/_x2)*(g/_x2)
+    
+    
+        _check=np_sqrt(1./self.dim *_check)
+
         self.steps.append(self.x[:])
         
-        return _g2*self.alpha
+        return _check

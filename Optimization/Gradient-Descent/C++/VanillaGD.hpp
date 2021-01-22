@@ -27,6 +27,12 @@ class VanillaGD: public GD_Namespace{
 
 
     VanillaGD(Func target, std::vector<LD> x0, LD alpha=1e-1);
+
+    // the update function called from GradientDescent.update.
+    // update should return a number that when it is smaller than 1
+    // the main loop stops.
+    // Here I choose this number to be:
+    //  sqrt(1/dim*sum_{i=0}^{dim}(grad/(abs_tol+x*rel_tol))_i^2)
     LD update(LD abs_tol=1e-5, LD rel_tol=1e-3);
 };
 
@@ -45,6 +51,7 @@ Vanilla_GD_Namespace::VanillaGD(Func target, std::vector<LD> x0, LD alpha){
 // The update function
 Vanilla_GD_Template
 LD Vanilla_GD_Namespace::update(LD abs_tol, LD rel_tol){
+
     LD _check=0,_x2=0;
     std::vector<LD> grad; 
 
@@ -56,11 +63,10 @@ LD Vanilla_GD_Namespace::update(LD abs_tol, LD rel_tol){
         _x2=abs_tol + this->x[i] * rel_tol;
         _check+=(grad[i]/_x2)*(grad[i]/_x2);
     }
-    _check=std::sqrt(1/((LD) this->dim) *_check)*this->alpha;
+    _check=std::sqrt(1/((LD) this->dim) *_check);
     
     this->steps.push_back(x);
 
-    // _check<1 means that we have converged
     return _check;
 }
 
