@@ -45,7 +45,7 @@ class AdaDeltaGD(GradientDescent):
 
         for i,g in enumerate(grad):
             self.gE[i]=self.gamma*self.gE[i] + (1-self.gamma)*g**2 
-            self.dx[i]=np.sqrt( (self.dxE[i]+self.epsilon)/(self.gE[i]+self.epsilon)  )*g*self.alpha
+            self.dx[i]=np_sqrt( (self.dxE[i]+self.epsilon)/(self.gE[i]+self.epsilon)  )*g*self.alpha
             self.dxE[i]=self.gamma*self.dxE[i] + (1-self.gamma)*self.dx[i]**2
             
             self.x[i]=self.x[i] - self.dx[i]

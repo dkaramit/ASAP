@@ -40,7 +40,7 @@ class RMSpropGD(GradientDescent):
 
         for i,g in enumerate(grad):
             self.gE[i]=self.gamma*self.gE[i] + (1-self.gamma)*g**2 
-            self.dx=self.alpha/np.sqrt( (self.gE[i]+self.epsilon)  )*g
+            self.dx=self.alpha/np_sqrt( (self.gE[i]+self.epsilon)  )*g
             
             
             self.x[i]=self.x[i] - self.dx

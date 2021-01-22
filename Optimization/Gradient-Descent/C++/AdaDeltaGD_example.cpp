@@ -35,7 +35,7 @@ int main(){
 
 
 
-    GD.run(1e-5,1e-8,100,50000);
+    GD.run(1e-6,1e-6,100,50000);
 
     for(auto step:GD.steps){
         for(auto x:step){cout<<x<<"\t";}

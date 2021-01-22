@@ -2,7 +2,7 @@
 
 #include"GD.hpp"
 
-#include"VanillaGD.hpp"
+#include"AdamGD.hpp"
 
 #include"TargetFunc.hpp"
 
@@ -31,7 +31,7 @@ int main(){
     targetFunc<LD,func> target(f,1e-5);
 
 
-    VanillaGD<LD,targetFunc<LD,func>> GD(target, {-.5,.2}, 1e-2);
+    AdamGD<LD,targetFunc<LD,func>> GD(target,{-.5,.2},0.9,0.999,1e-8,1e-2);
 
 
 
