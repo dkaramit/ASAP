@@ -1,41 +1,45 @@
-from .GradientDescent import GradientDescent
+from .StochasticGradientDescent import StochasticGradientDescent
 
+from numpy   import random as np_random
 from numpy   import sqrt as np_sqrt
 
 
-class NAdamGD(GradientDescent):
-    '''Implementation of NAdam.'''
+class AdamSGD(StochasticGradientDescent):
+    '''Implementation of Adam.'''
     
-    def __init__(self,target,x0,beta_m=1-1e-1,beta_v=1-1e-3,epsilon=1e-8,alpha=1e-2):
+    def __init__(self,loss,data,beta_m=1-1e-1,beta_v=1-1e-3,epsilon=1e-8,alpha=1e-2):
         '''
-        target: the target function to be minimized, with target.Gard its gradient
-        x0: starting point
+        loss: the loss function
+        data: the data to be used in order to minimize the loss
         beta_m: decay parameter for the average m
         beta_v: decay parameter for the average v 
         epsilon: safety parameter (to avoid division by 0)
         alpha: a learning rate that multiplies the rate of AdaDelta. 
         '''
-        self.target=target
+        self.lossFunc=loss
+        self.data=data
+
         self.beta_m=beta_m
         self.beta_v=beta_v
         self.epsilon=epsilon
         self.alpha=alpha
         
+        self.data_size=len(self.data)
         self.steps=[]
-        self.steps.append(x0[:])
-        self.x=[_ for _ in x0]
-        self.dim=len(x0)
-
+        self.steps.append(self.lossFunc.targetFunc.w[:])
+        self.dim=self.lossFunc.targetFunc.dim
+        
+        
         #The "bias corrected" m and v need beta^iteration, so I need something like this
         self.beta_m_ac=beta_m
         self.beta_v_ac=beta_v
-        
+
         # counters for the decaying means of the gradient         
-        self.mE=[0 for _ in self.x]
-        self.vE=[0 for _ in self.x]
+        self.mE=[0 for _ in self.lossFunc.targetFunc.w]
+        self.vE=[0 for _ in self.lossFunc.targetFunc.w]
         
-        #lists to store the changes in x         
-        self.dx=[0 for _ in self.x]
+        #lists to store the changes in w         
+        self.dw=[0 for _ in self.lossFunc.targetFunc.w]
 
     def update(self,abs_tol=1e-5, rel_tol=1e-3):
         '''
@@ -43,31 +47,33 @@ class NAdamGD(GradientDescent):
         the main loop stops. Here I choose this number to be:
         sqrt(1/dim*sum_{i=0}^{dim}(grad/(abs_tol+x*rel_tol))_i^2)
         '''
-        grad=self.target.Grad(self.x)
+        index=np_random.randint(self.data_size)
+        grad=self.Grad(index)
 
         # accumulate the decay rates, in order to correct the averages 
         self.beta_m_ac*=self.beta_m_ac
         self.beta_v_ac*=self.beta_v_ac
         
+        _w2=0
         _check=0
-        _x2=0
-
         for i,g in enumerate(grad):
             self.mE[i]=self.beta_m*self.mE[i] + (1-self.beta_m)*g 
             self.vE[i]=self.beta_v*self.vE[i] + (1-self.beta_v)*g**2
 
-            self.dx[i]=self.alpha/(np_sqrt(self.vE[i]/(1-self.beta_v_ac)) + self.epsilon)
-            self.dx[i]*=(self.beta_m*self.mE[i] + (1-self.beta_m)*g)/(1-self.beta_m_ac)
+            self.dw[i]=self.alpha/(np_sqrt(self.vE[i]/(1-self.beta_v_ac) ) + self.epsilon)  
+            self.dw[i]*=self.mE[i]/(1-self.beta_m_ac)
             
-            self.x[i]=self.x[i] - self.dx[i]
+            self.lossFunc.targetFunc.w[i]=self.lossFunc.targetFunc.w[i] - self.dw[i]
             
-            
-            _x2=abs_tol + self.x[i] * rel_tol
-            _check+=(g/_x2)*(g/_x2)
-    
-    
-        _check=np_sqrt(1./self.dim *_check)
+            _w2=abs_tol + self.lossFunc.targetFunc.w[i] * rel_tol
+            _check+=(g/_w2)*(g/_w2)
 
-        self.steps.append(self.x[:])
+        _check=np_sqrt(1./self.dim *_check)
+        
+        self.steps.append(self.lossFunc.targetFunc.w[:])
         
         return _check
+
+
+
+
