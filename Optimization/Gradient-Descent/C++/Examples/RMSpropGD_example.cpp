@@ -50,9 +50,9 @@ int main(){
         for(auto x:step){cout<<x<<"\t";}
         cout<<endl;
     }
+    cout<<"======================================================\n";
     #endif
 
-    cout<<"======================================================\n";
     cout<<"N0 steps: "<<GD.steps.size()<<"\n";
     cout<<"minimum at x0=("<<GD.x[0]<<","<<GD.x[1]<<")"<<"\t";
     cout<<"with f(x0)="<<f(GD.x);
