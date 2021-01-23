@@ -15,7 +15,7 @@ AdamGD is a class rderived from GradientDescent
 #define Adam_GD_Namespace AdamGD<LD,Func>
 
 Adam_GD_Template
-class AdamGD: public GD_Namespace{
+class AdamGD{
     public:
     Func target;
     LD beta_m,beta_v,gamma,epsilon,alpha;
@@ -29,7 +29,29 @@ class AdamGD: public GD_Namespace{
 
 
     AdamGD(Func target, std::vector<LD> x0, LD beta_m=1-1e-1, LD beta_v=1-1e-3, LD epsilon=1e-6, LD alpha=1e-2);
+    AdamGD(){};
 
+    AdamGD& operator=(const AdamGD& strategy){
+        this->target=strategy.target;
+        this->beta_m=strategy.beta_m;
+        this->beta_v=strategy.beta_v;
+        this->gamma=strategy.gamma;
+        this->epsilon=strategy.epsilon;
+        this->alpha=strategy.alpha;
+        this->x=strategy.x;
+        
+        this->dim=strategy.dim;
+        this->grad=strategy.grad;
+        this->beta_m_ac=strategy.beta_m_ac;
+        this->beta_v_ac=strategy.beta_v_ac;
+        this->steps=strategy.steps;
+
+        this->mE=strategy.mE;
+        this->vE=strategy.vE;
+
+        return *this;    
+    };
+    
     // the update function called from GradientDescent.update.
     // update should return a number that when it is smaller than 1
     // the main loop stops.

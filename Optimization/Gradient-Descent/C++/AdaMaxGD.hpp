@@ -15,7 +15,7 @@ AdaMaxGD is a class rderived from GradientDescent
 #define AdaMax_GD_Namespace AdaMaxGD<LD,Func>
 
 AdaMax_GD_Template
-class AdaMaxGD: public GD_Namespace{
+class AdaMaxGD{
     public:
     Func target;
     LD beta_m,beta_v,gamma,epsilon,alpha;
@@ -29,6 +29,27 @@ class AdaMaxGD: public GD_Namespace{
 
 
     AdaMaxGD(Func target, std::vector<LD> x0, LD beta_m=1-1e-1, LD beta_v=1-1e-3, LD epsilon=1e-6, LD alpha=1e-2);
+    AdaMaxGD(){};
+
+    AdaMaxGD& operator=(const AdaMaxGD& strategy){
+        this->target=strategy.target;
+        this->beta_m=strategy.beta_m;
+        this->beta_v=strategy.beta_v;
+        this->gamma=strategy.gamma;
+        this->epsilon=strategy.epsilon;
+        this->alpha=strategy.alpha;
+        this->x=strategy.x;
+        
+        this->dim=strategy.dim;
+        this->grad=strategy.grad;
+        this->beta_m_ac=strategy.beta_m_ac;
+        this->steps=strategy.steps;
+
+        this->mE=strategy.mE;
+        this->v_max=strategy.v_max;
+
+        return *this;    
+    };
 
     // the update function called from GradientDescent.update.
     // update should return a number that when it is smaller than 1

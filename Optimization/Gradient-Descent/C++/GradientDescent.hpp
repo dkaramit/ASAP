@@ -13,23 +13,20 @@ loop of updates (update), which should be defined in a derived class.
 #include <cmath>
 
 
-#define GD_Template template<class LD>
-#define GD_Namespace GradientDescent<LD>
+#define GD_Template template<class LD,class Strategy>
+#define GD_Namespace GradientDescent<LD, Strategy>
 
 
 GD_Template
 class GradientDescent{
     public:
-    
+    Strategy strategy;
     // constructor and destructor (they will be overwritten by the derived class)
-    GradientDescent(){};
+    GradientDescent(const Strategy &strategy){
+        this->strategy=strategy;
+    };
     ~GradientDescent(){};
 
-    // virtual update (it will be overwritten by the derived class)
-    // update should return a number that when it is smaller than 1
-    // the main loop stops.
-    // This number can depend on two abs_tol and rel_tol
-    virtual LD update(LD abs_tol, LD rel_tol);//this will be overwritten by the derived classes
     
     // function that runs the main loop.
     // abs_tol, rel_tol, , step_break: stop when _check<1 for step_break succesive steps
@@ -47,7 +44,10 @@ void GD_Namespace::run(LD abs_tol, LD rel_tol, unsigned int step_break, unsigned
     LD _check;
 
     while(count_steps<=max_step){
-        _check=this->update(abs_tol,rel_tol);
+        // update should return a number that when it is smaller than 1
+        // the loop stops.
+        // This number can depend on two abs_tol and rel_tol
+        _check=this->strategy.update(abs_tol,rel_tol);
 
         count_steps++;
 

@@ -9,13 +9,11 @@ RMSpropGD is a class rderived from GradientDescent
 #include<vector>
 #include<cmath>
 
-#include"GD.hpp"
-
 #define RMSprop_GD_Template template<class LD, class Func>
 #define RMSprop_GD_Namespace RMSpropGD<LD,Func>
 
 RMSprop_GD_Template
-class RMSpropGD: public GD_Namespace{
+class RMSpropGD{
     public:
     Func target;
     LD gamma,epsilon,alpha;
@@ -28,6 +26,23 @@ class RMSpropGD: public GD_Namespace{
 
 
     RMSpropGD(Func target, std::vector<LD> x0, LD gamma=0.95, LD epsilon=1e-6, LD alpha=1e-2);
+    RMSpropGD(){};
+
+    RMSpropGD& operator=(const RMSpropGD& strategy){
+        this->target=strategy.target;
+        this->gamma=strategy.gamma;
+        this->epsilon=strategy.epsilon;
+        this->alpha=strategy.alpha;
+        this->x=strategy.x;
+        
+        this->dim=strategy.dim;
+        this->grad=strategy.grad;
+        this->steps=strategy.steps;
+
+        this->gE=strategy.gE;
+
+        return *this;    
+    };
 
     // the update function called from GradientDescent.update.
     // update should return a number that when it is smaller than 1

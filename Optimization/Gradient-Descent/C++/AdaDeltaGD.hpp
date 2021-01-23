@@ -9,25 +9,41 @@ AdaDeltaGD is a class rderived from GradientDescent
 #include<vector>
 #include<cmath>
 
-#include"GD.hpp"
-
 #define AdaDelta_GD_Template template<class LD, class Func>
 #define AdaDelta_GD_Namespace AdaDeltaGD<LD,Func>
 
 AdaDelta_GD_Template
-class AdaDeltaGD: public GD_Namespace{
+class AdaDeltaGD{
     public:
     Func target;
     LD gamma,epsilon,alpha;
 
     std::vector<std::vector<LD>> steps;
-    std::vector<LD> x,gE, dxE;
+    std::vector<LD> x,gE,dxE;
 
     unsigned int dim;
     std::vector<LD> grad;
 
 
     AdaDeltaGD(Func target, std::vector<LD> x0, LD gamma=0.95, LD epsilon=1e-6, LD alpha=1);
+    AdaDeltaGD(){};
+
+    AdaDeltaGD& operator=(const AdaDeltaGD& strategy){
+        this->target=strategy.target;
+        this->gamma=strategy.gamma;
+        this->epsilon=strategy.epsilon;
+        this->alpha=strategy.alpha;
+        this->x=strategy.x;
+        
+        this->dim=strategy.dim;
+        this->grad=strategy.grad;
+        this->steps=strategy.steps;
+
+        this->gE=strategy.gE;
+        this->dxE=strategy.dxE;
+
+        return *this;    
+    };
 
     // the update function called from GradientDescent.update.
     // update should return a number that when it is smaller than 1

@@ -9,13 +9,13 @@ VanillaGD is a class rderived from GradientDescent
 #include<vector>
 #include<cmath>
 
-#include"GD.hpp"
+// #include"GD.hpp"
 
 #define Vanilla_GD_Template template<class LD, class Func>
 #define Vanilla_GD_Namespace VanillaGD<LD,Func>
 
 Vanilla_GD_Template
-class VanillaGD: public GD_Namespace{
+class VanillaGD{
     public:
     Func target;
     LD alpha;
@@ -28,7 +28,19 @@ class VanillaGD: public GD_Namespace{
 
 
     VanillaGD(Func target, std::vector<LD> x0, LD alpha=1e-1);
+    VanillaGD(){};
 
+    VanillaGD& operator=(const VanillaGD& van){
+        this->target=van.target;
+        this->alpha=van.alpha;
+        this->x=van.x;
+        
+        this->dim=van.dim;
+        this->grad=van.grad;
+        this->steps=van.steps;
+        return *this;    
+    };
+    
     // the update function called from GradientDescent.update.
     // update should return a number that when it is smaller than 1
     // the main loop stops.
