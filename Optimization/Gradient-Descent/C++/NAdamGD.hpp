@@ -21,9 +21,10 @@ class NAdamGD: public GD_Namespace{
     LD beta_m,beta_v,gamma,epsilon,alpha;
 
     std::vector<std::vector<LD>> steps;
-    std::vector<LD> x, mE, vE, dx;
+    std::vector<LD> x, mE, vE;
 
     unsigned int dim;
+    std::vector<LD> grad;
     LD beta_m_ac,beta_v_ac;
 
 
@@ -50,6 +51,7 @@ NAdam_GD_Namespace::NAdamGD(Func target, std::vector<LD> x0, LD beta_m, LD beta_
     this->x=x0;
     
     this->dim=(this->x).size();
+    this->grad.resize(this->dim);
     this->steps.push_back(x0);
 
     this->beta_m_ac=beta_m;
@@ -59,41 +61,32 @@ NAdam_GD_Namespace::NAdamGD(Func target, std::vector<LD> x0, LD beta_m, LD beta_
     for(unsigned int i=0; i<this->dim; ++i){
         this->mE.push_back(0);
         this->vE.push_back(0);
-        this->dx.push_back(0);
     }
 
 }
-
-
-
-
-
 
 // The update function
 NAdam_GD_Template
 LD NAdam_GD_Namespace::update(LD abs_tol, LD rel_tol){
 
-    LD _check=0,_x2=0;
-    std::vector<LD> grad; 
-
-    this->target.Grad(this->x,grad);
+    LD dx=0,_check=0,_x2=0;
+    this->target.Grad(this->x,this->grad);
     
     // accumulate the decay rates, in order to correct the averages 
     this->beta_m_ac*=this->beta_m_ac;
     this->beta_v_ac*=this->beta_v_ac;
 
     for(unsigned int i=0 ; i<this->dim; ++i ){
-        this->mE[i]=this->beta_m*this->mE[i] + (1-this->beta_m)*grad[i]; 
-        this->vE[i]=this->beta_v*this->vE[i] + (1-this->beta_v)*grad[i]*grad[i];
+        this->mE[i]=this->beta_m*this->mE[i] + (1-this->beta_m)*this->grad[i]; 
+        this->vE[i]=this->beta_v*this->vE[i] + (1-this->beta_v)*this->grad[i]*this->grad[i];
+        dx=this->alpha/(std::sqrt(this->vE[i]/(1-this->beta_v_ac)) + this->epsilon);
+        dx*=(this->beta_m*this->mE[i] + (1-this->beta_m)*this->grad[i])/(1-this->beta_m_ac);
 
-        this->dx[i]=this->alpha/(std::sqrt(this->vE[i]/(1-this->beta_v_ac)) + this->epsilon);
-        this->dx[i]*=(this->beta_m*this->mE[i] + (1-this->beta_m)*grad[i])/(1-this->beta_m_ac);
-
-        this->x[i]=this->x[i] - this->dx[i];
+        this->x[i]=this->x[i] - dx;
 
 
         _x2=abs_tol + this->x[i] * rel_tol;
-        _check+=(grad[i]/_x2)*(grad[i]/_x2);
+        _check+=(this->grad[i]/_x2)*(this->grad[i]/_x2);
     }
     _check=std::sqrt(1/((LD) this->dim) *_check);
     

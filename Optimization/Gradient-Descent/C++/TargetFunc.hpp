@@ -7,11 +7,15 @@
 
 
 // Generic target function implementation
+// Here the function is assumed to get vector<LD> and return LD
+// So, we can be another class with an overloaded operator() or
+// using Func = LD (*)(const std::vector<LD>&); //recommended
+// using Func = LD (*)(std::vector<LD>);
+
 
 template<class LD, class Func>
 class targetFunc{
     public:
-    
     Func  target;
     LD h;
 
@@ -20,6 +24,8 @@ class targetFunc{
     ~targetFunc(){};
     
     targetFunc(Func  target, LD h=1e-8){
+        // target: the target function
+        // h: stepsize for the derivative 
         this->target=target;
         this->h=h;
         };
@@ -30,28 +36,20 @@ class targetFunc{
         };
     
 
-    LD operator()(std::vector<LD> x){ return this->target(x);}
+    LD operator()(const std::vector<LD> &x){ return this->target(x);}
     
     void Grad(const std::vector<LD> &x, std::vector<LD> &grad){
-        LD dfdx0,dfdx1;
-        std::vector<LD> x0,x1;
+        // grad must have at least the same size x 
+        //grad.reserve(x.size());// you can use this to ensure it, but it is probably slower
 
-        for(LD _:x){
-            x0.push_back(_);
-            x1.push_back(_);
-        }
+        std::vector<LD> xp=x; //I will use xp as the x \pm h needed
         
         for(unsigned int dim=0; dim<x.size(); dim++){
-            x0[dim]=x[dim]-this->h;
-            x1[dim]=x[dim]+this->h;
+            xp[dim]+=this->h;
+            grad[dim]=this->target(xp)/(2*this->h) ;
             
-            dfdx0=this->target(x0) ;
-            dfdx1=this->target(x1) ;
-
-            x0[dim]=x[dim];
-            x1[dim]=x[dim];
-            
-            grad.push_back((dfdx1-dfdx0)/(2*this->h));
+            xp[dim]+=-2*this->h;
+            grad[dim]+=-this->target(xp)/(2*this->h) ;
         }
     };
 };

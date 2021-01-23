@@ -24,6 +24,7 @@ class VanillaGD: public GD_Namespace{
     std::vector<LD> x;
 
     unsigned int dim;
+    std::vector<LD> grad;
 
 
     VanillaGD(Func target, std::vector<LD> x0, LD alpha=1e-1);
@@ -44,7 +45,9 @@ Vanilla_GD_Namespace::VanillaGD(Func target, std::vector<LD> x0, LD alpha){
     this->target=target;
     this->alpha=alpha;
     this->x=x0;
+    
     this->dim=(this->x).size();
+    this->grad.resize(this->dim);
     this->steps.push_back(x0);
 }
 
@@ -53,15 +56,13 @@ Vanilla_GD_Template
 LD Vanilla_GD_Namespace::update(LD abs_tol, LD rel_tol){
 
     LD _check=0,_x2=0;
-    std::vector<LD> grad; 
-
-    this->target.Grad(this->x,grad);
-
+    this->target.Grad(this->x,this->grad);
+    
     for(unsigned int i=0 ; i<this->dim; ++i ){
-        this->x[i] = this->x[i] - (this->alpha)*grad[i] ; 
+        this->x[i] = this->x[i] - (this->alpha)*this->grad[i] ; 
 
         _x2=abs_tol + this->x[i] * rel_tol;
-        _check+=(grad[i]/_x2)*(grad[i]/_x2);
+        _check+=(this->grad[i]/_x2)*(this->grad[i]/_x2);
     }
     _check=std::sqrt(1/((LD) this->dim) *_check);
     
