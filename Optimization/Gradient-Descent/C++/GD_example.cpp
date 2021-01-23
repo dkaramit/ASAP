@@ -2,8 +2,6 @@
 #include<vector>
 
 #include"GD.hpp"
-// #include"GradientDescent.hpp"
-// #include"VanillaGD.hpp"
 #include"TargetFunc.hpp"
 
 #ifndef LONG
