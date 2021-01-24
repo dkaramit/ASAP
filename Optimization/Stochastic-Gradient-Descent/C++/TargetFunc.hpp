@@ -13,22 +13,24 @@ class targetFunc{
     public:
     TFunc f;
     std::vector<LD> w;
+    std::vector<LD> *Z;
     unsigned int dim;
 
     targetFunc(){};
-    targetFunc(TFunc func, std::vector<LD> &w0){
+    targetFunc(TFunc func,const std::vector<LD> &w0){
         this->f=func;
         this->w=w0;
         this->dim=w0.size();
-
     }
 
-    targetFunc& operator=(const targetFunc& tf){
-        this->f=tf.f;
-        this->w=tf.w;
-        this->dim=tf.dim;
-
-        return *this;
+    // I want to pass the entire model, and allow the optimization algorithms to 
+    // change it. So I'll need to pass its reference 
+    // (e.g. in lossFunc I have TFunc * as the target)
+    targetFunc* operator=(targetFunc *tf){
+        this->f=tf->f;
+        this->w=tf->w;
+        this->dim=tf->dim;
+        return this;
     }
 
     void operator()(const std::vector<LD> &x, std::vector<LD> &y)
@@ -41,33 +43,23 @@ class lossFunc{
     QFunc Q;
     TFunc *target;
     LD h;
-    std::vector<LD> *w;
 
 
     lossFunc(){};
-    lossFunc(const QFunc &Q,TFunc *target, LD h=1e-8){
-        this->target=target;
+    lossFunc(const QFunc &Q, TFunc *target, LD h=1e-8){
+        this->target=target; //make it explicit 
         this->Q=Q;
         this->h=h;
     }
-
-
-    lossFunc& operator=(const lossFunc& lf){
-        this->Q=lf.Q;
-        this->target=lf.target;
-        this->h=lf.h;
-
-        return *this;
-    }
-    
+  
     
     LD operator()(const std::vector<LD> &x, const std::vector<LD> &y)
     {return    this->Q(*(this->target), x, y);}
 
 
     void Grad(const std::vector<LD> &x, const std::vector<LD> &y, std::vector<LD> &grad){
-        // grad must have at least the same size y 
-        //grad.reserve(y.size());// you can use this to ensure it, but it is probably slower
+        // grad must have the same size as target->w
+        //grad.reserve(target->w.size());// you can use this to ensure it, but it is probably slower
         
         for(unsigned int dim=0; dim<target->dim; dim++){
             target->w[dim]+=this->h;

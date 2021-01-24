@@ -44,6 +44,10 @@ using vec2=vector<vector<LD>>;
 
 
 
+
+
+
+#if 1
 int main(){
 
 
@@ -53,25 +57,29 @@ int main(){
     std::default_random_engine RndE{std::random_device{}()}; ;
     std::uniform_real_distribution<LD> UnDist{-1,2};
     LD x=0;
+    
+    targetFunc<LD,TFunc> target(testF,w);
+    lossFunc<LD,QFunc, targetFunc<LD,TFunc>> loss(MSE,&target);
+    VanillaSGD<LD,lossFunc<LD,QFunc, targetFunc<LD,TFunc>>> vSGD(loss,&X,&Y,1e-2);
+
+
     for(int i=0;i<500;++i){
         x=UnDist(RndE);
         X.push_back({x});
         Y.push_back({5*x+1});
     }
+
     
-    targetFunc<LD,TFunc> target(testF,w);
-    lossFunc<LD,QFunc, targetFunc<LD,TFunc>> loss(MSE,&target);
-    VanillaSGD<LD,lossFunc<LD,QFunc, targetFunc<LD,TFunc>>> vSGD(loss,X,Y,1e-2);
-
-
     StochasticGradientDescent<LD,VanillaSGD<LD,lossFunc<LD,QFunc, targetFunc<LD,TFunc>>>> 
     SGD(vSGD);
     
     SGD.run(1e-8, 1e-5, 250, 5000);
-    
+
     cout<<target.w[0]<<"\t"<<target.w[1]<<endl;
 
 
 
     return 0;
 }
+
+#endif
