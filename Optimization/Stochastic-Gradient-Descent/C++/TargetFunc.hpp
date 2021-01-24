@@ -16,10 +16,11 @@ class targetFunc{
     unsigned int dim;
 
     targetFunc(){};
-    targetFunc(TFunc func, std::vector<LD> w0){
+    targetFunc(TFunc func, std::vector<LD> &w0){
         this->f=func;
         this->w=w0;
         this->dim=w0.size();
+
     }
 
     targetFunc& operator=(const targetFunc& tf){
@@ -38,31 +39,44 @@ template<class LD, class QFunc, class TFunc>
 class lossFunc{
     public:
     QFunc Q;
-    TFunc target;
+    TFunc *target;
     LD h;
+    std::vector<LD> *w;
 
-    lossFunc(const QFunc &Q,const TFunc &target, LD h=1e-8){
+
+    lossFunc(){};
+    lossFunc(const QFunc &Q,TFunc *target, LD h=1e-8){
         this->target=target;
         this->Q=Q;
         this->h=h;
     }
 
+
+    lossFunc& operator=(const lossFunc& lf){
+        this->Q=lf.Q;
+        this->target=lf.target;
+        this->h=lf.h;
+
+        return *this;
+    }
+    
+    
     LD operator()(const std::vector<LD> &x, const std::vector<LD> &y)
-    {return    this->Q(target, x, y);}
+    {return    this->Q(*(this->target), x, y);}
 
 
     void Grad(const std::vector<LD> &x, const std::vector<LD> &y, std::vector<LD> &grad){
         // grad must have at least the same size y 
         //grad.reserve(y.size());// you can use this to ensure it, but it is probably slower
         
-        for(unsigned int dim=0; dim<target.dim; dim++){
-            target.w[dim]+=this->h;
+        for(unsigned int dim=0; dim<target->dim; dim++){
+            target->w[dim]+=this->h;
             grad[dim]=this->operator()(x,y)/(2*this->h) ;
             
-            target.w[dim]+=-2*this->h;
+            target->w[dim]+=-2*this->h;
             grad[dim]+=-this->operator()(x,y)/(2*this->h) ;
             
-            target.w[dim]+=-this->h;//return w to its initial value
+            target->w[dim]+=-this->h;//return w to its initial value
         }
     };
 };

@@ -1,5 +1,6 @@
 #include<iostream>
 #include<vector>
+#include<random>
 
 #include"SGD.hpp"
 #include"TargetFunc.hpp"
@@ -39,24 +40,36 @@ LD MSE(targetFunc<LD,TFunc> f, const vector<LD> &x, const vector<LD> &y){
     return sum;    
 }
 
+using vec2=vector<vector<LD>>;
+
+
 
 int main(){
-    
-    targetFunc<LD,TFunc> target(testF,{1,10});
-    lossFunc<LD,QFunc,targetFunc<LD,TFunc> > loss(MSE,target);
 
 
-    vector<LD> x={0.2,-2.31};
-    vector<LD> y={5,15};
+    std::vector<LD> w={5,-1};
+    vec2 X,Y;
     
+    std::default_random_engine RndE{std::random_device{}()}; ;
+    std::uniform_real_distribution<LD> UnDist{-1,2};
+    LD x=0;
+    for(int i=0;i<500;++i){
+        x=UnDist(RndE);
+        X.push_back({x});
+        Y.push_back({5*x+1});
+    }
     
-    // cout<<MSE(target,x,y)<<endl;
-    cout<<loss(x,y)<<endl;
+    targetFunc<LD,TFunc> target(testF,w);
+    lossFunc<LD,QFunc, targetFunc<LD,TFunc>> loss(MSE,&target);
+    VanillaSGD<LD,lossFunc<LD,QFunc, targetFunc<LD,TFunc>>> vSGD(loss,X,Y,1e-2);
+
+
+    StochasticGradientDescent<LD,VanillaSGD<LD,lossFunc<LD,QFunc, targetFunc<LD,TFunc>>>> 
+    SGD(vSGD);
     
-    vector<LD> grad=x;
-    loss.Grad(x,y,grad);
-    cout<<grad[0]<<endl;
-    cout<<grad[1]<<endl;
+    SGD.run(1e-8, 1e-5, 250, 5000);
+    
+    cout<<target.w[0]<<"\t"<<target.w[1]<<endl;
 
 
 
