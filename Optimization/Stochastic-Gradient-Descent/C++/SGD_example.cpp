@@ -22,8 +22,8 @@ using std::vector;
 using TFunc= void (*)(const vector<LD> &x, const vector<LD> &w, vector<LD> &y);
 
 void testF(const vector<LD> &x, const vector<LD> &w, vector<LD> &y){
-    y[0]=w[0]*x[0]+w[1];
-    y[1]=w[0]+w[1]*x[1];
+    y[0]=w[0]*x[0]+w[1]+w[2]*x[1];
+    y[1]=w[0]+w[1]*x[1]+w[2]*x[0];
 }
 
 using QFunc= LD (*)(targetFunc<LD,TFunc> f, const vector<LD> &x, const vector<LD> &y);
@@ -45,40 +45,56 @@ using vec2=vector<vector<LD>>;
 
 
 
+targetFunc<LD,TFunc> target(testF,{5,-1,2});
+lossFunc<LD,QFunc, targetFunc<LD,TFunc>> loss(MSE,&target);
+vec2 X,Y;
 
+#define Vanilla
+
+#ifdef Vanilla
+using strategy=VanillaSGD<LD,lossFunc<LD,QFunc, targetFunc<LD,TFunc>>> ;
+#define params {loss,&X,&Y,1e-2}
+#endif
 
 #if 1
 int main(){
-
-
-    std::vector<LD> w={5,-1};
-    vec2 X,Y;
-    
     std::default_random_engine RndE{std::random_device{}()}; ;
-    std::uniform_real_distribution<LD> UnDist{-1,2};
-    LD x=0;
+    std::uniform_real_distribution<LD> UnDist{-10,2};
     
-    targetFunc<LD,TFunc> target(testF,w);
-    lossFunc<LD,QFunc, targetFunc<LD,TFunc>> loss(MSE,&target);
-    VanillaSGD<LD,lossFunc<LD,QFunc, targetFunc<LD,TFunc>>> vSGD(loss,&X,&Y,1e-2);
+    LD x=0;
+    LD y=0;
+    
 
-
-    for(int i=0;i<500;++i){
+    for(int i=0;i<100;++i){
         x=UnDist(RndE);
-        X.push_back({x});
-        Y.push_back({5*x+1});
+        y=UnDist(RndE);
+        X.push_back({x,y});
+        Y.push_back({1.2*x+10,1.2+10*y});
+    }
+    
+    StochasticGradientDescent<LD,strategy> SGD( strategy(params) );
+    SGD.run(1e-4, 1e-4, 100, 50000);
+
+
+    // print the results
+    cout<<"w=(";
+    for(unsigned int i=0 ; i<target.w.size() ; ++i){
+        cout<<target.w[i];
+        if(i!=target.w.size()-1){cout<<", ";}
+        else{cout<<")\n";}
     }
 
     
-    StochasticGradientDescent<LD,VanillaSGD<LD,lossFunc<LD,QFunc, targetFunc<LD,TFunc>>>> 
-    SGD(vSGD);
+    LD Qmean=0;
+    for(unsigned int i=0 ; i<X.size() ; ++i){
+        Qmean+=loss(X[i],Y[i]);
+    }
+    Qmean=Qmean/X.size();
     
-    SGD.run(1e-8, 1e-5, 250, 5000);
+    cout<<"No steps: "<<SGD.strategy.steps.size()<<"\t";
+    cout<<"mean error, Q= "<<Qmean<<endl;
 
-    cout<<target.w[0]<<"\t"<<target.w[1]<<endl;
-
-
-
+    
     return 0;
 }
 

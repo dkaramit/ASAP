@@ -87,7 +87,8 @@ LD Vanilla_SGD_Namespace::update(LD abs_tol, LD rel_tol){
     this->Q.Grad(this->input_data->operator[](index),
                 this->output_data->operator[](index),
                 this->grad);
-    
+
+
     for(unsigned int i=0 ; i<this->dim; ++i ){
         Q.target->w[i] = Q.target->w[i] - (this->alpha)*this->grad[i] ; 
 
