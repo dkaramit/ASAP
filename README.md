@@ -4,7 +4,8 @@ Numerical calculations *as simple as possible* (ASAP).
 ---
 ![GitHub repo size](https://img.shields.io/github/repo-size/dkaramit/ASAP?color=red&style=flat-square)
 
-![](https://tokei.rs/b1/github/dkaramit/ASAP)
+![](https://img.shields.io/badge/language-C++-black.svg)  
+![](https://img.shields.io/badge/language-python-black.svg)  
 --
 **Personal note**
 
