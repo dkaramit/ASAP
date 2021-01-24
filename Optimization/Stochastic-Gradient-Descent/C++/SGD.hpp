@@ -5,7 +5,7 @@
 #include <vector>
 
 
-// #include"VanillaSGD.hpp"
+#include"VanillaSGD.hpp"
 // #include"AdaDeltaSGD.hpp"
 // #include"RMSpropSGD.hpp"
 // #include"AdamSGD.hpp"

@@ -35,30 +35,6 @@ class StochasticGradientDescent{
 };
 
 
-GD_Template
-void GD_Namespace::run(LD abs_tol, LD rel_tol, unsigned int step_break, unsigned int max_step){
-    
-    unsigned int _s=0;
-    unsigned int count_steps=1;
-    
-    LD _check;
-
-    while(count_steps<=max_step){
-        // update should return a number that when it is smaller than 1
-        // the loop stops.
-        // This number can depend on two abs_tol and rel_tol
-        _check=this->strategy.update(abs_tol,rel_tol);
-
-        count_steps++;
-
-        if(_check<1){_s++;}
-        else{_s=0;}
-        if(_s>step_break){break;}
-
-    }
-}
-
-
 
 
 #endif
