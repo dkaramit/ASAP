@@ -3,6 +3,8 @@ Numerical calculations *as simple as possible* (ASAP).
 
 ---
 ![GitHub repo size](https://img.shields.io/github/repo-size/dkaramit/ASAP?color=red&style=flat-square)
+
+![](https://tokei.rs/b1/github/dkaramit/ASAP)
 --
 **Personal note**
 
