@@ -5,4 +5,4 @@
 *.cpp linguist-language=C++
 *.hpp linguist-language=C++
 *.py linguist-language=python
-*.ipynb linguist-detectable=python
+*.ipynb linguist-language=python
