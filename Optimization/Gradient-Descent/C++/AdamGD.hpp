@@ -17,19 +17,32 @@ Adam_GD_Template
 class AdamGD{
     public:
     Func target;
+    // parameters of the algorithm
     LD beta_m,beta_v,gamma,epsilon,alpha;
 
-    std::vector<std::vector<LD>> steps;
-    std::vector<LD> x, mE, vE;
-
+    // vector of (current) position
+    std::vector<LD> x;
+    
+    // dimension of x
     unsigned int dim;
+
+    // vector that will be used to hold the gradient at every step (same dimension as x)
     std::vector<LD> grad;
+
+    // vector of positions
+    std::vector<std::vector<LD>> steps;
+
+    // vectors that hold the decaying averages of m and v 
+    std::vector<LD> mE, vE;
+
+    // variables that accumulate beta_{m,v}^iteration 
     LD beta_m_ac,beta_v_ac;
 
-
+    // costructor with default arguments
     AdamGD(Func target, std::vector<LD> x0, LD beta_m=1-1e-1, LD beta_v=1-1e-3, LD epsilon=1e-6, LD alpha=1e-2);
     AdamGD(){};
 
+    // overloading of operator= so that everything is copied correctly 
     AdamGD& operator=(const AdamGD& strategy){
         this->target=strategy.target;
         this->beta_m=strategy.beta_m;
@@ -41,12 +54,15 @@ class AdamGD{
         
         this->dim=strategy.dim;
         this->grad=strategy.grad;
-        this->beta_m_ac=strategy.beta_m_ac;
-        this->beta_v_ac=strategy.beta_v_ac;
+
         this->steps=strategy.steps;
+        
 
         this->mE=strategy.mE;
         this->vE=strategy.vE;
+
+        this->beta_m_ac=strategy.beta_m_ac;
+        this->beta_v_ac=strategy.beta_v_ac;
 
         return *this;    
     };
@@ -73,16 +89,17 @@ Adam_GD_Namespace::AdamGD(Func target, std::vector<LD> x0, LD beta_m, LD beta_v,
     
     this->dim=(this->x).size();
     this->grad.resize(this->dim);
-    this->steps.push_back(x0);
 
-    this->beta_m_ac=beta_m;
-    this->beta_v_ac=beta_v;
+    this->steps.push_back(x0);
 
 
     for(unsigned int i=0; i<this->dim; ++i){
         this->mE.push_back(0);
         this->vE.push_back(0);
     }
+
+    this->beta_m_ac=beta_m;
+    this->beta_v_ac=beta_v;
 
 }
 
@@ -91,7 +108,7 @@ Adam_GD_Template
 LD Adam_GD_Namespace::update(LD abs_tol, LD rel_tol){
 
     LD dx=0,_check=0,_x2=0;
-
+    // calculate gradient at current position
     this->target.Grad(this->x,this->grad);
     
     // accumulate the decay rates, in order to correct the averages 
@@ -99,22 +116,25 @@ LD Adam_GD_Namespace::update(LD abs_tol, LD rel_tol){
     this->beta_v_ac*=this->beta_v_ac;
 
     for(unsigned int i=0 ; i<this->dim; ++i ){
+        // calculate the decaying averages of m and v
         this->mE[i]=this->beta_m*this->mE[i] + (1-this->beta_m)*this->grad[i];
         this->vE[i]=this->beta_v*this->vE[i] + (1-this->beta_v)*this->grad[i]*this->grad[i];
 
+        // update position
         dx=this->alpha/(std::sqrt(this->vE[i]/(1-this->beta_v_ac) ) + this->epsilon);
         dx*=this->mE[i]/(1-this->beta_m_ac);
-
         this->x[i]=this->x[i] - dx;
 
-
+        // grad^2/(abs_tol + x * rel_tol)^2 for this direction
         _x2=abs_tol + this->x[i] * rel_tol;
         _check+=(this->grad[i]/_x2)*(this->grad[i]/_x2);
     }
-    _check=std::sqrt(1/((LD) this->dim) *_check);
-    
-    this->steps.push_back(x);
 
+    // append new position to steps
+    this->steps.push_back(x);
+    
+    //calculate _check 
+    _check=std::sqrt(1/((LD) this->dim) *_check);
     return _check;
 }
 

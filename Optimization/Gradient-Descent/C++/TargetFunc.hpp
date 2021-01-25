@@ -30,11 +30,6 @@ class targetFunc{
         this->h=h;
         };
 
-    targetFunc(const targetFunc  &target_obj, LD h=1e-8){  
-        this->target=target_obj.target;
-        this->h=h;
-        };
-    
 
     LD operator()(const std::vector<LD> &x){ return this->target(x);}
     

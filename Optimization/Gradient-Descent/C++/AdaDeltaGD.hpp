@@ -2,8 +2,7 @@
 #define AdaDelta_GD_class
 
 /*
-AdaDelta Gradient Descent (i.e. no adaptation of the learning rate).
-AdaDeltaGD is a class rderived from GradientDescent
+AdaDelta Gradient Descent
 */
 
 #include<vector>
@@ -15,19 +14,31 @@ AdaDeltaGD is a class rderived from GradientDescent
 AdaDelta_GD_Template
 class AdaDeltaGD{
     public:
+    // function to be minimized
     Func target;
+    // parameters of the algorithm
     LD gamma,epsilon,alpha;
 
-    std::vector<std::vector<LD>> steps;
-    std::vector<LD> x,gE,dxE;
-
+    // position vector
+    std::vector<LD> x;
+    // dimension of x 
     unsigned int dim;
+
+    // vector that holds the gradient at the current position
     std::vector<LD> grad;
+    
+    // vector that holds the positions the algorithm takes
+    std::vector<std::vector<LD>> steps;
+    
+    // decaying averages of gradient and steps
+    std::vector<LD> gE,dxE;
+    
 
-
+    // constructor with default variables
     AdaDeltaGD(Func target, std::vector<LD> x0, LD gamma=0.95, LD epsilon=1e-6, LD alpha=1);
     AdaDeltaGD(){};
 
+    // overloading of operator= to make sure all attributes are copied correctly
     AdaDeltaGD& operator=(const AdaDeltaGD& strategy){
         this->target=strategy.target;
         this->gamma=strategy.gamma;
@@ -36,7 +47,9 @@ class AdaDeltaGD{
         this->x=strategy.x;
         
         this->dim=strategy.dim;
+        
         this->grad=strategy.grad;
+
         this->steps=strategy.steps;
 
         this->gE=strategy.gE;
@@ -65,7 +78,9 @@ AdaDelta_GD_Namespace::AdaDeltaGD(Func target, std::vector<LD> x0, LD gamma, LD 
     this->x=x0;
     
     this->dim=(this->x).size();
+
     this->grad.resize(this->dim);
+    
     this->steps.push_back(x0);
 
     for(unsigned int i=0; i<this->dim; ++i){
@@ -80,22 +95,29 @@ AdaDelta_GD_Template
 LD AdaDelta_GD_Namespace::update(LD abs_tol, LD rel_tol){
 
     LD dx=0,_check=0,_x2=0;
+    // calculate the gradient at the current position
     this->target.Grad(this->x,this->grad);
 
     for(unsigned int i=0 ; i<this->dim; ++i ){
+        // calculate the decaying average of the gradient
         this->gE[i]=this->gamma*this->gE[i] + (1-this->gamma)*this->grad[i]*this->grad[i];
+        
+        // update the position
         dx=std::sqrt( (this->dxE[i]+this->epsilon)/(this->gE[i]+this->epsilon)  )*this->grad[i]*this->alpha;
-        this->dxE[i]=this->gamma*this->dxE[i] + (1-this->gamma)*dx*dx;
         this->x[i]=this->x[i] - dx;
+        
+        //calculate the decaying average of dx (in the i direction)
+        this->dxE[i]=this->gamma*this->dxE[i] + (1-this->gamma)*dx*dx;
 
-
+        // grad^2/(abs_tol + x * rel_tol)^2 for this direction
         _x2=abs_tol + this->x[i] * rel_tol;
         _check+=(this->grad[i]/_x2)*(this->grad[i]/_x2);
     }
-    _check=std::sqrt(1/((LD) this->dim) *_check);
-    
+    // append new position to steps
     this->steps.push_back(x);
 
+    // calculate _check
+    _check=std::sqrt(1/((LD) this->dim) *_check);
     return _check;
 }
 

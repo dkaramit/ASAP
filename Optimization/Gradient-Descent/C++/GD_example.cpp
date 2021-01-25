@@ -35,7 +35,7 @@ class func{
 
 // global (for this example)
 func f(1);
-targetFunc<LD,func> target(f,1e-5);
+targetFunc<LD,func> target(f,1e-8);
 vector<LD> x0={-.5,.2};
 
 
@@ -43,8 +43,8 @@ vector<LD> x0={-.5,.2};
 
 
 // #define Vanilla //run vanilla GD
-// #define AdaDelta //run AdaDelta GD
 // #define RMSprop //run RMSprop GD
+// #define AdaDelta //run AdaDelta GD
 // #define Adam //run Adam GD
 // #define AdaMax //run AdaMax GD
 #define NAdam //run NAdam GD
@@ -95,7 +95,7 @@ int main(){
     cout<<"======================================================\n";
     #endif
 
-    cout<<"N0 steps: "<<GD.strategy.steps.size()<<"\n";
+    cout<<"No steps: "<<GD.strategy.steps.size()<<"\n";
     cout<<"minimum at x0=("<<GD.strategy.x[0]<<","<<GD.strategy.x[1]<<")"<<"\t";
     cout<<"with f(x0)="<<f(GD.strategy.x);
     cout<<endl;

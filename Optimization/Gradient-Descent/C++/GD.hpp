@@ -6,8 +6,8 @@
 
 
 #include"VanillaGD.hpp"
-#include"AdaDeltaGD.hpp"
 #include"RMSpropGD.hpp"
+#include"AdaDeltaGD.hpp"
 #include"AdamGD.hpp"
 #include"AdaMaxGD.hpp"
 #include"NAdamGD.hpp"
