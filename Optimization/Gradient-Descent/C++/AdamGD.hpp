@@ -2,8 +2,7 @@
 #define Adam_GD_class
 
 /*
-Adam Gradient Descent (i.e. no adaptation of the learning rate).
-AdamGD is a class rderived from GradientDescent
+Adam Gradient Descent
 */
 
 #include<vector>

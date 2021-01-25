@@ -2,8 +2,7 @@
 #define AdaMax_GD_class
 
 /*
-AdaMax Gradient Descent (i.e. no adaptation of the learning rate).
-AdaMaxGD is a class rderived from GradientDescent
+AdaMax Gradient Descent
 */
 
 #include<vector>

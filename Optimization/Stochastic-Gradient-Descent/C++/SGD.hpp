@@ -6,11 +6,11 @@
 
 
 #include"VanillaSGD.hpp"
-// #include"AdaDeltaSGD.hpp"
-// #include"RMSpropSGD.hpp"
-// #include"AdamSGD.hpp"
-// #include"AdaMaxSGD.hpp"
-// #include"NAdamSGD.hpp"
+#include"AdaDeltaSGD.hpp"
+#include"RMSpropSGD.hpp"
+#include"AdamSGD.hpp"
+#include"AdaMaxSGD.hpp"
+#include"NAdamSGD.hpp"
 
 #include"StochasticGradientDescent.hpp"
 

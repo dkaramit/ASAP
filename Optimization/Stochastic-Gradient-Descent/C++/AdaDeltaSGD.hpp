@@ -1,45 +1,48 @@
-#ifndef Vanilla_SGD_class
-#define Vanilla_SGD_class
+#ifndef AdaDelta_SGD_class
+#define AdaDelta_SGD_class
 
 /*
-Vanilla Stochastic Gradient Descent (i.e. no adaptation of the learning rate).
+AdaDelta Stochastic Gradient Descent
 */
 
 #include<vector>
 #include<cmath>
 #include<random>
 
-#define Vanilla_SGD_Template template<class LD, class lossFunc>
-#define Vanilla_SGD_Namespace VanillaSGD<LD,lossFunc>
+#define AdaDelta_SGD_Template template<class LD, class lossFunc>
+#define AdaDelta_SGD_Namespace AdaDeltaSGD<LD,lossFunc>
 
-Vanilla_SGD_Template
-class VanillaSGD{
+AdaDelta_SGD_Template
+class AdaDeltaSGD{
     using vec2=std::vector<std::vector<LD>>;
 
     public:
     lossFunc Q;
     vec2 *input_data;
     vec2 *output_data;
-    LD alpha;
-
+    LD gamma,epsilon,alpha;
 
     vec2 steps;
+    std::vector<LD> gE,dwE;
     unsigned int dim;
     
     std::vector<LD> grad;
     
+
     unsigned int data_size;
     std::default_random_engine RndE{std::random_device{}()}; ;
     std::uniform_int_distribution<unsigned int> UnInt;
     
     
-    VanillaSGD(const lossFunc &Q, vec2 *input_data, vec2 *output_data, LD alpha=1e-3);
+    AdaDeltaSGD(const lossFunc &Q, vec2 *input_data, vec2 *output_data, LD gamma=0.95, LD epsilon=1e-6, LD alpha=1);
 
-    VanillaSGD(){};
-    VanillaSGD& operator=(const VanillaSGD& strategy){
+    AdaDeltaSGD(){};
+    AdaDeltaSGD& operator=(const AdaDeltaSGD& strategy){
         this->Q=strategy.Q;
         this->input_data=strategy.input_data;
         this->output_data=strategy.output_data;
+        this->gamma=strategy.gamma;
+        this->epsilon=strategy.epsilon;
         this->alpha=strategy.alpha;
 
 
@@ -51,6 +54,10 @@ class VanillaSGD{
         this->dim=strategy.Q.target->dim;
         this->grad.resize(this->dim);
 
+        this->gE=strategy.gE;
+        this->dwE=strategy.dwE;
+
+
         return *this;    
     };
 
@@ -61,11 +68,13 @@ class VanillaSGD{
 
 
 // Constructor
-Vanilla_SGD_Template
-Vanilla_SGD_Namespace::VanillaSGD(const lossFunc &Q, vec2 *input_data, vec2 *output_data, LD alpha){
+AdaDelta_SGD_Template
+AdaDelta_SGD_Namespace::AdaDeltaSGD(const lossFunc &Q, vec2 *input_data, vec2 *output_data, LD gamma, LD epsilon, LD alpha){
     this->Q=Q;
     this->input_data=input_data;
     this->output_data=output_data;
+    this->gamma=gamma;
+    this->epsilon=epsilon;
     this->alpha=alpha;
 
     this->data_size=input_data->size();
@@ -74,14 +83,21 @@ Vanilla_SGD_Namespace::VanillaSGD(const lossFunc &Q, vec2 *input_data, vec2 *out
     this->dim=Q.target->dim;
     this->grad.resize(this->dim);
     this->steps.push_back(Q.target->w);
+
+    for(unsigned int i=0; i<this->dim; ++i){
+        this->gE.push_back(0);
+        this->dwE.push_back(0);
+    }
+
 }
 
 
 
 // // The update function
-Vanilla_SGD_Template
-LD Vanilla_SGD_Namespace::update(LD abs_tol, LD rel_tol){
-    LD _check=0,_w2=0;
+AdaDelta_SGD_Template
+LD AdaDelta_SGD_Namespace::update(LD abs_tol, LD rel_tol){
+    LD dw=0,_check=0,_w2=0;
+
     unsigned int index=this->UnInt(this->RndE);
     this->Q.Grad(this->input_data->operator[](index),
                 this->output_data->operator[](index),
@@ -89,7 +105,12 @@ LD Vanilla_SGD_Namespace::update(LD abs_tol, LD rel_tol){
 
 
     for(unsigned int i=0 ; i<this->dim; ++i ){
-        Q.target->w[i] = Q.target->w[i] - (this->alpha)*this->grad[i] ; 
+
+        this->gE[i]=this->gamma*this->gE[i] + (1-this->gamma)*this->grad[i]*this->grad[i];
+        dw=std::sqrt( (this->dwE[i]+this->epsilon)/(this->gE[i]+this->epsilon)  )*this->grad[i]*this->alpha;
+        this->dwE[i]=this->gamma*this->dwE[i] + (1-this->gamma)*dw*dw;
+        Q.target->w[i]=Q.target->w[i] - dw;
+        
 
         _w2=abs_tol + Q.target->w[i] * rel_tol;
         _check+=(this->grad[i]/_w2)*(this->grad[i]/_w2);

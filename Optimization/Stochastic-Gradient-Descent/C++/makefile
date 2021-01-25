@@ -7,7 +7,7 @@ Headers=$(wildcard ./*.hpp)
 
 CC=g++
 STD=-std=c++17
-OPT=-O1
+OPT=-O3
 
 
 
