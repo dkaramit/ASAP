@@ -10,9 +10,7 @@ Numerical calculations *as simple as possible* (ASAP).
 **Personal note**
 
 I'm trying to create a collection of programs and scripts that perform various calculations.
-I'm doing this to understand (and show) how various numerical tools work. 
-
-I usually start something using python, but once I understand how it works I translate it to C++.
+I'm doing this to understand (and show) how various numerical tools work. I usually start something using python, but once I understand how it works I translate it to C++.
 
 
 For the moment I have successfully implemented different kinds of Monte Carlo (including Metropolis and VEGAS integration) and various ODE solvers (among other, minor, things). I am currently working on implementation of Optimization algorithms and neural netwokrs. 
