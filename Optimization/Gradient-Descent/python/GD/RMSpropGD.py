@@ -2,7 +2,7 @@ from .GradientDescent import GradientDescent
 
 from numpy   import sqrt as np_sqrt
 
-class RMSpropGD(GradientDescent):
+class RMSpropGD:
     '''Implementation of RMSprop.'''
     
     def __init__(self,target,x0,gamma=0.95,epsilon=1e-6,alpha=1e-2):

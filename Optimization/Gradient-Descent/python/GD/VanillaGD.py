@@ -2,7 +2,7 @@ from .GradientDescent import GradientDescent
 
 from numpy   import sqrt as np_sqrt
 
-class VanillaGD(GradientDescent):
+class VanillaGD:
     def __init__(self,target,x0,alpha=1e-1):
         '''
         target: the target function to be minimized, with target.Gard its gradient

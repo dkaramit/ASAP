@@ -5,7 +5,7 @@ from numpy   import max as np_max
 from numpy   import abs as np_abs
 
 
-class AdaMaxGD(GradientDescent):
+class AdaMaxGD:
     '''Implementation of AdaMax.'''
     
     def __init__(self,target,x0,beta_m=1-1e-1,beta_v=1-1e-3,epsilon=1e-8,alpha=1e-2):

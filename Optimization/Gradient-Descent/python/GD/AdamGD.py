@@ -3,7 +3,7 @@ from .GradientDescent import GradientDescent
 from numpy   import sqrt as np_sqrt
 
 
-class AdamGD(GradientDescent):
+class AdamGD:
     '''Implementation of Adam.'''
     
     def __init__(self,target,x0,beta_m=1-1e-1,beta_v=1-1e-3,epsilon=1e-8,alpha=1e-2):
