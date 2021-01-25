@@ -8,8 +8,6 @@ AdaMax Gradient Descent
 #include<vector>
 #include<cmath>
 
-#include"GD.hpp"
-
 #define AdaMax_GD_Template template<class LD, class Func>
 #define AdaMax_GD_Namespace AdaMaxGD<LD,Func>
 

@@ -9,7 +9,6 @@ NAdamGD is a class rderived from GradientDescent
 #include<vector>
 #include<cmath>
 
-#include"GD.hpp"
 
 #define NAdam_GD_Template template<class LD, class Func>
 #define NAdam_GD_Namespace NAdamGD<LD,Func>

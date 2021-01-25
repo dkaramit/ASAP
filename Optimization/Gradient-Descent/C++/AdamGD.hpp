@@ -8,8 +8,6 @@ Adam Gradient Descent
 #include<vector>
 #include<cmath>
 
-#include"GD.hpp"
-
 #define Adam_GD_Template template<class LD, class Func>
 #define Adam_GD_Namespace AdamGD<LD,Func>
 

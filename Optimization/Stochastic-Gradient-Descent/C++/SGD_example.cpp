@@ -50,8 +50,8 @@ lossFunc<LD,QFunc, targetFunc<LD,TFunc>> loss(MSE,&target);
 vec2 X,Y;
 
 // #define Vanilla
-// #define AdaDelta
 // #define RMSprop
+// #define AdaDelta
 // #define Adam
 // #define AdaMax
 #define NAdam
@@ -61,17 +61,15 @@ using strategy=VanillaSGD<LD,lossFunc<LD,QFunc, targetFunc<LD,TFunc>>> ;
 #define params {loss,&X,&Y,1e-2}
 #endif
 
-
-#ifdef AdaDelta
-using strategy=AdaDeltaSGD<LD,lossFunc<LD,QFunc, targetFunc<LD,TFunc>>> ;
-#define params {loss,&X,&Y,1-1e-2,1e-5,1}
-#endif
-
 #ifdef RMSprop
 using strategy=RMSpropSGD<LD,lossFunc<LD,QFunc, targetFunc<LD,TFunc>>> ;
 #define params {loss,&X,&Y,1-1e-2,1e-5,1e-2}
 #endif
 
+#ifdef AdaDelta
+using strategy=AdaDeltaSGD<LD,lossFunc<LD,QFunc, targetFunc<LD,TFunc>>> ;
+#define params {loss,&X,&Y,1-1e-2,1e-5,1}
+#endif
 
 #ifdef Adam
 using strategy=AdamSGD<LD,lossFunc<LD,QFunc, targetFunc<LD,TFunc>>> ;

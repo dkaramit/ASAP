@@ -2,7 +2,7 @@
 #define Vanilla_SGD_class
 
 /*
-Vanilla Stochastic Gradient Descent (i.e. no adaptation of the learning rate).
+Vanilla Stochastic Gradient Descent (i.e. no adaptation of the learning rate)
 */
 
 #include<vector>

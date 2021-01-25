@@ -6,8 +6,8 @@
 
 
 #include"VanillaSGD.hpp"
-#include"AdaDeltaSGD.hpp"
 #include"RMSpropSGD.hpp"
+#include"AdaDeltaSGD.hpp"
 #include"AdamSGD.hpp"
 #include"AdaMaxSGD.hpp"
 #include"NAdamSGD.hpp"
