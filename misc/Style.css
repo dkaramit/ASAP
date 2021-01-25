@@ -1,8 +1,9 @@
 h1{
     color: rgb(255, 255, 255);
     font-size: 20pt;
+    margin: 0px 0px;
+    padding: 0px 0px;
 }
-
 
 /*Add style for the github link.*/
 .githubRef a 
@@ -39,41 +40,44 @@ p{
 /*style for body*/
 body
 {
-    height: 100%;
+    height: 80%;
 
-    overflow-x: auto;
-    overflow-y: auto;
+    /* overflow-x: scroll; */
+    /* overflow-y: scroll; */
     background-color:  #2D383A;
     color: #C8C8CD;
 }
 
 .Head{
+    margin: 0px 0px;
+    padding: 0px 0px;
+    text-align: center;
     background-color: rgb(192, 192, 192);
-    color: blue;
+    color: rgb(0, 0, 0);
 }
 
 /*split the page*/
 .SplitLeft 
 {
-    height: 80%;
+    height: 60%;
     overflow-x: auto;
     overflow-y: auto;
     position: fixed;
-    width: 45%;
-    padding-top: 5px;
-    left:5%;
+    width: 47%;
+    padding-top: 3px;
+    left:1%;
 }
   
 .SplitRight 
 {  
-    height: 50%;
+    height: 60%;
     overflow-x: auto;
-    overflow-y: visible;
+    overflow-y: auto;
     position: fixed;
-    width: 46%;
-    padding-top: 5px;
-    right: 2%;
-    border: 2px solid rgb(255, 255, 255);
+    width: 51%;
+    padding-top: 0px;
+    right: 0.2%;
+    border: 2px solid rgb(0, 0, 0);
     background-color: #8B8680;
     color: cyan;
     
