@@ -58,32 +58,9 @@ class lossFunc:
 class StochasticGradientDescent:    
     '''Base class for SGD. The derivative classes should overide the constructor and the update function'''
     
-    def __init__(self):
-        pass
+    def __init__(self,strategy):
+        self.strategy=strategy
     
-    def update(self):
-        pass
-    
-    
-    def __call__(self,index):
-        '''
-        Change call so that you calculate the loss of the "index" data-point with the self.targetFuncFunc.w
-        set to self.position
-        '''
-        
-        x=self.data[index][0]
-        t=self.data[index][1]
-        
-        return self.lossFunc(x,t)
-    
-    
-    def Grad(self,index,h=1e-5):
-        x=self.data[index][0]
-        t=self.data[index][1]
-
-        return self.lossFunc.Grad(x,t)
-        
-        
     
     
     
@@ -97,7 +74,7 @@ class StochasticGradientDescent:
         _s=0
         count_steps=1
         while count_steps<=max_step:
-            _check=self.update(abs_tol, rel_tol)
+            _check=self.strategy.update(abs_tol, rel_tol)
             
             count_steps+=1             
                 
@@ -110,7 +87,7 @@ class StochasticGradientDescent:
             if _s>step_break:
                 break
 
-        return self.lossFunc.targetFunc.w[:]
+        return self.strategy.lossFunc.targetFunc.w[:]
 #---------------------------------------------------------------------------------------#
 
 

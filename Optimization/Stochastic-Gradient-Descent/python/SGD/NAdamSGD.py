@@ -50,7 +50,9 @@ class NAdamSGD(StochasticGradientDescent):
         sqrt(1/dim*sum_{i=0}^{dim}(grad/(abs_tol+x*rel_tol))_i^2)
         '''
         index=np_random.randint(self.data_size)
-        grad=self.Grad(index)
+        x=self.data[index][0]
+        t=self.data[index][1]
+        grad=self.lossFunc.Grad(x,t)            
 
         # accumulate the decay rates, in order to correct the averages 
         self.beta_m_ac*=self.beta_m_ac
