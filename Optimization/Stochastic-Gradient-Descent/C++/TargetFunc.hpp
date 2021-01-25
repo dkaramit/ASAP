@@ -7,13 +7,11 @@
 
 
 // Generic target function implementation
-
 template<class LD, class TFunc>
 class targetFunc{
     public:
     TFunc f;
     std::vector<LD> w;
-    std::vector<LD> *Z;
     unsigned int dim;
 
     targetFunc(){};
@@ -47,7 +45,7 @@ class lossFunc{
 
     lossFunc(){};
     lossFunc(const QFunc &Q, TFunc *target, LD h=1e-8){
-        this->target=target; //make it explicit 
+        this->target=target; 
         this->Q=Q;
         this->h=h;
     }
