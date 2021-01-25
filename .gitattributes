@@ -3,6 +3,7 @@
 *.htm linguist-detectable=false
 *.css linguist-detectable=false
 *.tex linguist-detectable=false
+*.TeX linguist-detectable=false
 *.ipynb linguist-detectable=false
 *.cpp linguist-language=C++
 *.hpp linguist-language=C++
