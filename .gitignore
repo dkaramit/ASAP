@@ -12,3 +12,6 @@ tests*
 *0-old*
 *.exe
 *.run
+*.tex
+*.sty
+*jaxo-tex-run*
