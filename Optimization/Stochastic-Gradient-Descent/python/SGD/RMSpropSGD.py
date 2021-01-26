@@ -1,11 +1,9 @@
-from .StochasticGradientDescent import StochasticGradientDescent
-
 from numpy   import random as np_random
 from numpy   import sqrt as np_sqrt
 
 
 
-class RMSpropSGD(StochasticGradientDescent):
+class RMSpropSGD:
     '''Implementation of RMSprop.'''
 
     def __init__(self,loss,data,gamma=0.95,epsilon=1e-6,alpha=1e-2):

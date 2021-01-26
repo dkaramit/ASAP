@@ -1,5 +1,3 @@
-from .GradientDescent import GradientDescent
-
 from numpy   import sqrt as np_sqrt
 from numpy   import max as np_max
 from numpy   import abs as np_abs

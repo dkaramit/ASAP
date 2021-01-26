@@ -30,9 +30,8 @@ class targetFunc:
             
 #-----------------------------------------------------------------------#
 
-#The Gradient Descent base class
+#The Gradient Descent class
 class GradientDescent:
-    
     def __init__(self,strategy):
             self.strategy=strategy
         

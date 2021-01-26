@@ -53,16 +53,10 @@ class lossFunc:
 
 
 
-#Base class for Stochastic Gradient Descent
-
+#class for Stochastic Gradient Descent
 class StochasticGradientDescent:    
-    '''Base class for SGD. The derivative classes should overide the constructor and the update function'''
-    
     def __init__(self,strategy):
         self.strategy=strategy
-    
-    
-    
     
     def run(self,abs_tol=1e-5, rel_tol=1e-3, step_break=100,max_step=5000):
         '''        

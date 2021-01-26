@@ -1,5 +1,3 @@
-from .GradientDescent import GradientDescent
-
 from numpy   import sqrt as np_sqrt
 
 class VanillaGD:

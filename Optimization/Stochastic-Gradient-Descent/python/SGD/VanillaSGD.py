@@ -1,10 +1,8 @@
-from .StochasticGradientDescent import StochasticGradientDescent
-
 from numpy   import random as np_random
 from numpy   import sqrt as np_sqrt
 
 
-class VanillaSGD(StochasticGradientDescent):
+class VanillaSGD:
     '''Plain SGD, with constant learning rate'''
     
     def __init__(self,loss,data,alpha=1e-2):

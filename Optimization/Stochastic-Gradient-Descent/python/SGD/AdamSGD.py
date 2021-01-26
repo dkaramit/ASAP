@@ -1,10 +1,8 @@
-from .StochasticGradientDescent import StochasticGradientDescent
-
 from numpy   import random as np_random
 from numpy   import sqrt as np_sqrt
 
 
-class AdamSGD(StochasticGradientDescent):
+class AdamSGD:
     '''Implementation of Adam.'''
     
     def __init__(self,loss,data,beta_m=1-1e-1,beta_v=1-1e-3,epsilon=1e-8,alpha=1e-2):
