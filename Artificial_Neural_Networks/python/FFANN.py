@@ -14,6 +14,30 @@ class linearActivation:
         return 1
 
 
+
+class sigmoidActivation:
+    '''Example of how an activation functiion should look-like'''
+    def __init__(self):
+        pass
+    
+    def __call__(self,x):
+        return 1/(1+exp(-x))
+        
+    def derivative(self,x):
+        return exp(-x)*self(x)**2
+
+
+class expActivation:
+    '''Example of how an activation functiion should look-like'''
+    def __init__(self):
+        pass
+    
+    def __call__(self,x):
+        return (1-exp(-x))
+        
+    def derivative(self,x):
+        return exp(-x)
+
 class FFANN:
     def __init__(self, _inputs,_outputs,_hidden_nodes, 
                  activations=[]):
@@ -59,8 +83,11 @@ class FFANN:
         #in case you get confused, these are the indices
         self.weight_indices=[ [['w^({0})_{1}{2}'.format(l,j,i) for i in range(self.nodes[l])] for j in range(self.nodes[l+1])]  for l in range(self.layers+1)]
         
+
+        #there is no point chenging and resizing them every time I pass through mulM or calcSignal
         self.derivatives=[ [[0 for i in range(self.nodes[l])] for j in range(self.nodes[l+1])]  for l in range(self.layers+1)]
-        
+        # totalDerivatives accumulates the derivatives in a way that  self.totalDerivatives[-1] is the derivative of the outputs wrt all inputs
+        self.totalDerivatives=[ [[0 for i in range(self.nodes[0])] for j in range(self.nodes[l])]  for l in range(1,self.total_layers)]
         
         #declare the biases
         #By definition the biases of l=0 are zero, so we define biases[l][j] to refer to the l+1 layer.
@@ -89,7 +116,8 @@ class FFANN:
     def __call__(self,x):
         self.inputSignal(x)
         self.feedForward()
-        return self.signals[self.total_layers-1]
+        # you can returnt output and its derivatives
+        return self.signals[self.total_layers-1],self.totalDerivatives[self.total_layers-2]
 
     #-------------------------signals--------------------------------------#
     def inputSignal(self, x):
@@ -99,80 +127,44 @@ class FFANN:
     
     def calcSignal(self, l,j):
         '''
-        calculate the output of the j node of layer l.
+        calculate the output of the j node of layer l and 
+        the derivatives of s^{l}_{j} with respect s^{l-1}_{i} (far all i).
         It is intended to be used after the l-1 signals have been calulated.
         '''
-        if l == 0:
-            print('for l=0 run self.inputSignal')
-            return 0
-        
-        #Notice that self.biases[l-1][j] correspond to the bias of node j and layer l.
-        sum_wx = np_sum( [ self.weights[l-1][j][i] * xi for i,xi in enumerate(self.signals[l-1]) ] ) 
-        self.signals[l][j] =  self.activations[l-1]( sum_wx + self.biases[l-1][j]  )
+        #for l=0 this function is meaningless as self.signals[0] is input
 
-    
-    #========================Feed-Forward========================#
-    
+        #Notice that self.biases[l-1][j] correspond to the bias of node j and layer l.
+        sum_wx = sum( [ self.weights[l-1][j][i] * xi for i,xi in enumerate(self.signals[l-1]) ] ) 
+        self.signals[l][j] =  self.activations[l-1]( sum_wx + self.biases[l-1][j]  )
+        
+        #fill also the derivatives (does the same thing as self.derivative for all i in self.nodes[l-1])
+        arg=sum_wx+self.biases[l-1][j] 
+        for i in range(self.nodes[l-1]):
+            self.derivatives[l-1][j][i]= self.activations[l-1].derivative(arg) * self.weights[l-1][j][i]
+
+           
     def feedForward(self):
         '''
-        Calculates the output of the network.
-        Also sets the signals (for later use)
+        Calculates the output and its derivative of the network.
         '''
+        
         for l in range(1,self.total_layers):
             for j in range(self.nodes[l]):
                 self.calcSignal(l,j)
-            
-            
-            
-    #=======derivatives=======================#
-    def derivative(self,l,j,i):
-        '''
-        Return the derivative of s^{l+1}_{j} with respect s^{l}_{i}
-        It is intended to be used after the l-1 signals have been calulated.
-        '''
+            self.mulM(l)
         
-        arg=np_sum( [ self.weights[l][j][m] * xi for m,xi in enumerate(self.signals[l]) ] )+self.biases[l][j]  
-        
-        return self.activations[l].derivative(arg) * self.weights[l][j][i]
-        
-    
-    def calcDerivatives(self):
-        '''Fill self.derivatives'''
-        for l in range(self.total_layers-1):
-            for j in range(self.nodes[l+1]):
-                for i in range(self.nodes[l]):
-                    self.derivatives[l][j][i]=self.derivative(l,j,i)
-
+                
     def mulM(self,l):
         '''Matrix multiplication to be used when calculating the derivatives'''
-        _res=[]
-        for j in range(self.nodes[l+1]):
-            _tmp=[]
+        if l==1:
+            self.totalDerivatives[0]= self.derivatives[0][:]
+            return 
+        
+        for j in range(self.nodes[l]):
             for i in range(self.nodes[0]):
-                _tmp.append(0)
-                for k in range(self.nodes[l]):
-                    _tmp[i]+=self.derivatives[l][j][k]*self.totalDerivatives[k][i]
-            _res.append(_tmp)
-        
-        self.totalDerivatives=_res[:]
-    
-    def calcTotaDerivative(self,x=[]):
-        '''
-        calculate the derivatives of all outputs with respect to all inputs at the latest input point.
-        That is, this function should run after feedFarward, otherwise the signals might be outdated 
-        (Note: I should optimize it to run feefForward and derivatives at the same time, with minimal cost).
-        
-        The result is stored in self.totalDerivatives 
-        '''
-        if len(x)==0:
-            self.calcDerivatives()
-            self.totalDerivatives=self.derivatives[0][:]
-            for l in range(1,self.total_layers-1):
-                self.mulM(l)
-        else:
-            self(x)
-            self.calcTotaDerivative()
-
+                self.totalDerivatives[l-1][j][i]=0
+                for k in range(self.nodes[l-1]):
+                    self.totalDerivatives[l-1][j][i]+=self.derivatives[l-1][j][k]*self.totalDerivatives[l-2][k][i]
 
 
     #========================update========================#
@@ -195,57 +187,28 @@ class FFANN:
 
     #-------------------------------Aux--------------------------------#
 
-    def numericalDerivative(self,output_node,input_node,h=1e-3,x=[]):
+    def numericalDerivative(self,output_node,input_node,h=1e-3):
         '''Vanilla numerical derivative (faster in very large networks)'''
-        if len(x)==0:
-            h1=h+abs(self.signals[0][input_node])*h
-            
-            self.signals[0][input_node]+=h1
-            self.feedForward()
-            f1=self.signals[self.total_layers-1][output_node]
-            
-            self.signals[0][input_node]-=2*h1
-            self.feedForward()
-            f0=self.signals[self.total_layers-1][output_node]
-            
-            self.signals[0][input_node]+=h1
+        h1=h+abs(self.signals[0][input_node])*h
         
-            return (f1-f0)/(2*h1)
-        else:
-            self(x)
-            return self.numericalDerivative(output_node,input_node,h,[])
+        self.signals[0][input_node]+=h1
+        self.feedForward()
+        f1=self.signals[self.total_layers-1][output_node]
+        
+        self.signals[0][input_node]-=2*h1
+        self.feedForward()
+        f0=self.signals[self.total_layers-1][output_node]
+        
+        self.signals[0][input_node]+=h1
+    
+        return (f1-f0)/(2*h1)
 
     def totalNumericalDerivative(self,h=1e-3):
     
         return [[self.numericalDerivative(p,r)  for r in range(self.inputs)] for p in range(self.outputs) ]
 
 
-    def write_params(self):
-        '''
-            Returns biases and weights as a vector.
-            Can be used to pass the parameters to an optimization algorithm that takes vectors. 
-        '''
-        X=[]
-        for l in range(self.layers+1):
-            for j in range(self.nodes[l+1]):
-                X.append(self.biases[l][j])
-                for i in range(self.nodes[l]):
-                    X.append(self.weights[l][j][i])
-        return X
     
-    def read_params(self,X):
-        '''
-            Read and update biases and weights from a vector X
-            Can be used to read the result from an optimization algorithm that returns vectors. 
-        '''
-        _s=0
-        for l in range(self.layers+1):
-            for j in range(self.nodes[l+1]):
-                self.update_bias(l,j,X[_s])
-                _s+=1
-                for i in range(self.nodes[l]):
-                    self.update_weight(l,j,i,X[_s])
-                    _s+=1
 
     #fill everything with a given value
     def fill_weights_with(self,value=0):
