@@ -36,7 +36,6 @@ def calcSignal(self, l,j):
     arg=sum_wx+self.biases[l-1][j] 
     for i in range(self.nodes[l-1]):
         self.derivatives[l-1][j][i]= self.activations[l-1].derivative(arg) * self.weights[l-1][j][i]
-
         
     
             

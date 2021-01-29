@@ -46,6 +46,7 @@ def FFANN_const(self, N_inputs,N_outputs, hiddenNodes, activationFunctions):
 
     #there is no point chenging and resizing them every time I pass through mulM or calcSignal
     self.derivatives=[ [[0 for i in range(self.nodes[l])] for j in range(self.nodes[l+1])]  for l in range(self.total_layers-1)]
+    self.derivatives_w=[ [[0 for i in range(self.nodes[l])] for j in range(self.nodes[l+1])]  for l in range(self.total_layers-1)]
     # totalDerivatives accumulates the derivatives in a way that  self.totalDerivatives[-1] is the derivative of the outputs wrt all inputs
     self.totalDerivatives=[ [[0 for i in range(self.nodes[0])] for j in range(self.nodes[l])]  for l in range(1,self.total_layers)]
     

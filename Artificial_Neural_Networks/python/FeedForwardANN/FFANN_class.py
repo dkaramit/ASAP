@@ -59,7 +59,7 @@ class FFANN:
         '''
         Function that initializes the weights and biases using random numbers in [_min,_max]
         '''
-        init_params(self,_min=-1,_max=1)
+        init_params(self,_min,_max)
     
     #========================update========================#
 
@@ -89,7 +89,7 @@ class FFANN:
         It is still better to just run __call__(), because __call__ calculates everything (marginally) faster.  
         '''
 
-        return numericalDerivative(self,input_node,h=1e-3)
+        return numericalDerivative(self,input_node,h)
 
     def totalNumericalDerivative(self,h=1e-3):
         '''
@@ -97,7 +97,7 @@ class FFANN:
         The result is stored in self.numericalDerivatives
         '''
 
-        return totalNumericalDerivative(self,h=1e-3)
+        return totalNumericalDerivative(self,h)
 
 
 
@@ -105,9 +105,9 @@ class FFANN:
 
     #-------------------------------Aux--------------------------------#
     def fill_weights_with(self,value=0):
-        fill_weights_with(self,value=0)
+        fill_weights_with(self,value)
 
-    def fill_biases_with(self,value):
+    def fill_biases_with(self,value=0):
         fill_biases_with(self,value)
     #print
     def print_weights(self):
