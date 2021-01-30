@@ -22,11 +22,24 @@ def inputSignal(self, x):
 def calcSignal(self, l,j):
     '''
     Calculate the output of the j node of layer l and 
-    the derivatives of s^{l}_{j} with respect s^{l-1}_{i} (far all i).
+    the (local) derivatives of s^{l}_{j} with respect s^{l-1}_{i} (far all i).
+    we use:
+    
+    self.derivatives[0][j][i]= \dfrac{\partial s^{1}_{j}}{\partial s^{(0)}_{i}} 
+    self.derivatives[1][j][i]= \dfrac{\partial s^{2}_{j}}{\partial s^{(1)}_{i}} 
+
+    self.derivatives[l][j][i]= \dfrac{\partial s^{l+1}_{j}}{\partial s^{(l)}_{i}} 
+    
+
+    Note the convention:
+    1. \theta^{(l)} =  self.activations[l-1]
+    2. b^{(l)} = self.biases[l-1]
+
     It is intended to be used after the l-1 signals have been calulated
-    within the feedForward() call
+    within the feedForward() call.
+
+    Note that this function is meaningless for l=0, since self.signals[0] is input
     '''
-    #for l=0 this function is meaningless as self.signals[0] is input
 
     #Notice that self.biases[l-1][j] correspond to the bias of node j and layer l.
     sum_wx = sum( [ self.weights[l-1][j][i] * xi for i,xi in enumerate(self.signals[l-1]) ] ) 
@@ -42,7 +55,19 @@ def calcSignal(self, l,j):
 def mulM(self,l):
     '''
     Matrix multiplication to be used when calculating the derivatives.
-    It is intended to be used the feedForward() call
+    It is intended to be used the feedForwardDerivatives() call.
+    self.totalDerivatives is
+
+    self.totalDerivatives[0][j][i] = \dfrac{\partial s^{1}_{j}}{\partial s^{(0)}_{i}} 
+    self.totalDerivatives[1][j][i] = \dfrac{\partial s^{2}_{j}}{\partial s^{(0)}_{i}} 
+    .
+    .
+    .
+    self.totalDerivatives[l][j][i] = \dfrac{\partial s^{l+1}_{j}}{\partial s^{(0)}_{i}} 
+
+    using our convention, this is
+
+    self.totalDerivatives[l][j][i] = self.derivatives[l][j][k] * self.totalDerivatives[l-1][j][k] 
     '''
 
     if l==1:
@@ -56,15 +81,28 @@ def mulM(self,l):
                 self.totalDerivatives[l-1][j][i]+=self.derivatives[l-1][j][k]*self.totalDerivatives[l-2][k][i]
 
 
-def feedForward(self):
+def feedForwardDerivatives(self):
     '''
-    Calculate the output and the derivatives of the network
+    Calculate the output and the "local" derivatives of the network
+    This feed forward function also fills the self.totalDerivatives,
+    with self.totalDerivatives[-1] being the derivatives of the output 
+    nodes with respect to the input nodes
     '''
     
     for l in range(1,self.total_layers):
         for j in range(self.nodes[l]):
             self.calcSignal(l,j)
         self.mulM(l)
+
+
+def feedForward(self):
+    '''
+    Calculate only the output of the network and the local derivatives
+    '''
+    
+    for l in range(1,self.total_layers):
+        for j in range(self.nodes[l]):
+            self.calcSignal(l,j)
 
 
 #let's overlaod __call__ for convenience

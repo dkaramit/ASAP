@@ -2,7 +2,7 @@ from numpy import sum as np_sum
 
 from .FFANN_const import  FFANN_const
 from .FFANN_init_params import  init_params
-from .FFANN_call import  evaluate,call,inputSignal,calcSignal,feedForward,mulM
+from .FFANN_call import  evaluate,call,inputSignal,calcSignal,feedForward,feedForwardDerivatives,mulM
 from .FFANN_numerical_derivative import numericalDerivative,totalNumericalDerivative
 from .FFANN_aux import fill_weights_with,fill_biases_with,print_weights,print_biases,print_signals
 
@@ -40,6 +40,14 @@ class FFANN:
         '''
         mulM(self,l)
 
+    def feedForwardDerivatives(self):
+        '''
+        Calculate the output and the "local" derivatives of the network
+        This feed forward function also fills the self.totalDerivatives,
+        with self.totalDerivatives[-1] being the derivatives of the output 
+        nodes with respect to the input nodes
+        '''
+        feedForwardDerivatives(self)
 
     def feedForward(self):
         '''
