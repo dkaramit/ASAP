@@ -64,6 +64,7 @@ def numericalDerivative_bw(self,l,j,i,h=1e-3):
 
     \dfrac{\partial s^{(N-1)}_{r}}{\partial w^{(l)}_{ji}} and 
     \dfrac{\partial s^{(N-1)}_{r}}{\partial b^{(l+1)}_{j}} 
+
     (for all r=0,1,...self.nodes[self.total_layers-1])
 
     using the formula: 
@@ -74,6 +75,17 @@ def numericalDerivative_bw(self,l,j,i,h=1e-3):
     '''
 
     N=self.total_layers
+    if l==N-2:            
+        for r in range(self.nodes[N-1]):
+            if j==r:
+                sum_wx = sum( [ self.weights[l][j][k] * xi for k,xi in enumerate(self.signals[l]) ] ) 
+                self.numerical_dsdb[r]=self.activations[l].derivative(sum_wx+self.biases[l][j])
+                self.numerical_dsdw[r]=self.activations[l].derivative(sum_wx+self.biases[l][j])*self.signals[l][i]
+            else:
+                self.numerical_dsdb[r]=0
+                self.numerical_dsdw[r]=0
+        return
+
 
     h1=h+abs(self.signals[l+1][j])*h
 

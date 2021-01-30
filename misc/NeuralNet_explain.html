@@ -13077,7 +13077,7 @@ div#notebook {
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Let's-build-a-class-that-defines-a-feed-forwad-artificial-neural-network.">Let's build a class that defines a <em>feed-forwad artificial neural network</em>.<a class="anchor-link" href="#Let's-build-a-class-that-defines-a-feed-forwad-artificial-neural-network.">&#182;</a></h2>
+<h1 id="Let's-build-a-class-that-defines-a-feed-forwad-artificial-neural-network.">Let's build a class that defines a <em>feed-forwad artificial neural network</em>.<a class="anchor-link" href="#Let's-build-a-class-that-defines-a-feed-forwad-artificial-neural-network.">&#182;</a></h1>
 </div>
 </div>
 </div>
@@ -13107,379 +13107,114 @@ div#notebook {
 <p><img src="misc/Neuron.png" style="height:450px"></p>
 <p>That is, it takes the outputs from the previous layer ($l$), and the weights that represent the strength of the connection between the node $i$ of the $l$ layer and node $j$ of the $l+1$ layer (all these inputs and outputs are called "signals"). Then it adds all the different contributions and returns the output of which is:
 $$
-x^{(l)}_{j} = \theta\left( \displaystyle \sum_{i=0}^{n^{(l)}-1} w^{(l)}_{j i}  x^{(l)}_{i} + b^{(l+1)}_{j}\right) \; , 
+s^{(l)}_{j} = \theta\left( \displaystyle \sum_{i=0}^{n^{(l)}-1} w^{(l)}_{j i}  s^{(l)}_{i} + b^{(l+1)}_{j}\right) \; , 
 $$</p>
 <p>with $\theta$ the "activation function", which is some simple function we choose.</p>
 
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[1]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[2]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">class</span> <span class="nc">FFANN</span><span class="p">:</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_inputs</span><span class="p">,</span><span class="n">_outputs</span><span class="p">,</span><span class="n">_hidden_nodes</span><span class="p">,</span> 
-                 <span class="n">activations</span><span class="o">=</span><span class="p">[]):</span>
-        <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">        Constructor for the class.</span>
-
-<span class="sd">        _inputs: number of input nodes</span>
-<span class="sd">        _outputs: number of ouput nodes</span>
-<span class="sd">        </span>
-<span class="sd">        _hidden_nodes: list of number of layers in each hidden node</span>
-<span class="sd">        activations: list of activation functions for hidden layers and output</span>
-<span class="sd">        &#39;&#39;&#39;</span>
-        
-        <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="o">=</span><span class="n">_inputs</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="o">=</span><span class="n">_outputs</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">_hidden_nodes</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">total_layers</span><span class="o">=</span><span class="mi">2</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">layers</span> <span class="c1">#total layers = No. layers + input layer + output layer</span>
-        
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">activations</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">activations</span><span class="o">=</span><span class="p">[</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span><span class="n">x</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">total_layers</span><span class="o">-</span><span class="mi">1</span><span class="p">)]</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">activations</span><span class="o">=</span><span class="p">[</span><span class="n">_</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">activations</span><span class="p">]</span>
-
-        <span class="c1">#an array to hold number of nodes at each layer</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="o">=</span><span class="p">[</span><span class="n">_inputs</span><span class="p">]</span>
-        
-        <span class="k">for</span> <span class="n">_n</span> <span class="ow">in</span> <span class="n">_hidden_nodes</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_n</span><span class="p">)</span>
-            
-        <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_outputs</span><span class="p">)</span>
-        
-            
-        
-        <span class="c1">#declare the signals</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">signals</span><span class="o">=</span><span class="p">[</span> <span class="p">[</span><span class="mi">0</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">l</span><span class="p">])]</span>  <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">total_layers</span><span class="p">)]</span>
-        <span class="c1">#in case you get confused, these are the indices</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">signal_indices</span><span class="o">=</span><span class="p">[</span> <span class="p">[</span><span class="s1">&#39;x^(</span><span class="si">{0}</span><span class="s1">)_</span><span class="si">{1}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">l</span><span class="p">,</span><span class="n">j</span><span class="p">)</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">l</span><span class="p">])]</span>  <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">total_layers</span><span class="p">)]</span>
-        
-
-        
-        <span class="c1">#declare the weights</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="o">=</span><span class="p">[</span> <span class="p">[[</span><span class="mi">0</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">l</span><span class="p">])]</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">l</span><span class="o">+</span><span class="mi">1</span><span class="p">])]</span>  <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span>
-        <span class="c1">#in case you get confused, these are the indices</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">weight_indices</span><span class="o">=</span><span class="p">[</span> <span class="p">[[</span><span class="s1">&#39;w^(</span><span class="si">{0}</span><span class="s1">)_</span><span class="si">{1}{2}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">l</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">l</span><span class="p">])]</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">l</span><span class="o">+</span><span class="mi">1</span><span class="p">])]</span>  <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span>
-        
-        
-        
-        <span class="c1">#declare the biases</span>
-        <span class="c1">#By definition the biases of l=0 are zero, so we define biases[l][j] to refer to the l+1 layer.</span>
-        <span class="c1">#this will help as we will be able to put the biases in the same loop as the weights (see init_params for example).</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">biases</span><span class="o">=</span><span class="p">[</span> <span class="p">[</span><span class="mi">0</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">l</span><span class="o">+</span><span class="mi">1</span><span class="p">])]</span>  <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span>        
-        <span class="c1">#in case you get confused, these are the indices</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">bias_indices</span><span class="o">=</span><span class="p">[</span> <span class="p">[</span><span class="s1">&#39;b^(</span><span class="si">{0}</span><span class="s1">)_</span><span class="si">{1}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">l</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="n">j</span><span class="p">)</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">l</span><span class="o">+</span><span class="mi">1</span><span class="p">])]</span>  <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span>
-        
-    
-        <span class="bp">self</span><span class="o">.</span><span class="n">init_params</span><span class="p">()</span><span class="c1">#initialize the weights and biases</span>
-                
-    <span class="c1">#========================initializations========================#</span>
-    <span class="k">def</span> <span class="nf">init_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">_min</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span><span class="n">_max</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">        Function that initializes the weights and biasesby some random numbers.</span>
-<span class="sd">        &#39;&#39;&#39;</span>
-        <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
-            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">l</span><span class="o">+</span><span class="mi">1</span><span class="p">]):</span>
-                <span class="c1">#You see, we defined biases in this way in order to manipulate them with the weights at the same loop. </span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">biases</span><span class="p">[</span><span class="n">l</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">([</span><span class="n">_min</span><span class="p">,</span><span class="n">_max</span><span class="p">])</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">()</span> <span class="p">)</span>
-                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">l</span><span class="p">]):</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="p">[</span><span class="n">l</span><span class="p">][</span><span class="n">j</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">([</span><span class="n">_min</span><span class="p">,</span><span class="n">_max</span><span class="p">])</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">()</span> <span class="p">)</span>
-    
-    
-    <span class="k">def</span> <span class="nf">write_params</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">            Returns biases and weights as a vector.</span>
-<span class="sd">            Can be used to pass the parameters to an optimization algorithm that takes vectors. </span>
-<span class="sd">        &#39;&#39;&#39;</span>
-        <span class="n">X</span><span class="o">=</span><span class="p">[]</span>
-        <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
-            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">l</span><span class="o">+</span><span class="mi">1</span><span class="p">]):</span>
-                <span class="n">X</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">biases</span><span class="p">[</span><span class="n">l</span><span class="p">][</span><span class="n">j</span><span class="p">])</span>
-                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">l</span><span class="p">]):</span>
-                    <span class="n">X</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="p">[</span><span class="n">l</span><span class="p">][</span><span class="n">j</span><span class="p">][</span><span class="n">i</span><span class="p">])</span>
-        <span class="k">return</span> <span class="n">X</span>
-    
-    <span class="k">def</span> <span class="nf">read_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">X</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">            Read and update biases and weights from a vector X</span>
-<span class="sd">            Can be used to read the result from an optimization algorithm that returns vectors. </span>
-<span class="sd">        &#39;&#39;&#39;</span>
-        <span class="n">_s</span><span class="o">=</span><span class="mi">0</span>
-        <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
-            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">l</span><span class="o">+</span><span class="mi">1</span><span class="p">]):</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">update_bias</span><span class="p">(</span><span class="n">l</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">X</span><span class="p">[</span><span class="n">_s</span><span class="p">])</span>
-                <span class="n">_s</span><span class="o">+=</span><span class="mi">1</span>
-                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">l</span><span class="p">]):</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">update_weight</span><span class="p">(</span><span class="n">l</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">i</span><span class="p">,</span><span class="n">X</span><span class="p">[</span><span class="n">_s</span><span class="p">])</span>
-                    <span class="n">_s</span><span class="o">+=</span><span class="mi">1</span>
-    
-    <span class="k">def</span> <span class="nf">input_signal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39;Read the input (x).&#39;&#39;&#39;</span>
-        <span class="k">for</span> <span class="n">j</span><span class="p">,</span><span class="n">_</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">signals</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">_</span>
-    
-    <span class="k">def</span> <span class="nf">calc_signal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span><span class="n">j</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39;calculate the output of the j node of layer l.&#39;&#39;&#39;</span>
-        <span class="k">if</span> <span class="n">l</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;for l=0 run self.input_signal&#39;</span><span class="p">)</span>
-            <span class="k">return</span> <span class="mi">0</span>
-        
-        <span class="c1">#Notice that self.biases[l-1][j] correspond to the bias of node j and layer l.</span>
-        <span class="n">sum_wx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span> <span class="p">[</span> <span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="p">[</span><span class="n">l</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="n">j</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">xi</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">xi</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">signals</span><span class="p">[</span><span class="n">l</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="p">]</span> <span class="p">)</span> 
-        <span class="bp">self</span><span class="o">.</span><span class="n">signals</span><span class="p">[</span><span class="n">l</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span>  <span class="bp">self</span><span class="o">.</span><span class="n">activations</span><span class="p">[</span><span class="n">l</span><span class="o">-</span><span class="mi">1</span><span class="p">](</span> <span class="n">sum_wx</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">biases</span><span class="p">[</span><span class="n">l</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="n">j</span><span class="p">]</span>  <span class="p">)</span>
-
-    
-    <span class="c1">#========================Feed-Forward========================#</span>
-    
-    <span class="k">def</span> <span class="nf">feed_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">        Calculates the output of the network.</span>
-<span class="sd">        Also sets the signals (for later use)</span>
-<span class="sd">        &#39;&#39;&#39;</span>
-        <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">total_layers</span><span class="p">):</span>
-            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">l</span><span class="p">]):</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">calc_signal</span><span class="p">(</span><span class="n">l</span><span class="p">,</span><span class="n">j</span><span class="p">)</span>
-            
-            
-            
-            
-    <span class="c1">#========================update========================#</span>
-
-    <span class="k">def</span> <span class="nf">update_weight</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">l</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">i</span><span class="p">,</span><span class="n">value</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">        Change the value of w^{l}_{ji} to value</span>
-<span class="sd">        &#39;&#39;&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="p">[</span><span class="n">l</span><span class="p">][</span><span class="n">j</span><span class="p">][</span><span class="n">i</span><span class="p">]</span><span class="o">=</span><span class="n">value</span>
-
-    <span class="k">def</span> <span class="nf">update_bias</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">l</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">value</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">        Change the value of b^{l}_{j} to value</span>
-<span class="sd">        &#39;&#39;&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">biases</span><span class="p">[</span><span class="n">l</span><span class="p">][</span><span class="n">j</span><span class="p">]</span><span class="o">=</span><span class="n">value</span>
-    <span class="c1">#======================================================#</span>
-
-
-    <span class="c1">#print</span>
-    <span class="k">def</span> <span class="nf">print_weights</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="p">)):</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;l=&#39;</span><span class="p">,</span><span class="n">l</span><span class="p">,</span><span class="s1">&#39;:&#39;</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="p">[</span><span class="n">l</span><span class="p">])):</span>
-                
-                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="p">[</span><span class="n">l</span><span class="p">][</span><span class="n">j</span><span class="p">])):</span>
-                    <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="p">[</span><span class="n">l</span><span class="p">][</span><span class="n">j</span><span class="p">][</span><span class="n">i</span><span class="p">],</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
-                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;============&#39;</span><span class="p">)</span>
-    
-    <span class="k">def</span> <span class="nf">print_biases</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">biases</span><span class="p">)):</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;l=&#39;</span><span class="p">,</span><span class="n">l</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="s1">&#39;:&#39;</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">biases</span><span class="p">[</span><span class="n">l</span><span class="p">])):</span>
-                <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">biases</span><span class="p">[</span><span class="n">l</span><span class="p">][</span><span class="n">j</span><span class="p">],</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;============&#39;</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">print_signals</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">signals</span><span class="p">)):</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;l=&#39;</span><span class="p">,</span><span class="n">l</span><span class="p">,</span><span class="s1">&#39;:&#39;</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">signals</span><span class="p">[</span><span class="n">l</span><span class="p">])):</span>
-                <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">signals</span><span class="p">[</span><span class="n">l</span><span class="p">][</span><span class="n">j</span><span class="p">],</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;============&#39;</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[3]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">brain</span> <span class="o">=</span> <span class="n">FFANN</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">,[</span><span class="mi">3</span><span class="p">])</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[4]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">#this is how you run it!</span>
-<span class="n">brain</span><span class="o">.</span><span class="n">input_signal</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
-<span class="n">brain</span><span class="o">.</span><span class="n">feed_forward</span><span class="p">()</span>
-<span class="n">brain</span><span class="o">.</span><span class="n">signals</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[4]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>[[2, 1],
- [0.3826296767389352, -0.2700919935712156, 0.6227726078006575],
- [-1.0853964255160546]]</pre>
-</div>
-
-</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="The-FFANN-class">The <code>FFANN</code> class<a class="anchor-link" href="#The-FFANN-class">&#182;</a></h1><p>the class <code>FFANN</code> defines a feed-forward artificial neural network with an arbitrary number of input/output nodes and hidden layers.</p>
+<h2 id="Functions-and-conventions">Functions and conventions<a class="anchor-link" href="#Functions-and-conventions">&#182;</a></h2><p>The constructor is called using</p>
+<p><code>FFANN( number_of_input_nodes, number_of_output_nodes, hidden_nodes, activation_functions)</code></p>
+<p><code>hidden_nodes</code> a list that contains the number of nodes in each hidden layer 
+(e.g. a list like [2,3,5] means that we have 3 hidden layers with 2,3,5 number of nodes respectively).</p>
+<p>The weights, biases, and signals are stored in <code>FFANN.weights</code>, <code>FFANN.biases</code>,<code>FFANN.signals</code>. For teh moment they can be initialized using <code>FFANN.init_params</code>, but one can define their own initialization. It is <strong>important</strong> that the biases of the $l^{\rm th}$ layer correspond to the <code>FFANN.biases[l-1]</code>, because the input nodes do not have a bias.</p>
+<p><code>activation_functions</code> is a  list with activation functions in each node. Again (<strong>important</strong>) the activations of the $l^{\rm th}$ layer correspond to the <code>FFANN.activations[l-1]</code>, because there is one less activatioin needed (the output is just the output).</p>
+<h3 id="Evaluation">Evaluation<a class="anchor-link" href="#Evaluation">&#182;</a></h3><p>The different ways to get the output of the network are:</p>
+<ol>
+<li><p><code>FFANN.evaluate(x)</code>, which calculates <em>only</em> the signals.</p>
+</li>
+<li><p><code>FFANN(x)</code>, which calculates the signals and the "local" derivatives of the network with self.signals[0]=x. This stores all the signals in <code>FFANN.signals</code> and the local derivatives in <code>self.derivatives[l][j][i]</code>$= \dfrac{\partial s^{l+1}_{j}}{\partial s^{(l)}_{i}}$.</p>
+</li>
+<li><p><code>FFANN.feedForwardDerivatives()</code>. Calculates the signals and the "local" derivatives of the network (at the current <code>FFANN.signals[0]</code>) This feed forward function also fills <code>self.totalDerivatives</code>, with <code>self.totalDerivatives[l][j][i]</code> $= \dfrac{\partial s^{l+1}_{j}}{\partial s^{(0)}_{i}}$.</p>
+</li>
+</ol>
+<p>After <code>FFANN(x)</code> one call <code>FFANN.backPropagation</code>. This fills <code>FFANN.Delta[f][j][i]</code> $= \dfrac{\partial s^{[N-1)]}_{k}}{\partial s^{[N-(f+2)]}_{i}}$, with $N$ the total numer of layers ($N-1$ is the output layer since we start counting form $l=0$), $f=0,1,2,...N-2$. <em>Notice that</em> <code>Delta</code> is like <code>totalDerivatives</code> but backwards (hence <strong>backPropagation</strong>).</p>
+<h3 id="Derivatives">Derivatives<a class="anchor-link" href="#Derivatives">&#182;</a></h3><p>As already mensioned there are two different ways to get the derivates.</p>
+<ol>
+<li><p>call <code>FFANN.feedForwardDerivatives()</code>. After this you can find
+$\dfrac{\partial s^{(N-1)}_{j}}{\partial s^{(0)}_{i}}$ in <code>FFANN.totalDerivatives[N-2][j][i]</code>.</p>
+</li>
+<li><p><code>FFANN(x)</code> and then <code>FFANN.backPropagation()</code>. After this you can find
+$\dfrac{\partial s^{(N-1)}_{j}}{\partial s^{(0)}_{i}}$ in <code>FFANN.Delta[N-2][j][i]</code>.</p>
+</li>
+</ol>
+<p>Once you run <code>FFANN.backPropagation()</code>, you can also calculate the derivatives with respect to the weights, biases, and signals. Simply run <code>FFANN.derivative_bw(self,l,j,i)</code> which stores $\dfrac{\partial s^{(N-1)}_{r}}{\partial w^{(l)}_{ji}}$ and  $\dfrac{\partial s^{(N-1)}_{r}}{\partial b^{(l+1)}_{j}}$ (for all $r=0,1,... \# \text{ output nodes}$) to <code>FFANN.dsdw</code> and <code>FFANN.dsdb</code>, respectively.</p>
+<hr>
+<h4 id="Why-two-kinds-of-&quot;derivatives&quot;?">Why two kinds of "derivatives"?<a class="anchor-link" href="#Why-two-kinds-of-&quot;derivatives&quot;?">&#182;</a></h4><p>Both use the chain rule to obtain derivatives. However:</p>
+<ol>
+<li><p><code>FFANN.totalDerivatives</code> is obtained by applying the chain-rule during feed forward 
+(i.e. at the same time as the calculation of the signals!). Therefore, this is useful when the network is already trained, and we just need its derivatives (since they are calculated during the feed forward).</p>
+</li>
+<li><p><code>FFANN.Delta</code> is obtained by applying the chain-rule during back propagation
+(i.e. its elements are $\dfrac{\partial s^{[N-1)]}_{k}}{\partial s^{[N-(f+2)]}_{i}}$ 
+for $N= total \ \# \ layers$, $f=N-(l+3)$ and $l&lt;N-2$).
+This is useful as we train the network, as it cannot be caclulated during feed forward.</p>
+</li>
+</ol>
+<p>The good thing is that both can be used to obtain the derivative of the outputs with respect to the signals. That is:
+$\dfrac{\partial s^{(N-1)}_{j}}{\partial s^{(0)}_{i}}$ = <code>FFANN.Delta[N-2][j][i]</code> = <code>FFANN.totalDerivatives[N-2][j][i]</code></p>
+<hr>
+<h2 id="Numerical-derivatives">Numerical derivatives<a class="anchor-link" href="#Numerical-derivatives">&#182;</a></h2><p>For testing, debugginf or any other purpose one can think of, the numerical derivatives can be obtained using 
+<code>FFANN.totalNumericalDerivative()</code>, which stores $\dfrac{\partial s^{(N-1)}_{j}}{\partial s^{(0)}_{i}}$ in <code>FFANN.numericalDerivatives[j][i]</code>.</p>
+<p>The numerical derivatives of $\dfrac{\partial s^{(N-1)}_{r}}{\partial w^{(l)}_{ji}}$ and $\dfrac{\partial s^{(N-1)}_{r}}{\partial b^{(l+1)}_{j}}$ (for all $r=0,1,... \# \text{ output nodes}$) are stored in <code>FFANN.numerical_dsdw</code> and <code>FFANN.numerical_dsdb</code> after  calling <code>FFANN.numericalDerivative_bw(l,j,i)</code>.  It should be noted, that this function has to be called after (at least) <code>FFANN.evaluate</code> since it uses the fact that this derivative needs only to re-calculate the signals after the  $(l+1)^{(\rm th)}$ layer.</p>
 
 </div>
 </div>
-
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Check-that-the-read-and-write-to-vector-do-not-mess-up-the-biases-and-matrices">Check that the read and write to vector do not mess-up the biases and matrices<a class="anchor-link" href="#Check-that-the-read-and-write-to-vector-do-not-mess-up-the-biases-and-matrices">&#182;</a></h3>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[5]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">brain</span> <span class="o">=</span> <span class="n">FFANN</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">,[</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">])</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[6]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">brain</span><span class="o">.</span><span class="n">weights</span><span class="p">,</span><span class="n">brain</span><span class="o">.</span><span class="n">biases</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[6]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>([[[-0.725223081605065, 0.792457666009715]],
-  [[0.9488242498767208], [0.5551122212356655], [0.2746075261355123]],
-  [[0.36317198628612335, -0.7419949974387423, -0.9485500880618983]]],
- [[-0.6200155542060692],
-  [-0.6681891468614447, -0.4593180497918209, -0.7498749469412885],
-  [0.4184742837674873]])</pre>
-</div>
-
-</div>
+<h1 id="Derivatives-with-respect-to-the-inputs,-weights,-and-biases">Derivatives with respect to the inputs, weights, and biases<a class="anchor-link" href="#Derivatives-with-respect-to-the-inputs,-weights,-and-biases">&#182;</a></h1><p>During <code>FFANN.feedForward</code> we store all $\dfrac{\partial s^{(l+1)}_{j}}{\partial s^{(l)}_{i}}= \theta^{\prime \, (l+1)}_{j} w^{(l)}_{ji}$
+in <code>FFANN.derivatives</code>. For a network with $N$ layers ($N-2$ hidden + $1$ input layer + $1$ output layer), we wish to calculate</p>
+<ul>
+<li>$\dfrac{\partial s^{(N-1)}_{r}}{\partial s^{(0)}_{p}}$ . <a href="#1">#1</a></li>
+<li>$\dfrac{\partial s^{(N-1)}_{r}}{\partial w^{(l)}_{ji}} = 
+\dfrac{\partial s^{(N-1)}_{r}}{\partial s^{(l+1)}_{j}} \theta^{\prime\, (l+1)}_{j}s^{(l)}_{i}$ (no sum over $j$). <a href="#2">#2</a></li>
+</ul>
+<p>In order to do this we can accumulate
+$$
+\Delta^{ (0) }_{j i} = \dfrac{\partial s^{(N-1)}_{j}}{\partial s^{(N-2)}_{i}} \\
+\Delta^{ (1) }_{j i} = \dfrac{\partial s^{(N-1)}_{j}}{\partial s^{(N-3)}_{i}}=
+\dfrac{\partial s^{(N-1)}_{j}}{\partial s^{(N-2)}_{k_1}} \cdot 
+\dfrac{\partial s^{(N-2)}_{k_1}}{\partial s^{(N-3)}_{i}}=
+\Delta^{(0)}_{j k}\cdot \dfrac{\partial s^{(N-2)}_{k}}{\partial s^{(N-3)}_{i}}
+\\
+\Delta^{ (2) }_{j i} = \dfrac{\partial s^{(N-1)}_{j}}{\partial s^{(N-4)}_{i}}=
+\dfrac{\partial s^{(N-1)}_{j}}{\partial s^{(N-2)}_{k_1}} \cdot 
+\dfrac{\partial s^{(N-2)}_{k_1}}{\partial s^{(N-3)}_{k_2}}\cdot 
+\dfrac{\partial s^{(N-3)}_{k_2}}{\partial s^{(N-4)}_{i}}=
+\Delta^{(1)}_{j k}\cdot  \dfrac{\partial s^{(N-3)}_{k}}{\partial s^{(N-4)}_{i}}\\
+\vdots\\
+\Delta^{ (f) }_{j i} =\Delta^{ (f-1) }_{j i} \cdot  \dfrac{\partial s^{[N-(f+1)]}_{k}}{\partial s^{[N-(f+2)]}_{i}} \;,
+$$
+where the dot ($\cdot$) indicates summation over repeated indices. For convinience we can also define $\Delta^{(-1)}_{ji} = \delta_{ij}$.</p>
+<p>For <a href="#1">#1</a>, $ f= N-2 $, i.e. $\dfrac{\partial s^{(N-1)}_{r}}{\partial s^{(0)}_{p}} = \Delta^{(N-2)}_{ji}$.</p>
+<p>For <a href="#2">#2</a>,  $f= N-(l+3)$, i.e. 
+$$\dfrac{\partial s^{(N-1)}_{r}}{\partial w^{(l)}_{ji}} = 
+\Delta^{ (N-(l+3)) }_{r j} \theta^{\prime\, (l+1)}_{j}s^{(l)}_{i} \qquad\qquad\qquad\qquad 
+\text{ for } l \leq N -3
+\\
+\dfrac{\partial s^{(N-1)}_{r}}{\partial w^{(N-2)}_{ji}} = 
+\Delta^{ (-1) }_{r j} \theta^{\prime\, (N-1)}_{j}s^{(N-2)}_{i} = \delta_{r j} \ \theta^{\prime\, (N-1)}_{j}s^{(N-2)}_{i} 
+\qquad \text{ for } l=N-2 \; .
+$$</p>
+<p>Similarly we can obtain the derivatives with respect to the biases, since
+$$
+\dfrac{\partial s^{(N-1)}_r}{\partial b^{(l+1)}_{j}} = \dfrac{\partial s^{(N-1)}_{r}}{\partial s^{(l+1)}_{j}} \theta^{\prime\, (l+1)}_{j} 
+;.
+$$</p>
+<p>This calculation can be done at the same time as  $\dfrac{\partial s^{(N-1)}_{r}}{\partial w^{(l)}_{ji}}$ since
+$$
+\dfrac{\partial s^{(N-1)}_{r}}{\partial w^{(l)}_{ji}} = \dfrac{\partial s^{(N-1)}_r}{\partial b^{(l+1)}_{j}} \ s^{(l)}_{i} \;.
+$$</p>
 
 </div>
 </div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[7]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">X</span><span class="o">=</span><span class="n">brain</span><span class="o">.</span><span class="n">write_params</span><span class="p">()</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[8]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">brain</span><span class="o">.</span><span class="n">read_params</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[9]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">brain</span><span class="o">.</span><span class="n">weights</span><span class="p">,</span><span class="n">brain</span><span class="o">.</span><span class="n">biases</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[9]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>([[[-0.725223081605065, 0.792457666009715]],
-  [[0.9488242498767208], [0.5551122212356655], [0.2746075261355123]],
-  [[0.36317198628612335, -0.7419949974387423, -0.9485500880618983]]],
- [[-0.6200155542060692],
-  [-0.6681891468614447, -0.4593180497918209, -0.7498749469412885],
-  [0.4184742837674873]])</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">

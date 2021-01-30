@@ -40,8 +40,9 @@ def derivative_bw(self,l,j,i):
             if j==r:
                 sum_wx = sum( [ self.weights[l][j][k] * xi for k,xi in enumerate(self.signals[l]) ] ) 
                 self.dsdb[r]=self.activations[l].derivative(sum_wx+self.biases[l][j])
-                self.dsdw[r]=self.activations[l].derivative(sum_wx+self.biases[l][j])*self.signals[l][i]
+                self.dsdw[r]=self.dsdb[r]*self.signals[l][i]
             else:
+                self.dsdb[r]=0
                 self.dsdw[r]=0
 
     else:
@@ -50,4 +51,4 @@ def derivative_bw(self,l,j,i):
             self.dsdb[r]=self.Delta[N-(l+3)][r][j]
             self.dsdb[r]*=self.activations[l].derivative(sum_wx+self.biases[l][j])
             
-            self.dsdw[r]=dsdb[r]*self.signals[l][i]
+            self.dsdw[r]=self.dsdb[r]*self.signals[l][i]

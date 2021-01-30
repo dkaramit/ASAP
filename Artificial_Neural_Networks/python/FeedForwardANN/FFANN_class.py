@@ -68,7 +68,7 @@ class FFANN:
 
         stores the results in self.dsdw and self.dsdb
         '''
-        return derivative_w(self,l,j,i)
+        return derivative_bw(self,l,j,i)
 
 
 
@@ -144,7 +144,7 @@ class FFANN:
 
         stores the results in self.numerical_dsdw and self.numerical_dsdb 
         '''
-        return numericalDerivative_w(self,l,j,i,h)
+        return numericalDerivative_bw(self,l,j,i,h)
 
     
 
