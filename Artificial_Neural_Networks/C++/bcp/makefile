@@ -13,7 +13,8 @@ FLG=  -std=c++17  -I "$(Path)" -lm   -DLONG=$(LONG)  -O3
 
 all: FFANN.run
 
-FFANN.run: makefile FFANN.hpp FFANN_class.hpp FFANN.cpp
+FFANN.run: makefile FFANN.hpp FFANN_class.hpp FFANN_const.hpp FFANN_init.hpp\
+FFANN_ff.hpp FFANN_update.hpp FFANN_rw.hpp FFANN_aux.hpp FFANN.cpp
 	$(CC) -o "$(Path)/FFANN.run" "$(Path)/FFANN.cpp" $(FLG) -Wall
 
 
