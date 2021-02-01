@@ -84,7 +84,7 @@ def FFANN_const(self, N_inputs,N_outputs, hiddenNodes, activationFunctions):
 
 
     #in case you get confused, these are the indices
-    self.signal_indices=[ ['x^({0})_{1}'.format(l,j) for j in range(self.nodes[l])]  for l in range(N)]
+    self.signal_indices=[ ['s^({0})_{1}'.format(l,j) for j in range(self.nodes[l])]  for l in range(N)]
     #in case you get confused, these are the indices
     self.weight_indices=[ [['w^({0})_{1}{2}'.format(l,j,i) for i in range(self.nodes[l])] for j in range(self.nodes[l+1])]  for l in range(N-1)]
     #in case you get confused, these are the indices

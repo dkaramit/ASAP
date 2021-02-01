@@ -36,24 +36,125 @@ class activationType{
 
 FFANN_Template
 class FFANN{
-    using actArray=std::array<activationType<LD,Func>,total_layers-1>;
-    using nodeArray=std::array<unsigned int ,total_layers>;
 
+    using un_int=unsigned int;
+    using actArray=std::array<activationType<LD,Func>,total_layers-1>;
+    using nodeArray=std::array<un_int ,total_layers>;
+
+    // This multidimensional arrays do not seem to be the best option.
+    // Should represent it as 1D. The problem is that the rows ans comluns
+    // are not the same size in all layers, and we would need to store the 
+    // sizes in other arrays.  
+    using weightArray=std::array<std::vector<std::vector<LD>> ,total_layers-1>;
+
+    using biasArray=std::array<std::vector<LD> ,total_layers-1>;
+
+    using signalArray=std::array<std::vector<LD> ,total_layers>;
+
+    using derivativeArray=std::array<std::vector<std::vector<LD>> ,total_layers-1>;
     
+    using numDerArray=std::vector<std::vector<LD>>;
+
+    using totalDerArray=std::array<std::vector<std::vector<LD>> ,total_layers-1>;
+    using DeltaArray=std::array<std::vector<std::vector<LD>> ,total_layers-1>;
+
+    using dsdwbArray=std::vector<LD>;
+    
+
     public:
     actArray activations;
     nodeArray nodes;
     
-
-    // FFANN(){};
-    FFANN(nodeArray &nodes, actArray &activationFunctions){
-        this->activations=activationFunctions;
-        this->nodes=nodes;
-
-    };
+    signalArray signals,_signals;
+    weightArray weights;
     
+    biasArray biases;
+
+    derivativeArray derivatives;
+
+    totalDerArray totalDerivatives;
+    DeltaArray Delta;
+    numDerArray numericalDerivatives;
+
+    dsdwbArray dsdw,dsdb,numerical_dsdw,numerical_dsdb;
 
 
+
+
+    /*-------------constructors-------------*/
+    FFANN(){};
+    FFANN(nodeArray &nodes, actArray &activationFunctions);
+
+    /*-------------functions for assignments-------------*/
+    // "setters"
+    void update_weight(un_int l, un_int j, un_int i, LD value);
+    void update_bias(un_int l, un_int j, LD value);
+    // "getters"
+    LD get_weight(un_int l, un_int j, un_int i);
+    LD get_bias(un_int l, un_int j);
+    //fill
+    void init_weights(LD min_value=-1, LD max_value=1);
+    void init_biases(LD min_value=-1, LD max_value=1);
+    void fill_weights_with(LD value=0);
+    void fill_biases_with(LD value=0);
+
+    /*-------------signal and derivative calculation functions-------------*/
+    //set input signal (s^{(0)}_{j})
+    void inputSignal(const std::vector<LD> &x);
+    //calculate s^{(l)}_{j} and the local derivatives
+    void calcSignal(un_int l, un_int j);
+    //calculate only s^{(l)}_{j}
+    void evaluate(const std::vector<LD> &x);
+    //Calculate only the output of the network and the local derivatives
+    void feedForward();
+    // overlaod operator() for convenience
+    std::vector<LD> operator()(const std::vector<LD> &x);
+
+    //back porogation derivatives
+    void backPropagation();
+    // caclulate derivatives wrt the weights and biases (should be called only after backPropagation())
+    void derivative_bw();
+
+    // feed forward derivatives
+    //Calculate only the output of the network, the local derivatives, and the total derivatives
+    void feedForwardDerivatives();
+    //Matrix multiplication to be used when calculating the derivatives.
+    // It is intended to be used the feedForwardDerivatives() call.
+    void mulM();
+
+    // numerical derivatives wrt to a given input node
+    void numericalDerivative(un_int input_node, LD h=1e-3);
+    // numerical derivatives wrt to all given input nodes
+    void totalNumericalDerivative(LD h=1e-3);
+    // numerical derivative wrt  w^{(l)}_{ji} and b^{(l+1)}_{j}
+    void numericalDerivative_bw(un_int l, un_int j, un_int i, LD h=1e-3);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    //Auxilliary functions for printing
+    void printWeights();
+    void printBiases();
+    void printSignals();
+
+    void printDerivatives();
+    
+    void printTotalDerivatives();
+    void printDelta();
+
+    void printNumericalDerivatives();
 };
 
 

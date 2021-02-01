@@ -8,5 +8,15 @@
 
 
 #include "FFANN_class.hpp"
+#include "FFANN_const.hpp"
+#include "FFANN_params.hpp"
+
+
+
+
+#include "FFANN_aux.hpp"
+
+
+
 
 #endif
