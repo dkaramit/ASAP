@@ -1,6 +1,6 @@
 #ifndef FFANN_const
 #define FFANN_const
-#include"FFANN_class.hpp"
+#include"FFANN.hpp"
 
 
 

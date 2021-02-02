@@ -4,7 +4,6 @@
 
 #include"FFANN.hpp"
 
-
 #ifndef LONG
 #define LONG long
 #endif
@@ -35,18 +34,28 @@ int main(){
     // array of number of nodes in each layer
     array<unsigned int, total_layers> nodes{2,3,4,2};
     // array of activation functins in each layer
-    array<activationType<LD,Func>, total_layers-1> activations{lin,lin,sig};
+    array<activationType<LD,Func>, total_layers-1> activations{lin,lin,lin};
 
     // this is how the network is constructed
     FFANN<LD, Func, total_layers> brain(nodes,activations);
+    brain.fill_biases_with(1);
+    brain.fill_weights_with(0.2);
+    brain.update_weight(0,0,0,-2);
+    brain.update_weight(2,1,0,5);
+    brain.update_bias(0,0,-1);
+    brain.update_bias(1,1,3);
 
 
 
+    brain.inputSignal(vector<LD>{0.1,-2});
+    // brain.feedForward();
 
+    // vector<LD> x=brain(vector<LD>{3,0});
+    // for(auto X:x ){cout<<X<<endl;}
 
+    // brain.evaluate(vector<LD>{0.1,-2});
 
-
-
+    brain.feedForwardDerivatives();
 
     /*==========================---initialize and fill---==========================*/
     // brain.init_biases(-1,1);

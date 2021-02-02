@@ -1,6 +1,6 @@
 #ifndef FFANN_params
 #define FFANN_params
-#include"FFANN_class.hpp"
+#include"FFANN.hpp"
 
 
 

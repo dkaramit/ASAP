@@ -11,7 +11,11 @@
 #include "FFANN_const.hpp"
 #include "FFANN_params.hpp"
 
+#include "FFANN_derivatives.hpp"
+#include "FFANN_call.hpp"
+#include "FFANN_backProp.hpp"
 
+#include "FFANN_numerical_derivative.hpp"
 
 
 #include "FFANN_aux.hpp"

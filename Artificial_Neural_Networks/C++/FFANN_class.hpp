@@ -3,7 +3,6 @@
 
 #include<vector>
 #include<array>
-// #include"FFANN.hpp"
 
 template<class LD, class Func>
 class activationType{
@@ -120,7 +119,7 @@ class FFANN{
     void feedForwardDerivatives();
     //Matrix multiplication to be used when calculating the derivatives.
     // It is intended to be used the feedForwardDerivatives() call.
-    void mulM();
+    void mulM(un_int l);
 
     // numerical derivatives wrt to a given input node
     void numericalDerivative(un_int input_node, LD h=1e-3);
@@ -128,20 +127,6 @@ class FFANN{
     void totalNumericalDerivative(LD h=1e-3);
     // numerical derivative wrt  w^{(l)}_{ji} and b^{(l+1)}_{j}
     void numericalDerivative_bw(un_int l, un_int j, un_int i, LD h=1e-3);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     //Auxilliary functions for printing

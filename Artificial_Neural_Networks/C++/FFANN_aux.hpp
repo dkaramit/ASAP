@@ -1,6 +1,6 @@
 #ifndef FFANN_aux
 #define FFANN_aux
-#include"FFANN_class.hpp"
+#include"FFANN.hpp"
 
 
 FFANN_Template
