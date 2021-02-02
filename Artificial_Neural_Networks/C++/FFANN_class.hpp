@@ -83,6 +83,9 @@ class FFANN{
     /*-------------constructors-------------*/
     FFANN(){};
     FFANN(nodeArray &nodes, actArray &activationFunctions);
+    // you can call this as in python (i don't really like it)
+    FFANN(un_int inputNodes, un_int outputNodes, std::array<un_int ,total_layers-2> &hiddenNodes, 
+    actArray &activationFunctions);
 
     /*-------------functions for assignments-------------*/
     // "setters"

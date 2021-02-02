@@ -6,8 +6,8 @@
 
 FFANN_Template
 FFANN_Namespace::FFANN(nodeArray &nodes, actArray &activationFunctions){
-    this->activations=activationFunctions;
     this->nodes=nodes;
+    this->activations=activationFunctions;
 
 
     // reserve space for signals (and _signals)
@@ -79,6 +79,17 @@ FFANN_Namespace::FFANN(nodeArray &nodes, actArray &activationFunctions){
 };
 
 
+FFANN_Template
+FFANN_Namespace::FFANN(un_int inputNodes, un_int outputNodes, 
+                       std::array<un_int ,total_layers-2> &hiddenNodes, actArray &activationFunctions){
+    nodeArray _nodes;
+    _nodes[0]= inputNodes;
+    for(un_int l =0 ; l<total_layers-2; ++l ){
+        _nodes[l+1]=hiddenNodes[l];
+    }
+    _nodes[total_layers-1]=outputNodes;
 
+    *this=FFANN<LD, Func, total_layers>(_nodes, activationFunctions);
+}
 
 #endif

@@ -10,7 +10,7 @@ from .FFANN_backProp import  backPropagation, derivative_bw
 from .FFANN_derivatives import feedForwardDerivatives,mulM
 
 from .FFANN_numerical_derivative import numericalDerivative,totalNumericalDerivative,numericalDerivative_bw
-from .FFANN_aux import fill_weights_with,fill_biases_with,print_weights,print_biases,print_signals
+from .FFANN_aux import fill_weights_with,fill_biases_with,printWeights,printBiases,printSignals,printDerivatives,printTotalDerivatives,printDelta,printNumericalDerivatives
 
 
 class FFANN:
@@ -155,11 +155,23 @@ class FFANN:
     def fill_biases_with(self,value=0):
         fill_biases_with(self,value)
     #print
-    def print_weights(self):
-        print_weights(self)
+    def printWeights(self):
+        printWeights(self)
 
-    def print_biases(self):
-        print_biases(self)
+    def printBiases(self):
+        printBiases(self)
 
-    def print_signals(self):
-        print_signals(self)
+    def printSignals(self):
+        printSignals(self)
+
+    def printDerivatives(self):
+        printDerivatives(self)
+
+    def printTotalDerivatives(self):
+        printTotalDerivatives(self)
+    
+    def printDelta(self):
+        printDelta(self)
+
+    def printNumericalDerivatives(self):
+        printNumericalDerivatives(self)

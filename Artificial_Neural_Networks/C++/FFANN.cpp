@@ -31,13 +31,18 @@ int main(){
     activationType<LD,Func> lin(linearActivation,linearActivationDerivative);
     activationType<LD,Func> sig(sigmoidActivation,sigmoidActivationDerivative);
 
-    // array of number of nodes in each layer
-    array<unsigned int, total_layers> nodes{2,3,4,2};
     // array of activation functins in each layer
     array<activationType<LD,Func>, total_layers-1> activations{lin,lin,lin};
 
+
     // this is how the network is constructed
+    array<unsigned int, total_layers> nodes{2,3,4,2};
     FFANN<LD, Func, total_layers> brain(nodes,activations);
+    
+    /*or:*/
+    // array<unsigned int, total_layers-2> hiddenNodes{3,4};
+    // FFANN<LD, Func, total_layers> brain(2,2,hiddenNodes,activations);
+
     brain.fill_biases_with(1);
     brain.fill_weights_with(0.2);
     brain.update_weight(0,0,0,-2);
@@ -50,7 +55,7 @@ int main(){
     brain.inputSignal(vector<LD>{0.1,-2});
     // brain.feedForward();
 
-    // vector<LD> x=brain(vector<LD>{3,0});
+    // vector<LD> x=brain(vector<LD>{0.1,-2});
     // for(auto X:x ){cout<<X<<endl;}
 
     // brain.evaluate(vector<LD>{0.1,-2});
@@ -73,10 +78,10 @@ int main(){
     // brain.printSignals();
     // brain.printWeights();
     // brain.printBiases();
-    // brain.printDerivatives();
-    // brain.printTotalDerivatives();
-    // brain.printDelta();
-    // brain.printNumericalDerivatives();
+    brain.printDerivatives();
+    brain.printTotalDerivatives();
+    brain.printDelta();
+    brain.printNumericalDerivatives();
 
     return 0;
 }
