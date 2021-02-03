@@ -115,7 +115,7 @@ class FFANN{
     //back porogation derivatives
     void backPropagation();
     // caclulate derivatives wrt the weights and biases (should be called only after backPropagation())
-    void derivative_bw();
+    void derivative_bw(un_int l,un_int j,un_int i);
 
     // feed forward derivatives
     //Calculate only the output of the network, the local derivatives, and the total derivatives
@@ -143,6 +143,12 @@ class FFANN{
     void printDelta();
 
     void printNumericalDerivatives();
+
+    void printDerivatives_w();
+    void printDerivatives_b();
+
+    void printNumericalDerivatives_w();
+    void printNumericalDerivatives_b();
 };
 
 

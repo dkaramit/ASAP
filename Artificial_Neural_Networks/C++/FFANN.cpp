@@ -1,6 +1,8 @@
 #include<iostream>
 #include<vector>
 #include<array>
+#include <iomanip>
+#include <string>
 
 #include"FFANN.hpp"
 
@@ -13,6 +15,8 @@
 
 using std::cout;
 using std::endl;
+using std::setw;
+using std::setfill;
 using std::vector;
 using std::array;
 
@@ -50,17 +54,42 @@ int main(){
     brain.update_bias(0,0,-1);
     brain.update_bias(1,1,3);
 
+    std::string S;
+
+    vector<LD> inputSignal{0.1,-2};
+    brain.inputSignal(inputSignal);
 
 
-    brain.inputSignal(vector<LD>{0.1,-2});
-    // brain.feedForward();
+    S="--weights, biases, and signals--";
+    cout<<setfill('=')<<setw(S.length()+25)<<S<<setfill('=')<<setw(25)<<""<<endl<<endl;
+    brain(inputSignal);
+    brain.printWeights();
+    brain.printBiases();
+    brain.printSignals();
 
-    // vector<LD> x=brain(vector<LD>{0.1,-2});
-    // for(auto X:x ){cout<<X<<endl;}
-
-    // brain.evaluate(vector<LD>{0.1,-2});
-
+    S="--derivatives using feedForwardDerivatives--";
+    cout<<setfill('=')<<setw(S.length()+25)<<S<<setfill('=')<<setw(25)<<""<<endl<<endl;
     brain.feedForwardDerivatives();
+    brain.printDerivatives();
+    brain.printTotalDerivatives();
+    
+    S="--derivatives using backProp--";
+    cout<<setfill('=')<<setw(S.length()+25)<<S<<setfill('=')<<setw(25)<<""<<endl<<endl;
+    brain.feedForward();
+    brain.backPropagation();
+    brain.printDelta();
+    brain.printDerivatives_w();
+    brain.printDerivatives_b();
+    
+    S="--numerical derivatives--";
+    cout<<setfill('=')<<setw(S.length()+25)<<S<<setfill('=')<<setw(25)<<""<<endl<<endl;
+    brain.evaluate(inputSignal);
+    brain.totalNumericalDerivative();
+    brain.printNumericalDerivatives();
+    brain.printNumericalDerivatives_w();
+    brain.printNumericalDerivatives_b();
+
+
 
     /*==========================---initialize and fill---==========================*/
     // brain.init_biases(-1,1);
@@ -75,13 +104,6 @@ int main(){
     // brain.update_bias(1,1,-5);//remember that biases[l][j] correspond to b^{(l+1)}_{j}
     // cout<<brain.get_bias(1,1)<<endl;
     /*==========================---print---==========================*/
-    // brain.printSignals();
-    // brain.printWeights();
-    // brain.printBiases();
-    brain.printDerivatives();
-    brain.printTotalDerivatives();
-    brain.printDelta();
-    brain.printNumericalDerivatives();
-
+    
     return 0;
 }

@@ -112,7 +112,85 @@ void FFANN_Namespace::printNumericalDerivatives(){
         for(un_int r=0; r<nodes[0]; ++r){
         std::cout<< numericalDerivatives[p][r] <<"\t";
         }
+        std::cout<<std::endl;
+    }
     std::cout<<std::endl;
+
+}
+
+FFANN_Template
+void FFANN_Namespace::printDerivatives_w(){
+    for(un_int l=0; l<total_layers-1; ++l){
+        for(un_int j=0; j<nodes[l+1]; ++j){
+            for(un_int i=0; i<nodes[l]; ++i){
+                derivative_bw(l,j,i);
+                std::cout<<"\\dfrac{ds_j}{w^("<<l<<")_"<<j<<i<<"}= (";
+                for(un_int r=0; r<nodes[total_layers-1]; ++r){
+                    std::cout<<dsdw[r];
+                    if(r==nodes[total_layers-1]-1){std::cout<<")";} 
+                    else{std::cout<<",";} 
+                }
+                std::cout<<std::endl;
+            }
+            std::cout<<std::endl;
+        }
+        std::cout<<std::endl;
+    }
+}
+
+FFANN_Template
+void FFANN_Namespace::printDerivatives_b(){
+    for(un_int l=0; l<total_layers-1; ++l){
+        for(un_int j=0; j<nodes[l+1]; ++j){
+            derivative_bw(l,j,0);
+            std::cout<<"\\dfrac{ds_j}{b^("<<l+1<<")_"<<j<<"}= (";
+            for(un_int r=0; r<nodes[total_layers-1]; ++r){
+                std::cout<<dsdb[r];
+                if(r==nodes[total_layers-1]-1){std::cout<<")";} 
+                else{std::cout<<",";} 
+            }
+            std::cout<<std::endl;
+        }
+        std::cout<<std::endl;
+    }
+}
+
+
+
+FFANN_Template
+void FFANN_Namespace::printNumericalDerivatives_w(){
+    for(un_int l=0; l<total_layers-1; ++l){
+        for(un_int j=0; j<nodes[l+1]; ++j){
+            for(un_int i=0; i<nodes[l]; ++i){
+                numericalDerivative_bw(l,j,i);
+                std::cout<<"\\dfrac{ds_j}{w^("<<l<<")_"<<j<<i<<"}= (";
+                for(un_int r=0; r<nodes[total_layers-1]; ++r){
+                    std::cout<<numerical_dsdw[r];
+                    if(r==nodes[total_layers-1]-1){std::cout<<")";} 
+                    else{std::cout<<",";} 
+                }
+                std::cout<<std::endl;
+            }
+            std::cout<<std::endl;
+        }
+        std::cout<<std::endl;
+    }
+}
+
+FFANN_Template
+void FFANN_Namespace::printNumericalDerivatives_b(){
+    for(un_int l=0; l<total_layers-1; ++l){
+        for(un_int j=0; j<nodes[l+1]; ++j){
+            numericalDerivative_bw(l,j,0);
+            std::cout<<"\\dfrac{ds_j}{b^("<<l+1<<")_"<<j<<"}= (";
+            for(un_int r=0; r<nodes[total_layers-1]; ++r){
+                std::cout<<numerical_dsdb[r];
+                if(r==nodes[total_layers-1]-1){std::cout<<")";} 
+                else{std::cout<<",";} 
+            }
+            std::cout<<std::endl;
+        }
+        std::cout<<std::endl;
     }
 }
 

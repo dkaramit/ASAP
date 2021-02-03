@@ -85,3 +85,38 @@ def printNumericalDerivatives(self):
             print(self.numericalDerivatives[p][r],end='\t')
         print()
     print()
+
+
+def printDerivatives_w(self):
+    for l in range(self.total_layers-1):
+        for j in range(self.nodes[l+1]):
+            for i in range(self.nodes[l]):
+                self.derivative_bw(l,j,i)
+                print("\dfrac{{ds_j}}{{w^({0})_{1}{2}}}=".format(l,j,i),self.dsdw)
+            print('')
+        print('')
+        
+def printDerivatives_b(self):
+    for l in range(self.total_layers-1):
+        for j in range(self.nodes[l+1]):
+            self.derivative_bw(l,j,0)
+            print("\dfrac{{ds_j}}{{b^({0})_{1}}}=".format(l+1,j),self.dsdb)
+        print('')
+            
+
+def printNumericalDerivatives_w(self):
+    for l in range(self.total_layers-1):
+        for j in range(self.nodes[l+1]):
+            for i in range(self.nodes[l]):
+                self.numericalDerivative_bw(l,j,i)
+                print("\dfrac{{ds_j}}{{w^({0})_{1}{2}}}=".format(l,j,i),self.numerical_dsdw)
+            print('')
+        print('')
+        
+def printNumericalDerivatives_b(self):
+    for l in range(self.total_layers-1):
+        for j in range(self.nodes[l+1]):
+            self.numericalDerivative_bw(l,j,0)
+            print("\dfrac{{ds_j}}{{b^({0})_{1}}}=".format(l+1,j),self.numerical_dsdb)
+        print('')
+            
