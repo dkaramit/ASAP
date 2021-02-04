@@ -118,6 +118,22 @@ class FFANN:
 
 
 
+    def addToWeight(self,l,j,i,dw):
+        '''
+        Change the value of w^{l}_{ji} to w^{l}_{ji}+dw
+        '''
+        self.weights[l][j][i]+=dw
+        # print(dw)
+
+    def addToBias(self,l,j,db):
+        '''
+        Change the value of b^{l}_{j} to b^{l}_{j}+db
+        '''
+        self.biases[l][j]+=db
+        # print(db)
+        
+    #======================================================#
+
 
 
     def numericalDerivative(self,input_node,h=1e-3):
