@@ -10,7 +10,13 @@ from .FFANN_backProp import  backPropagation, derivative_bw
 from .FFANN_derivatives import feedForwardDerivatives,mulM
 
 from .FFANN_numerical_derivative import numericalDerivative,totalNumericalDerivative,numericalDerivative_bw
+
+from .FFANN_SGD import SGD
+
+
 from .FFANN_aux import fill_weights_with,fill_biases_with,printWeights,printBiases,printSignals,printDerivatives,printTotalDerivatives,printDelta,printNumericalDerivatives,printDerivatives_w,printDerivatives_b,printNumericalDerivatives_w,printNumericalDerivatives_b
+
+
 
 
 class FFANN:
@@ -123,18 +129,34 @@ class FFANN:
         Change the value of w^{l}_{ji} to w^{l}_{ji}+dw
         '''
         self.weights[l][j][i]+=dw
-        # print(dw)
 
     def addToBias(self,l,j,db):
         '''
         Change the value of b^{l}_{j} to b^{l}_{j}+db
         '''
         self.biases[l][j]+=db
-        # print(db)
         
     #======================================================#
 
+    #======================================================#
+    def SGD(self, strategy, data_in, data_out, abs_tol=1e-5, rel_tol=1e-3, step_break=100,max_step=5000):
+        '''
+        You have to pass the data (data_in are the inputs and data_out their corresponding outputs),
+        and define the loss (and its derivative).
 
+        strategy: the strategy that will be used to update the parameters
+
+        data_in,data_out: the inputs and the corresponding outputs to be used for training
+
+        abs_tol,rel_tol: determine the scale of a parameter 
+        (e.g. the scale of w^{(l)}_{ji} is scale=abs_tol+rel_tol*self.weights[l][j][i])
+
+        step_break:if the average scale (over the dimension of the output signal) is smaller than the gradient
+        for step_break number of steps, the SGD exits the loop.
+
+        max_step: SGD exits after max_step steps regardless of convergence. 
+        '''
+        SGD(self, strategy, data_in, data_out, abs_tol, rel_tol, step_break,max_step)
 
     def numericalDerivative(self,input_node,h=1e-3):
         '''
