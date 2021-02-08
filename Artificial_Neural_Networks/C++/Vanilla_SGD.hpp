@@ -6,12 +6,13 @@
 
 template<class FFANN, class loss, class LD>
 class Vanilla_SGD{
-    public:
+    private:
     FFANN *model;
     loss *Q;    
     LD alpha;
-
     unsigned int N,layers;
+
+    public:
 
     Vanilla_SGD(FFANN *brain, loss *Q, LD alpha=1e-3){
         this->model=brain;

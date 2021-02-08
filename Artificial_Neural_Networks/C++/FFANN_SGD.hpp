@@ -6,7 +6,9 @@
 
 template<class LD, class Func,  unsigned int total_layers>
 template<class Strategy>
-void FFANN_Namespace::SGD(Strategy strategy, std::vector<std::vector<LD>> data_in, std::vector<std::vector<LD>> data_out, LD abs_tol, LD rel_tol, un_int step_break, un_int max_step){
+void FFANN_Namespace::SGD(Strategy *strategy, 
+                        const std::vector<std::vector<LD>> *data_in, const std::vector<std::vector<LD>> *data_out, 
+                        LD abs_tol, LD rel_tol, un_int step_break, un_int max_step) {
    /*
    You have to pass the data (data_in are the inputs and data_out their corresponding outputs), and define the loss (and its derivative).
 
@@ -26,7 +28,7 @@ void FFANN_Namespace::SGD(Strategy strategy, std::vector<std::vector<LD>> data_i
     // set-up a random integer distribution that will randomly choose a data point each time this->update runs 
     std::default_random_engine RndE{std::random_device{}()}; 
     std::uniform_int_distribution<unsigned int> UnInt;
-    un_int data_size=data_in.size();
+    un_int data_size=data_in->size();
     UnInt=std::uniform_int_distribution<unsigned int>{0,data_size -1};
 
     un_int _s=0;
@@ -38,8 +40,8 @@ void FFANN_Namespace::SGD(Strategy strategy, std::vector<std::vector<LD>> data_i
     while(count_steps<=max_step){
         //get a random data point
         index=UnInt(RndE); 
-        x=data_in[index];  
-        t=data_out[index]; 
+        x=data_in->operator[](index);
+        t=data_out->operator[](index);
 
         // run feedForward and backProp to calculate signals and Deltas 
         inputSignal(x);
@@ -52,7 +54,7 @@ void FFANN_Namespace::SGD(Strategy strategy, std::vector<std::vector<LD>> data_i
         //involved). 
         //It also should have access to "self" because it will need to know the 
         //structure of the network, the loss, and take their derivatives.
-        _check=strategy.update(t, abs_tol, rel_tol);
+        _check=strategy->update(t, abs_tol, rel_tol);
 
         if(_check<1){_s+=1;}
         else{_s=0;}

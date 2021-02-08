@@ -49,7 +49,7 @@ int main(){
     // array of activation functins in each layer
     array<activationType<LD,Func>, total_layers-1> activations{sig,lin};
     // this is how the network is constructed
-    array<unsigned int, total_layers> nodes{2,3,1};
+    array<unsigned int, total_layers> nodes{2,2,1};
     FFANN<LD, Func, total_layers> brain(nodes,activations);
     brain.init_biases(-1,1);
     brain.init_weights(-1,1);
@@ -61,7 +61,7 @@ int main(){
     vector<vector<LD>> data_in{{1,1},{0,0},{1,0},{0,1}};
     vector<vector<LD>> data_out{{0},{0},{1},{1}};
 
-    brain.SGD(strategy,data_in,data_out,1e-3,1e-3,150,15000);
+    brain.SGD(&strategy,&data_in,&data_out,1e-3,1e-3,150,15000);
 
 
 
