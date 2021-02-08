@@ -20,7 +20,10 @@
 
 #include "FFANN_aux.hpp"
 
-
+// Need these for training
+#include "FFANN_SGD.hpp"
+#include"FFANN_loss.hpp"
+#include"Vanilla_SGD.hpp"
 
 
 #endif

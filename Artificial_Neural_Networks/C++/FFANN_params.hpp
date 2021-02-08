@@ -11,6 +11,11 @@ void FFANN_Namespace::update_weight(un_int l, un_int j, un_int i, LD value){
     weights[l][j][i]=value;
 }
 
+FFANN_Template
+void FFANN_Namespace::addToWeight(un_int l, un_int j, un_int i, LD value){
+    weights[l][j][i]+=value;
+}
+
 
 FFANN_Template
 void FFANN_Namespace::update_bias(un_int l, un_int j, LD value){
@@ -18,6 +23,11 @@ void FFANN_Namespace::update_bias(un_int l, un_int j, LD value){
     biases[l][j]=value;
 }
 
+FFANN_Template
+void FFANN_Namespace::addToBias(un_int l, un_int j, LD value){
+    //remember that biases[l][j] corresponds to b^{(l+1)}_{j}
+    biases[l][j]+=value;
+}
 
 
 FFANN_Template

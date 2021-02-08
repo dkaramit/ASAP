@@ -87,10 +87,19 @@ class FFANN{
     FFANN(un_int inputNodes, un_int outputNodes, std::array<un_int ,total_layers-2> &hiddenNodes, 
     actArray &activationFunctions);
 
+
+    FFANN& operator=(const FFANN &other)=default;
+
+
+
+
     /*-------------functions for assignments-------------*/
     // "setters"
     void update_weight(un_int l, un_int j, un_int i, LD value);
     void update_bias(un_int l, un_int j, LD value);
+    // add to the parameters
+    void addToWeight(un_int l, un_int j, un_int i, LD value);
+    void addToBias(un_int l, un_int j, LD value);
     // "getters"
     LD get_weight(un_int l, un_int j, un_int i);
     LD get_bias(un_int l, un_int j);
@@ -130,6 +139,11 @@ class FFANN{
     void totalNumericalDerivative(LD h=1e-3);
     // numerical derivative wrt  w^{(l)}_{ji} and b^{(l+1)}_{j}
     void numericalDerivative_bw(un_int l, un_int j, un_int i, LD h=1e-3);
+
+    //stochastic gradient descent main loop.
+    template <class Strategy>
+    void SGD(Strategy strategy, std::vector<std::vector<LD>> data_in, std::vector<std::vector<LD>> data_out, 
+            LD abs_tol=1e-5, LD rel_tol=1e-3, un_int step_break=100, un_int max_step=5000);
 
 
     //Auxilliary functions for printing
