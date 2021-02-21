@@ -62,7 +62,8 @@ void FFANN_Namespace::totalNumericalDerivative(LD h){
     Run numericalDerivative for all input nodes. 
     The result is stored in numericalDerivatives
     */
-   signalArray tmp;
+    std::vector<std::vector<LD>> tmp;
+    tmp.reserve(total_layers);
     for(un_int l=0; l<total_layers; ++l){
         for(un_int j=0; j<nodes[l]; ++j){
             tmp[l].push_back(signals[l][j]);
@@ -126,7 +127,8 @@ void FFANN_Namespace::numericalDerivative_bw(un_int l,un_int j,un_int i,LD h){
     LD h1=h+std::abs(signals[l+1][j])*h;
 
     // only the l+1 layers are relevant here
-    signalArray tmp;
+    std::vector<std::vector<LD>> tmp;
+    tmp.reserve(total_layers);
     for(un_int _l=l+1; _l<total_layers; ++_l){
         for(un_int _j=0; _j<nodes[_l]; ++_j){
             tmp[_l].push_back(signals[_l][_j]);
@@ -161,6 +163,7 @@ void FFANN_Namespace::numericalDerivative_bw(un_int l,un_int j,un_int i,LD h){
 
     std::vector<LD> f1=signals[N-1];
     std::vector<LD> f0=_signals[N-1];
+    
 
     for(un_int r=0; r<nodes[N-1]; ++r){
         numerical_dsdw[r]=(f1[r]-f0[r])/(2.*h1 )*factor_w;

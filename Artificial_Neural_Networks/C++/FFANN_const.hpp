@@ -9,17 +9,23 @@ FFANN_Namespace::FFANN(nodeArray &nodes, actArray &activationFunctions){
     this->nodes=nodes;
     this->activations=activationFunctions;
 
-
     // reserve space for signals (and _signals)
+    this->signals.reserve(total_layers);
+    this->_signals.reserve(total_layers);
     for(un_int l=0; l<total_layers;++l){
         this->signals[l].reserve( this-> nodes[l] );
+        this->_signals[l].reserve( this-> nodes[l] );
         for(un_int j=0; j<this->nodes[l]; ++j){
             this->signals[l].push_back(0);
+            this->_signals[l].push_back(0);
         }
     }
-    std::copy(this->signals.begin(), this->signals.end(),this->_signals.begin());
+    // std::copy(this->signals.begin(), this->signals.end(),this->_signals.begin());
     
     // reserve space for weights, biases, and local derivatives
+    this->weights.reserve(total_layers-1);
+    this->biases.reserve(total_layers-1);
+    this->derivatives.reserve(total_layers-1);
     for(un_int l=0; l<total_layers-1; ++l){
         this->weights[l].reserve(nodes[l+1]);
         this->derivatives[l].reserve(nodes[l+1]);
@@ -37,6 +43,7 @@ FFANN_Namespace::FFANN(nodeArray &nodes, actArray &activationFunctions){
 
 
     // reserve space for totalDerivatives
+    this->totalDerivatives.reserve(total_layers-1);
     for(un_int l=0; l<total_layers-1; ++l){
         this->totalDerivatives[l].reserve(this->nodes[l+1]);
         for(un_int j=0; j<this->nodes[l+1]; ++j){
@@ -48,6 +55,7 @@ FFANN_Namespace::FFANN(nodeArray &nodes, actArray &activationFunctions){
     }
 
     // reserve space for Delta
+    this->Delta.reserve(total_layers-1);
     for(un_int f=0; f<total_layers-1; ++f){
         this->Delta[f].reserve(nodes[total_layers-1]);
         for(un_int j=0; j<this->nodes[total_layers-1]; ++j){

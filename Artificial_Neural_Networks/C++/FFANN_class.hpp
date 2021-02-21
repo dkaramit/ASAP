@@ -44,18 +44,18 @@ class FFANN{
     // Should represent it as 1D. The problem is that the rows ans comluns
     // are not the same size in all layers, and we would need to store the 
     // sizes in other arrays.  
-    using weightArray=std::array<std::vector<std::vector<LD>> ,total_layers-1>;
+    using weightArray=std::vector<std::vector<std::vector<LD>>>;
 
-    using biasArray=std::array<std::vector<LD> ,total_layers-1>;
+    using biasArray=std::vector<std::vector<LD>>;
 
-    using signalArray=std::array<std::vector<LD> ,total_layers>;
+    using signalArray=std::vector<std::vector<LD>>;
 
-    using derivativeArray=std::array<std::vector<std::vector<LD>> ,total_layers-1>;
+    using derivativeArray=std::vector<std::vector<std::vector<LD>>>;
     
     using numDerArray=std::vector<std::vector<LD>>;
 
-    using totalDerArray=std::array<std::vector<std::vector<LD>> ,total_layers-1>;
-    using DeltaArray=std::array<std::vector<std::vector<LD>> ,total_layers-1>;
+    using totalDerArray=std::vector<std::vector<std::vector<LD>>>;
+    using DeltaArray=std::vector<std::vector<std::vector<LD>>>;
 
     using dsdwbArray=std::vector<LD>;
     

@@ -42,7 +42,8 @@ void FFANN_Namespace::derivative_bw(un_int l,un_int j,un_int i){
     \dfrac{\partial s^{(N-1)}_{r}}{\partial b^{(l+1)}_{j}} =\Delta^{ (N-(l+3)) }_{r j} \theta^{\prime\, (l+1)}_{j}
     
     and return the result for all r (r=# output nodes).
-    */
+    */        
+
     un_int N=total_layers;
     LD sum_ws=0;
     if(l==N-2){            

@@ -52,3 +52,4 @@ def SGD(self, strategy, data_in, data_out, abs_tol=1e-5, rel_tol=1e-3, step_brea
         
         if _s>step_break:
             break
+    #print(count_steps)

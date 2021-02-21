@@ -28,11 +28,10 @@ class Vanilla_SGD{
         LD _check=0;
         LD _w2=0;
 
-        std::vector<LD> signal=model->signals[layers-1];
-        for(unsigned int l=0; l<layers; ++l){
+        for(unsigned int l=0; l<layers-1; ++l){
             for(unsigned int j=0; j< model->nodes[l+1] ; ++j){
                 for(unsigned int i=0; i< model->nodes[l] ; ++i){
-                    Q->grad(l,j,i,signal,target);
+                    Q->grad(l,j,i,model->signals[layers-1],target);
 
                     model->addToWeight(l,j,i,  -alpha*(Q->dQdw));
 

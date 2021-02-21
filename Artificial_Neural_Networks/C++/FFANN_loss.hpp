@@ -54,7 +54,6 @@ class loss{
     void grad(unsigned int l, unsigned int j, unsigned int i, std::vector<LD> signal, std::vector<LD> target){
         /*calculates the derivatives wrt w^{(l)}_{ji} and b^{(l)}_{j}*/
         LD tmp_dQds;
-
         model->derivative_bw(l,j,i);
         //the derivative in general is 
         //\dfrac{\partial Q}{\partial P} = \dfrac{\partial Q}{\partial signal^{N-1}_{r}}\dfrac{\partial signal^{N-1}_{r}}{\partial P}

@@ -11,6 +11,7 @@ from .FFANN_numerical_derivative import numericalDerivative,totalNumericalDeriva
 from .FFANN_SGD import SGD
 from .FFANN_loss import loss
 from .FFANN_VanillaSGD import VanillaSGD
+from .FFANN_RMSpropSGD import RMSpropSGD
 
 
 

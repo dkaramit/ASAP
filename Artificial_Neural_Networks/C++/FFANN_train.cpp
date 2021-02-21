@@ -36,6 +36,9 @@ LD dQds_i(LD signal, LD target){
     return 2*(signal-target);
 }
 
+// #define vanilla
+#define rms_prop
+
 
 int main(){
     //some activation functions
@@ -54,14 +57,22 @@ int main(){
     brain.init_biases(-1,1);
     brain.init_weights(-1,1);
 
+
     loss<LD, FFANN<LD, Func, total_layers>> Q(Q_i,dQds_i,&brain);
-    Vanilla_SGD<FFANN<LD, Func, total_layers>, loss<LD, FFANN<LD, Func, total_layers>>, LD  > 
-    strategy(&brain,&Q,1e-1); 
+    #ifdef vanilla
+    Vanilla_SGD<FFANN<LD, Func, total_layers>, loss<LD, FFANN<LD, Func, total_layers>>, LD  >
+    strategy(&brain,&Q,1e-2); 
+    #endif
+     
+    #ifdef rms_prop
+    RMSprop_SGD<FFANN<LD, Func, total_layers>, loss<LD, FFANN<LD, Func, total_layers>>, LD  > 
+    strategy(&brain,&Q,0.999,1e-4,1e-2); 
+    #endif
 
     vector<vector<LD>> data_in{{1,1},{0,0},{1,0},{0,1}};
     vector<vector<LD>> data_out{{0},{0},{1},{1}};
 
-    brain.SGD(&strategy,&data_in,&data_out,1e-3,1e-3,150,15000);
+    brain.SGD(&strategy,&data_in,&data_out,1e-5,1e-5,150,1000000);
 
 
 

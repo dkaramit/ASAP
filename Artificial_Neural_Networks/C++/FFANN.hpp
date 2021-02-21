@@ -24,6 +24,7 @@
 #include "FFANN_SGD.hpp"
 #include"FFANN_loss.hpp"
 #include"Vanilla_SGD.hpp"
+#include"RMSprop_SGD.hpp"
 
 
 #endif

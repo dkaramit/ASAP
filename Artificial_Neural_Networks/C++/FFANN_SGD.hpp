@@ -65,7 +65,7 @@ void FFANN_Namespace::SGD(Strategy *strategy,
         ++count_steps;
     }
 
-
+    std::cout<<count_steps<<std::endl;
 }
 
 #endif
