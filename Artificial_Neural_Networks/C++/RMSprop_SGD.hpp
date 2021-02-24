@@ -27,8 +27,8 @@ class RMSprop_SGD{
         this->epsilon=epsilon;
         this->alpha=alpha;
 
-        this->N=this->model->nodes[model->nodes.size()-1];
-        this->layers=this->model->nodes.size();
+        this->layers=this->model->total_layers;
+        this->N=this->model->nodes[this->layers-1];
 
 
     this->meanWeights.reserve(this->layers-1);

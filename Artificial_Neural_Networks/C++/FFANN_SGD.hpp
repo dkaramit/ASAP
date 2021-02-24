@@ -4,7 +4,7 @@
 
 #include"FFANN.hpp"
 
-template<class LD, class Func,  unsigned int total_layers>
+template<class LD, class Func>
 template<class Strategy>
 void FFANN_Namespace::SGD(Strategy *strategy, 
                         const std::vector<std::vector<LD>> *data_in, const std::vector<std::vector<LD>> *data_out, 
@@ -65,7 +65,7 @@ void FFANN_Namespace::SGD(Strategy *strategy,
         ++count_steps;
     }
 
-    std::cout<<count_steps<<std::endl;
+    //std::cout<<count_steps<<std::endl;
 }
 
 #endif

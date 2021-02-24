@@ -33,7 +33,7 @@ class loss{
     loss(const func &Q_i, const func &dQds_i,FFANN *brain){
 
         this->model=brain;// don't make copy of FFANN!
-        this->N=this->model->nodes[model->nodes.size()-1];
+        this->N=this->model->nodes[model->total_layers-1];
         this->Q_i=Q_i;
         this->dQds_i=dQds_i;
 

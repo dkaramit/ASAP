@@ -46,26 +46,23 @@ int main(){
     activationType<LD,Func> sig(sigmoidActivation,sigmoidActivationDerivative);
 
 
-
-    const unsigned int  total_layers=3;
-
     // array of activation functins in each layer
-    array<activationType<LD,Func>, total_layers-1> activations{sig,lin};
+    vector<activationType<LD,Func>> activations{sig,lin};
     // this is how the network is constructed
-    array<unsigned int, total_layers> nodes{2,2,1};
-    FFANN<LD, Func, total_layers> brain(nodes,activations);
+    vector<unsigned int> nodes{2,2,1};
+    FFANN<LD, Func> brain(nodes,activations);
     brain.init_biases(-1,1);
     brain.init_weights(-1,1);
 
 
-    loss<LD, FFANN<LD, Func, total_layers>> Q(Q_i,dQds_i,&brain);
+    loss<LD, FFANN<LD, Func>> Q(Q_i,dQds_i,&brain);
     #ifdef vanilla
     Vanilla_SGD<FFANN<LD, Func, total_layers>, loss<LD, FFANN<LD, Func, total_layers>>, LD  >
     strategy(&brain,&Q,1e-2); 
     #endif
      
     #ifdef rms_prop
-    RMSprop_SGD<FFANN<LD, Func, total_layers>, loss<LD, FFANN<LD, Func, total_layers>>, LD  > 
+    RMSprop_SGD<FFANN<LD, Func>, loss<LD, FFANN<LD, Func>>, LD  > 
     strategy(&brain,&Q,0.999,1e-4,1e-2); 
     #endif
 

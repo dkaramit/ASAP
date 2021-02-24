@@ -28,8 +28,8 @@ class activationType{
     // }
 };
 
-#define FFANN_Template template<class LD, class Func,  unsigned int total_layers>
-#define FFANN_Namespace FFANN<LD, Func, total_layers>
+#define FFANN_Template template<class LD, class Func>
+#define FFANN_Namespace FFANN<LD, Func>
 
 
 
@@ -37,8 +37,8 @@ FFANN_Template
 class FFANN{
 
     using un_int=unsigned int;
-    using actArray=std::array<activationType<LD,Func>,total_layers-1>;
-    using nodeArray=std::array<un_int ,total_layers>;
+    using actArray=std::vector<activationType<LD,Func>>;
+    using nodeArray=std::vector<un_int>;
 
     // This multidimensional arrays do not seem to be the best option.
     // Should represent it as 1D. The problem is that the rows ans comluns
@@ -61,6 +61,8 @@ class FFANN{
     
 
     public:
+    un_int total_layers;
+
     actArray activations;
     nodeArray nodes;
     
@@ -84,12 +86,8 @@ class FFANN{
     FFANN(){};
     FFANN(nodeArray &nodes, actArray &activationFunctions);
     // you can call this as in python (i don't really like it)
-    FFANN(un_int inputNodes, un_int outputNodes, std::array<un_int ,total_layers-2> &hiddenNodes, 
+    FFANN(un_int inputNodes, un_int outputNodes, std::vector<un_int> &hiddenNodes, 
     actArray &activationFunctions);
-
-
-    FFANN& operator=(const FFANN &other)=default;
-
 
 
 
