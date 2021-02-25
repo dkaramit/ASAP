@@ -3,6 +3,8 @@
 #include<array>
 #include <iomanip>
 #include <string>
+#include <fstream>
+
 #include"FFANN.hpp"
 
 #ifndef LONG
@@ -40,7 +42,6 @@ LD dQds_i(LD signal, LD target){
 // #define rms_prop
 #define ada_delta
 
-
 int main(){
     //some activation functions
     activationType<LD,Func> lin(linearActivation,linearActivationDerivative);
@@ -48,12 +49,12 @@ int main(){
 
 
     // array of activation functins in each layer
-    vector<activationType<LD,Func>> activations{sig,lin};
+    vector<activationType<LD,Func>> activations{sig,lin,lin};
     // this is how the network is constructed
-    vector<unsigned int> nodes{2,2,1};
+    vector<unsigned int> nodes{1,12,2};
     FFANN<LD, Func> brain(nodes,activations);
-    brain.init_biases(-1,1);
-    brain.init_weights(-1,1);
+    brain.init_biases(-1e-1,1e-1);
+    brain.init_weights(-1e-1,1e-1);
 
 
     loss<LD, FFANN<LD, Func>> Q(Q_i,dQds_i,&brain);
@@ -69,35 +70,65 @@ int main(){
 
     #ifdef ada_delta
     AdaDelta_SGD<FFANN<LD, Func>, loss<LD, FFANN<LD, Func>>, LD  > 
-    strategy(&brain,&Q,0.999,1e-4,1); 
+    strategy(&brain,&Q,0.9999,1e-5,1); 
     #endif
 
-    vector<vector<LD>> data_in{{1,1},{0,0},{1,0},{0,1}};
-    vector<vector<LD>> data_out{{0},{0},{1},{1}};
-
-    brain.SGD(&strategy,&data_in,&data_out,1e-5,1e-5,150,1000000);
 
 
 
+    vector<vector<LD>> logT;
+    vector<vector<LD>> rdofs;
+    
+    LD tmp1,tmp2;
+    std::ifstream data_file("eos2020.dat");
 
 
+    while (true){
+        data_file>>tmp1;
+        logT.push_back(vector<LD>{std::log10(tmp1)});
+        
+        data_file>>tmp1;
+        data_file>>tmp2;
+        rdofs.push_back(vector<LD>{tmp1,tmp2});
+
+        if (data_file.eof()){
+            break;
+        }
+    }
+    
+
+
+
+    brain.SGD(&strategy,&logT,&rdofs,1e-1,1e-2,150,500000);
+    
+    for(unsigned int i=0; i<logT.size(); ++i){
+        cout<<logT[i][0]<<","<<rdofs[i][0]<<","<<rdofs[i][1]<<",";
+        brain.inputSignal(logT[i]);
+        brain.feedForward();
+        cout<<brain.signals[brain.total_layers-1][0]<<","<<brain.signals[brain.total_layers-1][1];
+        
+
+        cout<<"\n";
+    }
+
+    #if 0
     /*print the results*/
     vector<LD> signal,target;
     LD meanQ=0;
     LD maxQ=0;
 
-    for(unsigned int i=0; i<data_in.size(); ++i){
+    for(unsigned int i=0; i<logT.size(); ++i){
         cout<<"data point: (";
         
-        for(unsigned int j=0; j<data_in[i].size(); ++j){
-            cout<<data_in[i][j];
+        for(unsigned int j=0; j<logT[i].size(); ++j){
+            cout<<logT[i][j];
 
-            if(j<data_in[i].size()-1){cout<<",";}
+            if(j<logT[i].size()-1){cout<<",";}
 
         }
         cout<<")\n";
 
-        signal=brain(data_in[i]);
+        signal=brain(logT[i]);
         
         cout<<"FFANN gives: (";
         for(unsigned int j=0; j<signal.size(); ++j){
@@ -106,7 +137,7 @@ int main(){
         }
         cout<<")\t";
         
-        target=data_out[i];
+        target=rdofs[i];
         cout<<"The target is: (";
         for(unsigned int j=0; j<target.size(); ++j){
             cout<< target[j];
@@ -120,9 +151,10 @@ int main(){
 
     }
 
-    meanQ=meanQ/((LD) data_out.size());
+    meanQ=meanQ/((LD) rdofs.size());
     cout<<"max loss: "<<maxQ<<endl;
     cout<<"mean loss: "<<meanQ<<endl;
+    #endif
 
     return 0;
 }
