@@ -26,10 +26,24 @@ using Func= LD(*)(LD);
 
 LD linearActivation(LD x){return x;}
 LD linearActivationDerivative(LD x){return 1;}
+
 LD sigmoidActivation(LD x){return 1/(1+std::exp(-x));}
 LD sigmoidActivationDerivative(LD x){return std::exp(-x)*std::pow(sigmoidActivation(x),2.);}
-LD expActivation(LD x){return std::exp(x) + std::exp(-x);}
-LD expActivationDerivative(LD x){return std::exp(x) - std::exp(-x);}
+
+LD expActivation(LD x){return std::exp(x) ;}
+LD expActivationDerivative(LD x){return std::exp(x) ;}
+
+LD dexpActivation(LD x){return std::exp(x) + std::exp(-x);}
+LD dexpActivationDerivative(LD x){return std::exp(x) - std::exp(-x) ;}
+
+LD tanhActivation(LD x){return std::tanh(x) ;}
+LD tanhActivationDerivative(LD x){return 1-std::tanh(x)*std::tanh(x);}
+
+LD gaussActivation(LD x){return std::exp(-x*x) ;}
+LD gaussActivationDerivative(LD x){return -2*x*std::exp(-x*x) ;}
+
+LD softPlusActivation(LD x){return std::log(1 + std::exp(x));}
+LD softPlusActivationDerivative(LD x){return  1/(1 + std::exp(-x));}
 
 
 
@@ -45,16 +59,21 @@ LD dQds_i(LD signal, LD target){
 // #define rms_prop
 // #define ada_delta
 // #define adam
-#define adaMax
+// #define adaMax
+#define nadam
 
 int main(){
     //some activation functions
     activationType<LD,Func> lin(linearActivation,linearActivationDerivative);
     activationType<LD,Func> sig(sigmoidActivation,sigmoidActivationDerivative);
     activationType<LD,Func> exp(expActivation,expActivationDerivative);
+    activationType<LD,Func> dexp(dexpActivation,dexpActivationDerivative);
+    activationType<LD,Func> tanh(tanhActivation,tanhActivationDerivative);
+    activationType<LD,Func> gauss(gaussActivation,gaussActivationDerivative);
+    activationType<LD,Func> softPlus(softPlusActivation,softPlusActivationDerivative);
 
 
-    vector<activationType<LD,Func>> activations{sig,exp};
+    vector<activationType<LD,Func>> activations{sig,dexp};
     vector<unsigned int> nodes{1,4,2};
 
     FFANN<LD, Func> brain(nodes,activations);
@@ -85,7 +104,12 @@ int main(){
 
     #ifdef adaMax
     AdaMax_SGD<FFANN<LD, Func>, loss<LD, FFANN<LD, Func>>, LD  > 
-    strategy(&brain,&Q,0.99,0.9999,1e-8,1e-2); 
+    strategy(&brain,&Q,0.99,0.9999,1e-8,1e-3); 
+    #endif
+
+    #ifdef nadam
+    NAdam_SGD<FFANN<LD, Func>, loss<LD, FFANN<LD, Func>>, LD  > 
+    strategy(&brain,&Q,0.9,0.999,1e-8,1e-3); 
     #endif
 
 
