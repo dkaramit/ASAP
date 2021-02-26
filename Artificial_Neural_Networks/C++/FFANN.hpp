@@ -27,6 +27,8 @@
 #include"RMSprop_SGD.hpp"
 #include"AdaDelta_SGD.hpp"
 #include"Adam_SGD.hpp"
+#include"AdaMax_SGD.hpp"
+// #include"NAdam_SGD.hpp"
 
 
 #endif

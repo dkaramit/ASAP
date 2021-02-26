@@ -28,8 +28,8 @@ LD linearActivation(LD x){return x;}
 LD linearActivationDerivative(LD x){return 1;}
 LD sigmoidActivation(LD x){return 1/(1+std::exp(-x));}
 LD sigmoidActivationDerivative(LD x){return std::exp(-x)*std::pow(sigmoidActivation(x),2.);}
-LD expActivation(LD x){return std::exp(x);}
-LD expActivationDerivative(LD x){return std::exp(x);}
+LD expActivation(LD x){return std::exp(x) + std::exp(-x);}
+LD expActivationDerivative(LD x){return std::exp(x) - std::exp(-x);}
 
 
 
@@ -44,7 +44,8 @@ LD dQds_i(LD signal, LD target){
 // #define vanilla
 // #define rms_prop
 // #define ada_delta
-#define adam
+// #define adam
+#define adaMax
 
 int main(){
     //some activation functions
@@ -53,10 +54,9 @@ int main(){
     activationType<LD,Func> exp(expActivation,expActivationDerivative);
 
 
-    // array of activation functins in each layer
-    vector<activationType<LD,Func>> activations{sig,lin};
-    // this is how the network is constructed
-    vector<unsigned int> nodes{1,6,2};
+    vector<activationType<LD,Func>> activations{sig,exp};
+    vector<unsigned int> nodes{1,4,2};
+
     FFANN<LD, Func> brain(nodes,activations);
     brain.init_biases(-1e-1,1e-1);
     brain.init_weights(-1e-1,1e-1);
@@ -80,7 +80,12 @@ int main(){
 
     #ifdef adam
     Adam_SGD<FFANN<LD, Func>, loss<LD, FFANN<LD, Func>>, LD  > 
-    strategy(&brain,&Q,0.9,0.999,1e-8,1e-2); 
+    strategy(&brain,&Q,0.99,0.9999,1e-8,1e-2); 
+    #endif
+
+    #ifdef adaMax
+    AdaMax_SGD<FFANN<LD, Func>, loss<LD, FFANN<LD, Func>>, LD  > 
+    strategy(&brain,&Q,0.99,0.9999,1e-8,1e-2); 
     #endif
 
 

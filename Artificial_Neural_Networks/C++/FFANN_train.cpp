@@ -39,7 +39,8 @@ LD dQds_i(LD signal, LD target){
 // #define vanilla
 // #define rms_prop
 // #define ada_delta
-#define adam
+// #define adam
+#define adaMax
 
 
 int main(){
@@ -75,6 +76,11 @@ int main(){
 
     #ifdef adam
     Adam_SGD<FFANN<LD, Func>, loss<LD, FFANN<LD, Func>>, LD  > 
+    strategy(&brain,&Q,0.9,0.999,1e-8,1e-2); 
+    #endif
+
+    #ifdef adaMax
+    AdaMax_SGD<FFANN<LD, Func>, loss<LD, FFANN<LD, Func>>, LD  > 
     strategy(&brain,&Q,0.9,0.999,1e-8,1e-2); 
     #endif
 

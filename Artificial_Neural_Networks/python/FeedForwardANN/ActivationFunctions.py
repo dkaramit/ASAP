@@ -32,7 +32,7 @@ class expActivation:
         pass
     
     def __call__(self,x):
-        return (1-exp(-x))
+        return exp(x)+exp(-x)
         
     def derivative(self,x):
-        return exp(-x)
+        return exp(x)-exp(-x)

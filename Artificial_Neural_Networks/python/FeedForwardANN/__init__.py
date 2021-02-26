@@ -14,6 +14,8 @@ from .FFANN_VanillaSGD import VanillaSGD
 from .FFANN_RMSpropSGD import RMSpropSGD
 from .FFANN_AdaDeltaSGD import AdaDeltaSGD
 from .FFANN_AdamSGD import AdamSGD
+from .FFANN_AdaMaxSGD import AdaMaxSGD
+# from .FFANN_NAdamSGD import NAdamSGD
 
 
 from .FFANN_aux import fill_weights_with,fill_biases_with,printWeights,printBiases,printSignals,printDerivatives,printTotalDerivatives,printDelta,printNumericalDerivatives,printDerivatives_w,printDerivatives_b,printNumericalDerivatives_w,printNumericalDerivatives_b
