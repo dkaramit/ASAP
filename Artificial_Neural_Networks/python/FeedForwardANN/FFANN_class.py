@@ -156,7 +156,7 @@ class FFANN:
 
         max_step: SGD exits after max_step steps regardless of convergence. 
         '''
-        SGD(self, strategy, data_in, data_out, abs_tol, rel_tol, step_break,max_step)
+        return SGD(self, strategy, data_in, data_out, abs_tol, rel_tol, step_break,max_step)
 
     def numericalDerivative(self,input_node,h=1e-3):
         '''
