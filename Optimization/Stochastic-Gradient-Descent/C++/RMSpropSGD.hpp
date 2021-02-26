@@ -124,7 +124,7 @@ LD RMSprop_SGD_Namespace::update(LD abs_tol, LD rel_tol){
 
         // grad^2/(abs_tol + w * rel_tol)^2 for this direction
         _w2=abs_tol + Q.target->w[i] * rel_tol;
-        _check+=(this->grad[i]/_w2)*(this->grad[i]/_w2);
+        _check+=(dw/_w2)*(dw/_w2);
     }
     // append new w to steps
     this->steps.push_back(Q.target->w);

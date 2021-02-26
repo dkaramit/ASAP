@@ -91,7 +91,7 @@ Vanilla_SGD_Namespace::VanillaSGD(const lossFunc &Q, vec2 *input_data, vec2 *out
 Vanilla_SGD_Template
 LD Vanilla_SGD_Namespace::update(LD abs_tol, LD rel_tol){
     
-    LD _check=0,_w2=0;
+    LD _check=0,_w2=0,dw=0;
     // choose index of random data point
     unsigned int index=this->UnInt(this->RndE);
     // calculate the gradient at current value of w and at the index^th data point 
@@ -103,11 +103,12 @@ LD Vanilla_SGD_Namespace::update(LD abs_tol, LD rel_tol){
     for(unsigned int i=0 ; i<this->dim; ++i ){
         // update w (remember that target is a pointer to the model, so as update runs, the model is 
         // updated)
-        Q.target->w[i] = Q.target->w[i] - (this->alpha)*this->grad[i] ; 
+        dw=(this->alpha)*this->grad[i];
+        Q.target->w[i] = Q.target->w[i] - dw ; 
 
         // grad^2/(abs_tol + w * rel_tol)^2 for this direction
         _w2=abs_tol + Q.target->w[i] * rel_tol;
-        _check+=(this->grad[i]/_w2)*(this->grad[i]/_w2);
+        _check+=(dw/_w2)*(dw/_w2);
     }
     // append new w to steps
     this->steps.push_back(Q.target->w);
