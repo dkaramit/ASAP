@@ -72,9 +72,13 @@ int main(){
     activationType<LD,Func> gauss(gaussActivation,gaussActivationDerivative);
     activationType<LD,Func> softPlus(softPlusActivation,softPlusActivationDerivative);
 
-
+    /*simplest fit*/
     vector<activationType<LD,Func>> activations{sig,dexp};
     vector<unsigned int> nodes{1,4,2};
+
+    /*not so simple fit, but still works*/
+    // vector<activationType<LD,Func>> activations{gauss,gauss,softPlus};
+    // vector<unsigned int> nodes{1,5,5,2};
 
     FFANN<LD, Func> brain(nodes,activations);
     brain.init_biases(-1e-1,1e-1);
@@ -104,7 +108,7 @@ int main(){
 
     #ifdef adaMax
     AdaMax_SGD<FFANN<LD, Func>, loss<LD, FFANN<LD, Func>>, LD  > 
-    strategy(&brain,&Q,0.99,0.9999,1e-8,1e-3); 
+    strategy(&brain,&Q,0.99,0.9999,1e-8,1e-2); 
     #endif
 
     #ifdef nadam
@@ -145,8 +149,11 @@ int main(){
 
         cout<<"\n";
     }
+    
 
-    #if 0
+    //use this to easily stop when get the data in python
+    cout<<"end"<<"\n";
+
     /*print the results*/
     vector<LD> signal,target;
     LD meanQ=0;
@@ -189,7 +196,6 @@ int main(){
     meanQ=meanQ/((LD) rdofs.size());
     cout<<"max loss: "<<maxQ<<endl;
     cout<<"mean loss: "<<meanQ<<endl;
-    #endif
 
     return 0;
 }
