@@ -38,7 +38,7 @@ class VanillaSGD:
             self.lossFunc.targetFunc.w[i]=self.lossFunc.targetFunc.w[i]-self.alpha*g
             
             _w2=abs_tol + self.lossFunc.targetFunc.w[i] * rel_tol
-            _check+=(g/_w2)*(g/_w2)
+            _check+=(self.alpha*g/_w2)*(self.alpha*g/_w2)
 
         _check=np_sqrt(1./self.dim *_check)
         

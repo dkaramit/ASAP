@@ -67,7 +67,7 @@ class NAdamSGD:
             self.lossFunc.targetFunc.w[i]=self.lossFunc.targetFunc.w[i] - self.dw[i]
             
             _w2=abs_tol + self.lossFunc.targetFunc.w[i] * rel_tol
-            _check+=(g/_w2)*(g/_w2)
+            _check+=(dw[i]/_w2)*(dw[i]/_w2)
 
         _check=np_sqrt(1./self.dim *_check)
         
