@@ -31,27 +31,27 @@ class AdaDelta_SGD{
         this->N=this->model->nodes[this->layers-1];
 
 
-    this->mean_dw.reserve(this->layers-1);
-    this->mean_dQdw.reserve(this->layers-1);
-    this->mean_db.reserve(this->layers-1);
-    this->mean_dQdb.reserve(this->layers-1);
+        this->mean_dw.reserve(this->layers-1);
+        this->mean_dQdw.reserve(this->layers-1);
+        this->mean_db.reserve(this->layers-1);
+        this->mean_dQdb.reserve(this->layers-1);
 
-    for(un_int l=0; l<this->layers-1; ++l){
-        this->mean_dw[l].reserve(model->nodes[l+1]);
-        this->mean_dQdw[l].reserve(model->nodes[l+1]);
-        this->mean_db[l].reserve(model->nodes[l+1]);
-        this->mean_dQdb[l].reserve(model->nodes[l+1]);
-        for(un_int j=0; j<this->model->nodes[l+1]; ++j){
-            this->mean_dw[l][j].reserve(model->nodes[l]);
-            this->mean_dQdw[l][j].reserve(model->nodes[l]);
-            this->mean_db[l].push_back(0);
-            this->mean_dQdb[l].push_back(0);
-            for(un_int i=0; i<this->model->nodes[l]; ++i){
-                this->mean_dw[l][j].push_back(0);
-                this->mean_dQdw[l][j].push_back(0);
+        for(un_int l=0; l<this->layers-1; ++l){
+            this->mean_dw[l].reserve(model->nodes[l+1]);
+            this->mean_dQdw[l].reserve(model->nodes[l+1]);
+            this->mean_db[l].reserve(model->nodes[l+1]);
+            this->mean_dQdb[l].reserve(model->nodes[l+1]);
+            for(un_int j=0; j<this->model->nodes[l+1]; ++j){
+                this->mean_dw[l][j].reserve(model->nodes[l]);
+                this->mean_dQdw[l][j].reserve(model->nodes[l]);
+                this->mean_db[l].push_back(0);
+                this->mean_dQdb[l].push_back(0);
+                for(un_int i=0; i<this->model->nodes[l]; ++i){
+                    this->mean_dw[l][j].push_back(0);
+                    this->mean_dQdw[l][j].push_back(0);
+                }
             }
         }
-    }
     }   
 
 
@@ -72,7 +72,7 @@ class AdaDelta_SGD{
                     model->addToWeight(l,j,i,  -dw);
 
                     _w2=abs_tol + model->get_weight(l,j,i) * rel_tol;
-                    _check+=(Q->dQdw/_w2)*(Q->dQdw/_w2);
+                    _check+=(dw/_w2)*(dw/_w2);
 
                 }
                     mean_dQdb[l][j]=gamma*mean_dQdb[l][j] + (1-gamma)*(Q->dQdb)*(Q->dQdb);
@@ -82,7 +82,7 @@ class AdaDelta_SGD{
                 model->addToBias(l,j,  -dw);
                 
                 _w2=abs_tol + model->get_bias(l,j) * rel_tol;
-                _check+=(Q->dQdb/_w2)*(Q->dQdb/_w2);
+                _check+=(dw/_w2)*(dw/_w2);
             }
         }
 

@@ -26,6 +26,7 @@
 #include"Vanilla_SGD.hpp"
 #include"RMSprop_SGD.hpp"
 #include"AdaDelta_SGD.hpp"
+#include"Adam_SGD.hpp"
 
 
 #endif

@@ -27,7 +27,10 @@ using Func= LD(*)(LD);
 LD linearActivation(LD x){return x;}
 LD linearActivationDerivative(LD x){return 1;}
 LD sigmoidActivation(LD x){return 1/(1+std::exp(-x));}
-LD sigmoidActivationDerivative(LD x){return std::exp(-x)*std::pow(sigmoidActivation(x),2.);};
+LD sigmoidActivationDerivative(LD x){return std::exp(-x)*std::pow(sigmoidActivation(x),2.);}
+LD expActivation(LD x){return std::exp(x);}
+LD expActivationDerivative(LD x){return std::exp(x);}
+
 
 
 LD Q_i(LD signal, LD target){
@@ -40,18 +43,20 @@ LD dQds_i(LD signal, LD target){
 
 // #define vanilla
 // #define rms_prop
-#define ada_delta
+// #define ada_delta
+#define adam
 
 int main(){
     //some activation functions
     activationType<LD,Func> lin(linearActivation,linearActivationDerivative);
     activationType<LD,Func> sig(sigmoidActivation,sigmoidActivationDerivative);
+    activationType<LD,Func> exp(expActivation,expActivationDerivative);
 
 
     // array of activation functins in each layer
-    vector<activationType<LD,Func>> activations{sig,lin,lin};
+    vector<activationType<LD,Func>> activations{sig,lin};
     // this is how the network is constructed
-    vector<unsigned int> nodes{1,12,2};
+    vector<unsigned int> nodes{1,6,2};
     FFANN<LD, Func> brain(nodes,activations);
     brain.init_biases(-1e-1,1e-1);
     brain.init_weights(-1e-1,1e-1);
@@ -73,6 +78,10 @@ int main(){
     strategy(&brain,&Q,0.9999,1e-5,1); 
     #endif
 
+    #ifdef adam
+    Adam_SGD<FFANN<LD, Func>, loss<LD, FFANN<LD, Func>>, LD  > 
+    strategy(&brain,&Q,0.9,0.999,1e-8,1e-2); 
+    #endif
 
 
 
@@ -96,10 +105,7 @@ int main(){
         }
     }
     
-
-
-
-    cout<<brain.SGD(&strategy,&logT,&rdofs,1e-1,1e-2,150,500000)<<endl;
+    cout<<brain.SGD(&strategy,&logT,&rdofs,1e-3,1e-3,2*logT.size(),5000000)<<endl;
     
     for(unsigned int i=0; i<logT.size(); ++i){
         cout<<logT[i][0]<<","<<rdofs[i][0]<<","<<rdofs[i][1]<<",";

@@ -53,7 +53,7 @@ class RMSpropSGD:
                     self.FFANN.addToWeight(l,j,i, -dw)
 
                     _w2=abs_tol + self.FFANN.weights[l][j][i] * rel_tol
-                    _check+=(dw/self.alpha/_w2)*(dw/self.alpha/_w2)
+                    _check+=(dw/_w2)*(dw/_w2)
 
                 #update the bias using loss.dQdb (it is the same for all i, so don't run loss.grad again).
                 self.meanBiases[l][j]=self.gamma*self.meanBiases[l][j] + (1-self.gamma)*self.loss.dQdb**2 
@@ -62,7 +62,7 @@ class RMSpropSGD:
                 self.FFANN.addToBias(l,j, -dw)
                 
                 _w2=abs_tol + self.FFANN.biases[l][j] * rel_tol
-                _check+=(dw/self.alpha/_w2)*(dw/self.alpha/_w2)
+                _check+=(dw/_w2)*(dw/_w2)
                 
                 
         _check=np_sqrt(1./self.loss.N *_check)

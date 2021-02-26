@@ -12,7 +12,7 @@ class AdamSGD:
         beta_m: decay parameter for the average m
         beta_v: decay parameter for the average v 
         epsilon: safety parameter (to avoid division by 0)
-        alpha: a learning rate that multiplies the rate of AdaDelta. 
+        alpha: a learning rate that multiplies the rate. 
         '''
         self.lossFunc=loss
         self.data=data

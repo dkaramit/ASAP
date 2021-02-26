@@ -29,18 +29,19 @@ class VanillaSGD:
                     #get the grad of the loss. The results should be stored in loss.dQdw and loss.dQdb
                     #This way it should be easy to update the weights and biases of FFANN
                     self.loss.grad(l,j,i,signal_out,data_out)
-                    
+                    dw=self.alpha*self.loss.dQdw
                     #update the weight using loss.dQdw
-                    self.FFANN.addToWeight(l,j,i, -self.alpha*self.loss.dQdw)
+                    self.FFANN.addToWeight(l,j,i, -dw)
 
                     _w2=abs_tol + self.FFANN.weights[l][j][i] * rel_tol
-                    _check+=(self.loss.dQdw/_w2)*(self.loss.dQdw/_w2)
+                    _check+=(dw/_w2)*(dw/_w2)
 
+                dw=self.alpha*self.loss.dQdb
                 #update the bias using loss.dQdb (it is the same for all i, so don't run loss.grad again).
-                self.FFANN.addToBias(l,j, -self.alpha*self.loss.dQdb)
+                self.FFANN.addToBias(l,j, -dw)
                 
                 _w2=abs_tol + self.FFANN.biases[l][j] * rel_tol
-                _check+=(self.loss.dQdb/_w2)*(self.loss.dQdb/_w2)
+                _check+=(dw/_w2)*(dw/_w2)
                 
                 
         _check=np_sqrt(1./self.loss.N *_check)

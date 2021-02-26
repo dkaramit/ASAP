@@ -38,7 +38,8 @@ LD dQds_i(LD signal, LD target){
 
 // #define vanilla
 // #define rms_prop
-#define ada_delta
+// #define ada_delta
+#define adam
 
 
 int main(){
@@ -70,6 +71,11 @@ int main(){
     #ifdef ada_delta
     AdaDelta_SGD<FFANN<LD, Func>, loss<LD, FFANN<LD, Func>>, LD  > 
     strategy(&brain,&Q,0.999,1e-4,1); 
+    #endif
+
+    #ifdef adam
+    Adam_SGD<FFANN<LD, Func>, loss<LD, FFANN<LD, Func>>, LD  > 
+    strategy(&brain,&Q,0.9,0.999,1e-8,1e-2); 
     #endif
 
     vector<vector<LD>> data_in{{1,1},{0,0},{1,0},{0,1}};
