@@ -6,7 +6,7 @@
 
 template<class LD, class Func>
 template<class Strategy>
-void FFANN_Namespace::SGD(Strategy *strategy, 
+unsigned int FFANN_Namespace::SGD(Strategy *strategy, 
                         const std::vector<std::vector<LD>> *data_in, const std::vector<std::vector<LD>> *data_out, 
                         LD abs_tol, LD rel_tol, un_int step_break, un_int max_step) {
    /*
@@ -65,7 +65,7 @@ void FFANN_Namespace::SGD(Strategy *strategy,
         ++count_steps;
     }
 
-    std::cout<<count_steps<<std::endl;
+    return count_steps;
 }
 
 #endif

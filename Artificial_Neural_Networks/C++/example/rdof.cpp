@@ -99,7 +99,7 @@ int main(){
 
 
 
-    brain.SGD(&strategy,&logT,&rdofs,1e-1,1e-2,150,500000);
+    cout<<brain.SGD(&strategy,&logT,&rdofs,1e-1,1e-2,150,500000)<<endl;
     
     for(unsigned int i=0; i<logT.size(); ++i){
         cout<<logT[i][0]<<","<<rdofs[i][0]<<","<<rdofs[i][1]<<",";

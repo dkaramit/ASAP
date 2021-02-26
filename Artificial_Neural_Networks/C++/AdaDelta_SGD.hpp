@@ -72,7 +72,7 @@ class AdaDelta_SGD{
                     model->addToWeight(l,j,i,  -dw);
 
                     _w2=abs_tol + model->get_weight(l,j,i) * rel_tol;
-                    _check+=(dw/alpha/_w2)*(dw/alpha/_w2);
+                    _check+=(Q->dQdw/_w2)*(Q->dQdw/_w2);
 
                 }
                     mean_dQdb[l][j]=gamma*mean_dQdb[l][j] + (1-gamma)*(Q->dQdb)*(Q->dQdb);
@@ -82,7 +82,7 @@ class AdaDelta_SGD{
                 model->addToBias(l,j,  -dw);
                 
                 _w2=abs_tol + model->get_bias(l,j) * rel_tol;
-                _check+=(dw/alpha/_w2)*(dw/alpha/_w2);
+                _check+=(Q->dQdb/_w2)*(Q->dQdb/_w2);
             }
         }
 

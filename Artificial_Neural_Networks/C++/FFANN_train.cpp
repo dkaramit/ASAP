@@ -75,7 +75,7 @@ int main(){
     vector<vector<LD>> data_in{{1,1},{0,0},{1,0},{0,1}};
     vector<vector<LD>> data_out{{0},{0},{1},{1}};
 
-    brain.SGD(&strategy,&data_in,&data_out,1e-5,1e-5,150,1000000);
+    cout<<brain.SGD(&strategy,&data_in,&data_out,1e-5,1e-5,150,1000000)<<endl;
 
 
 

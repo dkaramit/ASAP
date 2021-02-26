@@ -140,7 +140,7 @@ class FFANN{
 
     //stochastic gradient descent main loop.
     template <class Strategy>
-    void SGD(Strategy *strategy, 
+    unsigned int SGD(Strategy *strategy, 
             const std::vector<std::vector<LD>> *data_in, const std::vector<std::vector<LD>> *data_out, 
             LD abs_tol=1e-5, LD rel_tol=1e-3, un_int step_break=100, un_int max_step=5000);
 
