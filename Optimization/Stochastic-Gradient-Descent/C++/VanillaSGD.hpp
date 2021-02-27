@@ -26,8 +26,6 @@ class VanillaSGD{
     // the learning rate
     LD alpha;
 
-    // the gradiend over the parameters of the model (the should be a pointer Q.target)
-    std::vector<LD> grad;
     // the dimension of the w parameters (same as grad obviously)
     unsigned int dim;
     
@@ -45,24 +43,7 @@ class VanillaSGD{
     VanillaSGD(const lossFunc &Q, vec2 *input_data, vec2 *output_data, LD alpha=1e-3);
     VanillaSGD(){};
 
-    // overloading of operator= just to make sure that we can copy it correctly
-    VanillaSGD& operator=(const VanillaSGD& strategy){
-        this->Q=strategy.Q;
-        this->input_data=strategy.input_data;
-        this->output_data=strategy.output_data;
-        this->alpha=strategy.alpha;
-
-        this->dim=strategy.Q.target->dim;
-        this->grad.resize(this->dim);
-
-        this->steps=strategy.steps;
-
-        this->data_size=input_data->size();
-        this->UnInt=std::uniform_int_distribution<unsigned int>{0,this->data_size -1};
-
-        return *this;    
-    };
-
+  
     LD update(LD abs_tol=1e-5, LD rel_tol=1e-3);
 };
 
@@ -76,10 +57,9 @@ Vanilla_SGD_Namespace::VanillaSGD(const lossFunc &Q, vec2 *input_data, vec2 *out
     this->output_data=output_data;
     this->alpha=alpha;
 
-    this->dim=Q.target->dim;
-    this->grad.resize(this->dim);
+    this->dim=Q.model->dim;
 
-    this->steps.push_back(Q.target->w);
+    this->steps.push_back(Q.model->w);
 
     this->data_size=input_data->size();
     this->UnInt=std::uniform_int_distribution<unsigned int>{0,this->data_size -1};
@@ -94,27 +74,28 @@ LD Vanilla_SGD_Namespace::update(LD abs_tol, LD rel_tol){
     LD _check=0,_w2=0,dw=0;
     // choose index of random data point
     unsigned int index=this->UnInt(this->RndE);
-    // calculate the gradient at current value of w and at the index^th data point 
-    this->Q.Grad(this->input_data->operator[](index),
-                this->output_data->operator[](index),
-                this->grad);
+    
+    // calculate the signal at current value of w and at the data point 
+    Q.model->operator()(&(input_data->operator[](index)));
 
-
+    
     for(unsigned int i=0 ; i<this->dim; ++i ){
-        // update w (remember that target is a pointer to the model, so as update runs, the model is 
+    // calculate the gradient at current value of w and at the index^th data point 
+    Q.grad(i,Q.model->signal,output_data->operator[](index));
+        // update w (remember that model is a pointer to the model, so as update runs, the model is 
         // updated)
-        dw=(this->alpha)*this->grad[i];
-        Q.target->w[i] = Q.target->w[i] - dw ; 
+        dw=(alpha)*Q.dQdw;
+        Q.model->w[i] = Q.model->w[i] - dw ; 
 
         // grad^2/(abs_tol + w * rel_tol)^2 for this direction
-        _w2=abs_tol + Q.target->w[i] * rel_tol;
+        _w2=abs_tol + Q.model->w[i] * rel_tol;
         _check+=(dw/_w2)*(dw/_w2);
     }
     // append new w to steps
-    this->steps.push_back(Q.target->w);
+    steps.push_back(Q.model->w);
 
     // calculate _check
-    _check=std::sqrt(1/((LD) this->dim) *_check);
+    _check=std::sqrt(1/((LD) dim) *_check);
     return _check;
 }
 

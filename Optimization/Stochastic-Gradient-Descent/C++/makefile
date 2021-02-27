@@ -13,12 +13,11 @@ OPT=-O3
 
 FLG=  $(STD)  -I "$(Path)"  -lm   $(OPT) -DLONG=$(LONG) 
 
-all:SGD_example.run 
+all: simple_SGD.run
 
-
-SGD_example.run: makefile $(Headers) SGD_example.cpp
-	$(CC) -o "$(Path)/SGD_example.run" "$(Path)/SGD_example.cpp" $(FLG) -Wall
+simple_SGD.run: makefile $(Headers) simple_SGD.cpp
+	$(CC) -o "$(Path)/simple_SGD.run" "$(Path)/simple_SGD.cpp" $(FLG) -Wall
 
 
 clean:
-	@[ -f "$(Path)/SGD_example.run" ] && rm "$(Path)/SGD_example.run" || true
+	@[ -f "$(Path)/simple_SGD.run" ] && rm "$(Path)/simple_SGD.run" || true

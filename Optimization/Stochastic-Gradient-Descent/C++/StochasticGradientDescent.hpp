@@ -18,9 +18,9 @@ loop of updates (update), which should be defined in a derived class.
 SGD_Template
 class StochasticGradientDescent{
     public:
-    Strategy strategy;
-    // constructor and destructor (they will be overwritten by the derived class)
-    StochasticGradientDescent(const Strategy &strategy){
+    Strategy *strategy;
+
+    StochasticGradientDescent(Strategy *strategy){
         this->strategy=strategy;
     };
     ~StochasticGradientDescent(){};
@@ -45,7 +45,7 @@ void SGD_Namespace::run(LD abs_tol, LD rel_tol, unsigned int step_break, unsigne
         // update should return a number that when it is smaller than 1
         // the loop stops.
         // This number can depend on two abs_tol and rel_tol
-        _check=this->strategy.update(abs_tol,rel_tol);
+        _check=this->strategy->update(abs_tol,rel_tol);
 
         count_steps++;
 
