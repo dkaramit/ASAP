@@ -96,9 +96,12 @@ LD AdaMax_SGD_Namespace::update(LD abs_tol, LD rel_tol){
 
     // choose index of random data point
     unsigned int index=UnInt(RndE);
+    std::vector<LD> t=output_data->operator[](index);
 
     // calculate the signal at current value of w and at the data point 
-    Q->model->operator()(&(input_data->operator[](index)));
+    Q->model->setInput(input_data->operator[](index));
+    Q->model->operator()();
+
 
 
     // accumulate the decay rates, in order to correct the averages 
@@ -106,7 +109,7 @@ LD AdaMax_SGD_Namespace::update(LD abs_tol, LD rel_tol){
 
     for(unsigned int i=0 ; i<dim; ++i ){
         // calculate the gradient at current value of w and at the index^th data point 
-        Q->grad(i,Q->model->signal,output_data->operator[](index));
+        Q->grad(i,t);
 
         // caclulate the decaying average of the gradient and v_max
         mE[i]=beta_m*mE[i] + (1-beta_m)*Q->dQdw; 

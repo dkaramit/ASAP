@@ -74,14 +74,16 @@ LD Vanilla_SGD_Namespace::update(LD abs_tol, LD rel_tol){
     LD _check=0,_w2=0,dw=0;
     // choose index of random data point
     unsigned int index=this->UnInt(this->RndE);
-    
+    std::vector<LD> t=output_data->operator[](index);
+
     // calculate the signal at current value of w and at the data point 
-    Q->model->operator()(&(input_data->operator[](index)));
+    Q->model->setInput(input_data->operator[](index));
+    Q->model->operator()();
 
     
     for(unsigned int i=0 ; i<this->dim; ++i ){
         // calculate the gradient at current value of w and at the index^th data point 
-        Q->grad(i,Q->model->signal,output_data->operator[](index));
+        Q->grad(i,t);
         // update w (remember that model is a pointer to the model, so as update runs, the model is 
         // updated)
         dw=(alpha)*Q->dQdw;

@@ -89,14 +89,17 @@ LD AdaDelta_SGD_Namespace::update(LD abs_tol, LD rel_tol){
 
     // choose index of random data point
     unsigned int index=UnInt(RndE);
+    std::vector<LD> t=output_data->operator[](index);
 
     // calculate the signal at current value of w and at the data point 
-    Q->model->operator()(&(input_data->operator[](index)));
+    Q->model->setInput(input_data->operator[](index));
+    Q->model->operator()();
+
 
 
     for(unsigned int i=0 ; i<dim; ++i ){
         // calculate the gradient at current value of w and at the index^th data point 
-        Q->grad(i,Q->model->signal,output_data->operator[](index));
+        Q->grad(i,t);
 
         // calculate decaying average of the gradient
         gE[i]=gamma*gE[i] + (1-gamma)*Q->dQdw*Q->dQdw;

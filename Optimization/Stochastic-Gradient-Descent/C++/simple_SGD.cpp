@@ -120,8 +120,9 @@ int main(){
     
     LD Qmean=0;
     for(unsigned int i=0 ; i<X.size() ; ++i){
-        model(&X[i]);
-        Qmean+=Q(model.signal,Y[i]);
+        model.setInput(X[i]);
+        model();
+        Qmean+=Q(Y[i]);
     }
     Qmean=Qmean/X.size();
     

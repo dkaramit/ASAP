@@ -30,6 +30,8 @@ class modelFunc{
     std::vector<LD> signal;
     //store the derivatives of the output signals over w_i here
     std::vector<LD> dsdw;
+    // store the input so that you don't have to pass it evey time you call the model and its derivative
+    std::vector<LD> input;
 
     modelFunc(){};
     modelFunc(const MFunc func, const MDer dfdw_i, const std::vector<unsigned int> &dimensions, const std::vector<LD> &w0){
@@ -41,12 +43,21 @@ class modelFunc{
 
         this->signal.reserve(dimensions[1]);
         this->dsdw.reserve(dimensions[1]);
+        this->input.reserve(dimensions[0]);
     }
 
-    void operator()(std::vector<LD> *x){ f(x,&w,&signal); }
+    void setInput(std::vector<LD> &x){ 
+        for (unsigned int i = 0; i < dimensions[0]; i++)
+        {
+            input[i]=x[i];
+        }
+        
+    }
 
-    void derivative_w(unsigned int i, std::vector<LD> *x){
-        dfdw_i(i,x,&w,&dsdw);
+    void operator()(){ f(&input,&w,&signal); }
+
+    void derivative_w(unsigned int i){
+        dfdw_i(i,&input,&w,&dsdw);
     }
 };
 
@@ -69,11 +80,11 @@ class lossFunc{
         this->N=this->model->dimensions[1];
     }
   
-    LD operator()(std::vector<LD> &signal, std::vector<LD> &target){
+    LD operator()(std::vector<LD> &target){
         LD sum_Q=0;
         
         for(unsigned int r=0; r<N; ++r){
-            sum_Q+=Q_i(signal[r],target[r]); 
+            sum_Q+=Q_i(model->signal[r],target[r]); 
         }
         sum_Q=sum_Q/((LD) N);
 
@@ -81,14 +92,14 @@ class lossFunc{
     }
 
 
-    void grad(unsigned int i, std::vector<LD> &signal, std::vector<LD> &target){
+    void grad(unsigned int i, std::vector<LD> &target){
         /*calculates the derivatives wrt w_i*/
         LD tmp_dQds;
-        model->derivative_w(i,&signal);
+        model->derivative_w(i);
         dQdw=0;
 
         for(unsigned int r=0; r<N; ++r){
-            tmp_dQds=dQds_i(signal[r],target[r])/((LD)N);
+            tmp_dQds=dQds_i(model->signal[r],target[r])/((LD)N);
             dQdw += tmp_dQds*model->dsdw[r];
         }
 
