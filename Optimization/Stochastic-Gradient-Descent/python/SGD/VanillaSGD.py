@@ -30,14 +30,15 @@ class VanillaSGD:
         '''
         
         index=np_random.randint(self.data_size)
-        x=self.data_in[index]
         t=self.data_out[index]
-        self.Q.model(x)
+        
+        self.Q.model.setInput(self.data_in[index])
+        self.Q.model()
         
         _w2=0
         _check=0
         for i in range(self.dim):
-            self.Q.grad(i,self.Q.model.signal,t)
+            self.Q.grad(i,t)
             dw=self.alpha*self.Q.dQdw
             self.Q.model.w[i]=self.Q.model.w[i]-dw
             

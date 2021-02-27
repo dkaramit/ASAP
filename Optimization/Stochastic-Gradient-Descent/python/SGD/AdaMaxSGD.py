@@ -47,17 +47,19 @@ class AdaMaxSGD:
         sqrt(1/dim*sum_{i=0}^{dim}(grad/(abs_tol+x*rel_tol))_i^2)
         '''
         index=np_random.randint(self.data_size)
-        x=self.data_in[index]
         t=self.data_out[index]
-        self.Q.model(x)
+
+        self.Q.model.setInput(self.data_in[index])
+        self.Q.model()
 
         # accumulate the decay rates, in order to correct the averages 
         self.beta_m_ac*=self.beta_m_ac
         
+
         _w2=0
         _check=0
         for i in range(self.dim):
-            self.Q.grad(i,self.Q.model.signal,t)
+            self.Q.grad(i,t)
 
             self.mE[i]=self.beta_m*self.mE[i] + (1-self.beta_m)*self.Q.dQdw 
             self.v_max[i]=np_max([self.beta_v*self.v_max[i], np_abs(self.Q.dQdw) ]) 

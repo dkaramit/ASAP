@@ -35,14 +35,15 @@ class RMSpropSGD:
         sqrt(1/dim*sum_{i=0}^{dim}(grad/(abs_tol+x*rel_tol))_i^2)
         '''
         index=np_random.randint(self.data_size)
-        x=self.data_in[index]
         t=self.data_out[index]
-        self.Q.model(x)
+
+        self.Q.model.setInput(self.data_in[index])
+        self.Q.model()
         
         _w2=0
         _check=0
         for i in range(self.dim):
-            self.Q.grad(i,self.Q.model.signal,t)
+            self.Q.grad(i,t)
             
             self.gE[i]=self.gamma*self.gE[i] + (1-self.gamma)*self.Q.dQdw**2 
             dw=self.alpha/np_sqrt( (self.gE[i]+self.epsilon)  )*self.Q.dQdw

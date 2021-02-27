@@ -22,14 +22,20 @@ class modelFunc:
         
         self.signal=[0 for i in range(dimensions[1])] #will store the output of self.f
         self.dsdw=[0 for i in range(dimensions[1])] #will store the output of self.dfdw_i
+        
+        #will store the input, to avoid passing the input every time we callthe function or its derivetive
+        self.input=[0 for i in range(dimensions[1])]
     
+    def __call__(self):
+        self.f(self,self.input)
     
-    def __call__(self,x):
-        self.f(self,x)
+    def setInput(self,x):
+        '''set the input'''
+        self.input=x
     
-    def derivative_w(self,i,x):
-        self.dfdw_i(self,i,x)
-       
+    def derivative_w(self,i):
+        self.dfdw_i(self,i,self.input)
+   
 
  
  
@@ -58,8 +64,11 @@ class lossFunc:
         self.dQdw=0 #this will hold dQdw
         
         
-    def __call__(self,signal,target):
+    def __call__(self,target):
         sum_Q=0;
+        
+        
+        signal=self.model.signal
         
         for r in range(self.N):
             sum_Q+=self.Q_i(signal[r],target[r])
@@ -67,19 +76,16 @@ class lossFunc:
         sum_Q=sum_Q/(float(self.N))
 
         return sum_Q
-
     
-    def grad(self,i,signal,target):
-        self.model.derivative_w(i,signal)
+    def grad(self,i,target):
+        self.model.derivative_w(i)
         self.dQdw=0
         
+        signal=self.model.signal
         for dim in range(self.dim):
             for r in range(self.N):
                 tmp_dQds=self.dQds_i(signal[r],target[r])/(float(self.N))
                 self.dQdw += tmp_dQds*self.model.dsdw[r]
-
-
-        
 #--------------------------------------------------------------------------------#
 
 
