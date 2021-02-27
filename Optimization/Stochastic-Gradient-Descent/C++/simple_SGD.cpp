@@ -17,34 +17,39 @@ using std::endl;
 using std::vector;
 
 
+// the loss function for one dimension. The class lossFunc averages over all dimensions.
 LD Q_i(LD signal, LD target){
     return (signal-target)*(signal-target);
 }
 
+// the derivative of the loss function for one dimension.
 LD dQds_i(LD signal, LD target){
     return 2*(signal-target);
 }
 
+
+// basically macros for the model function and its derivative 
 using MFunc= void (*)(vector<LD> *x, vector<LD> *w, vector<LD> *output);
 using MDer= void (*)(unsigned int i, std::vector<LD> *x, std::vector<LD> *w, std::vector<LD> *dsdw);
 
+
+// the model
 void f(vector<LD> *x, vector<LD> *w, vector<LD> *signal){
     (*signal)[0]=(*x)[0]*(*w)[0]+ (*w)[1];
 }
 
-// clearly there should be better ways to define the derivative
+// the model's derivative. Clearly there should be better ways to define the derivative
 void dfdw_i(unsigned int i, vector<LD> *x, vector<LD> *w, vector<LD> *dsdw){
     if(i==0){ (*dsdw)[0]=(*x)[0];}
     if(i==1){ (*dsdw)[0]=1;}
 
 }
 
-
+// setup the model
 modelFunc<LD> model(f,dfdw_i,vector<unsigned int>{1,1},vector<LD>{1,1});
+// this is the loss function
 lossFunc<LD,modelFunc<LD>> Q(Q_i,dQds_i,&model);
 
-using vec2=vector<vector<LD>>;
-vec2 X,Y;
 
 // #define Vanilla
 // #define RMSprop
@@ -53,42 +58,47 @@ vec2 X,Y;
 // #define AdaMax
 #define NAdam
 
+// we\ll need these vectors to pass the data
+using vec2=vector<vector<LD>>;
+vec2 X,Y;
+
+
 #ifdef Vanilla
 using strategy=VanillaSGD<LD, lossFunc<LD,modelFunc<LD>>> ;
-#define params {Q,&X,&Y,1e-2}
+#define params {&Q,&X,&Y,1e-2}
 #endif
 
 
 #ifdef RMSprop
 using strategy=RMSpropSGD<LD, lossFunc<LD,modelFunc<LD>>> ;
-#define params {Q,&X,&Y,1-1e-2,1e-5,1e-2}
+#define params {&Q,&X,&Y,1-1e-2,1e-5,1e-2}
 #endif
 
 #ifdef AdaDelta
 using strategy=AdaDeltaSGD<LD, lossFunc<LD,modelFunc<LD>>> ;
-#define params {Q,&X,&Y,1-1e-2,1e-5,1}
+#define params {&Q,&X,&Y,1-1e-2,1e-5,1}
 #endif
 
 #ifdef Adam
 using strategy=AdamSGD<LD, lossFunc<LD,modelFunc<LD>>> ;
-#define params {Q,&X,&Y,0.9,0.999,1e-8,1e-2}
+#define params {&Q,&X,&Y,0.9,0.999,1e-8,1e-2}
 #endif
 
 #ifdef AdaMax
 using strategy=AdaMaxSGD<LD, lossFunc<LD,modelFunc<LD>>> ;
-#define params {Q,&X,&Y,0.9,0.999,1e-8,1e-2}
+#define params {&Q,&X,&Y,0.9,0.999,1e-8,1e-2}
 #endif
 
 #ifdef NAdam
 using strategy=NAdamSGD<LD, lossFunc<LD,modelFunc<LD>>> ;
-#define params {Q,&X,&Y,0.9,0.999,1e-8,1e-2}
+#define params {&Q,&X,&Y,0.9,0.999,1e-8,1e-2}
 #endif
 
 int main(){
     std::default_random_engine RndE{std::random_device{}()}; ;
     std::uniform_real_distribution<LD> UnDist{-1,1};   
     LD x=0;
-    for(int i=0;i<5000;++i){
+    for(int i=0;i<50;++i){
         x=UnDist(RndE);
         X.push_back({x});
         Y.push_back({2*x+3});

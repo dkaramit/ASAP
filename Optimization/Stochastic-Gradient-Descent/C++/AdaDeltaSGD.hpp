@@ -18,7 +18,7 @@ class AdaDeltaSGD{
 
     public:
     // the loss function
-    lossFunc Q;
+    lossFunc *Q;
     // pointer to vectors of input and output data
     vec2 *input_data;
     vec2 *output_data;
@@ -44,7 +44,7 @@ class AdaDeltaSGD{
     std::vector<LD> gE,dwE;
     
     // constructor with default values of the parameters    
-    AdaDeltaSGD(const lossFunc &Q, vec2 *input_data, vec2 *output_data, LD gamma=0.95, LD epsilon=1e-6, LD alpha=1);
+    AdaDeltaSGD(lossFunc *Q, vec2 *input_data, vec2 *output_data, LD gamma=0.95, LD epsilon=1e-6, LD alpha=1);
     AdaDeltaSGD(){};
 
     
@@ -54,9 +54,9 @@ class AdaDeltaSGD{
 
 
 
-// Constructor
+// costuctor
 AdaDelta_SGD_Template
-AdaDelta_SGD_Namespace::AdaDeltaSGD(const lossFunc &Q, vec2 *input_data, vec2 *output_data, LD gamma, LD epsilon, LD alpha){
+AdaDelta_SGD_Namespace::AdaDeltaSGD(lossFunc *Q, vec2 *input_data, vec2 *output_data, LD gamma, LD epsilon, LD alpha){
     this->Q=Q;
     this->input_data=input_data;
     this->output_data=output_data;
@@ -65,9 +65,9 @@ AdaDelta_SGD_Namespace::AdaDeltaSGD(const lossFunc &Q, vec2 *input_data, vec2 *o
     this->epsilon=epsilon;
     this->alpha=alpha;
 
-    this->dim=Q.model->dim;
+    this->dim=Q->model->dim;
 
-    this->steps.push_back(Q.model->w);
+    this->steps.push_back(Q->model->w);
 
     this->data_size=input_data->size();
     this->UnInt=std::uniform_int_distribution<unsigned int>{0,this->data_size -1};
@@ -91,30 +91,30 @@ LD AdaDelta_SGD_Namespace::update(LD abs_tol, LD rel_tol){
     unsigned int index=UnInt(RndE);
 
     // calculate the signal at current value of w and at the data point 
-    Q.model->operator()(&(input_data->operator[](index)));
+    Q->model->operator()(&(input_data->operator[](index)));
 
 
     for(unsigned int i=0 ; i<dim; ++i ){
         // calculate the gradient at current value of w and at the index^th data point 
-        Q.grad(i,Q.model->signal,output_data->operator[](index));
+        Q->grad(i,Q->model->signal,output_data->operator[](index));
 
         // calculate decaying average of the gradient
-        gE[i]=gamma*gE[i] + (1-gamma)*Q.dQdw*Q.dQdw;
+        gE[i]=gamma*gE[i] + (1-gamma)*Q->dQdw*Q->dQdw;
         
         // update w
-        dw=std::sqrt( (dwE[i]+epsilon)/(gE[i]+epsilon)  )*Q.dQdw*alpha;
-        Q.model->w[i]=Q.model->w[i] - dw;
+        dw=std::sqrt( (dwE[i]+epsilon)/(gE[i]+epsilon)  )*Q->dQdw*alpha;
+        Q->model->w[i]=Q->model->w[i] - dw;
         
 
         // calculate decaying average of the stepsize
         dwE[i]=gamma*dwE[i] + (1-gamma)*dw*dw;
         
         // grad^2/(abs_tol + w * rel_tol)^2 for this direction
-        _w2=abs_tol + Q.model->w[i] * rel_tol;
+        _w2=abs_tol + Q->model->w[i] * rel_tol;
         _check+=(dw/_w2)*(dw/_w2);
     }
     // append new w to steps
-    steps.push_back(Q.model->w);
+    steps.push_back(Q->model->w);
 
     // calculate _check
     _check=std::sqrt(1/((LD) dim) *_check);

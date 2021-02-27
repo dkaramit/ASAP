@@ -18,7 +18,7 @@ class AdaMaxSGD{
 
     public:
     // the loss function
-    lossFunc Q;
+    lossFunc *Q;
     // pointer to vectors of input and output data
     vec2 *input_data;
     vec2 *output_data;
@@ -49,7 +49,7 @@ class AdaMaxSGD{
     LD beta_m_ac;
 
     // constructor with default values of the parameters    
-    AdaMaxSGD(const lossFunc &Q, vec2 *input_data, vec2 *output_data,LD beta_m=1-1e-1, LD beta_v=1-1e-3, LD epsilon=1e-6, LD alpha=1e-2);
+    AdaMaxSGD(lossFunc *Q, vec2 *input_data, vec2 *output_data,LD beta_m=1-1e-1, LD beta_v=1-1e-3, LD epsilon=1e-6, LD alpha=1e-2);
     AdaMaxSGD(){};
 
 
@@ -60,8 +60,8 @@ class AdaMaxSGD{
 
 // Constructor
 AdaMax_SGD_Template
-AdaMax_SGD_Namespace::AdaMaxSGD(const lossFunc &Q, vec2 *input_data, vec2 *output_data, LD beta_m, LD beta_v, LD epsilon, LD alpha){
-        this->Q=Q;
+AdaMax_SGD_Namespace::AdaMaxSGD(lossFunc *Q, vec2 *input_data, vec2 *output_data, LD beta_m, LD beta_v, LD epsilon, LD alpha){
+    this->Q=Q;
     this->input_data=input_data;
     this->output_data=output_data;
 
@@ -70,9 +70,9 @@ AdaMax_SGD_Namespace::AdaMaxSGD(const lossFunc &Q, vec2 *input_data, vec2 *outpu
     this->epsilon=epsilon;
     this->alpha=alpha;
 
-    this->dim=Q.model->dim;
+    this->dim=Q->model->dim;
 
-    this->steps.push_back(Q.model->w);
+    this->steps.push_back(Q->model->w);
 
     this->data_size=input_data->size();
     this->UnInt=std::uniform_int_distribution<unsigned int>{0,this->data_size -1};
@@ -98,7 +98,7 @@ LD AdaMax_SGD_Namespace::update(LD abs_tol, LD rel_tol){
     unsigned int index=UnInt(RndE);
 
     // calculate the signal at current value of w and at the data point 
-    Q.model->operator()(&(input_data->operator[](index)));
+    Q->model->operator()(&(input_data->operator[](index)));
 
 
     // accumulate the decay rates, in order to correct the averages 
@@ -106,23 +106,23 @@ LD AdaMax_SGD_Namespace::update(LD abs_tol, LD rel_tol){
 
     for(unsigned int i=0 ; i<dim; ++i ){
         // calculate the gradient at current value of w and at the index^th data point 
-        Q.grad(i,Q.model->signal,output_data->operator[](index));
+        Q->grad(i,Q->model->signal,output_data->operator[](index));
 
         // caclulate the decaying average of the gradient and v_max
-        mE[i]=beta_m*mE[i] + (1-beta_m)*Q.dQdw; 
-        v_max[i]=(std::abs(Q.dQdw) > beta_v*v_max[i]) ? std::abs(Q.dQdw) : beta_v*v_max[i]; 
+        mE[i]=beta_m*mE[i] + (1-beta_m)*Q->dQdw; 
+        v_max[i]=(std::abs(Q->dQdw) > beta_v*v_max[i]) ? std::abs(Q->dQdw) : beta_v*v_max[i]; 
 
         // update w
         dw=alpha/(v_max[i] + epsilon)  *mE[i]/(1-beta_m_ac);
-        Q.model->w[i]=Q.model->w[i] - dw;
+        Q->model->w[i]=Q->model->w[i] - dw;
         
 
         // grad^2/(abs_tol + w * rel_tol)^2 for this direction
-        _w2=abs_tol + Q.model->w[i] * rel_tol;
+        _w2=abs_tol + Q->model->w[i] * rel_tol;
         _check+=(dw/_w2)*(dw/_w2);
     }
     // append new w to steps
-    steps.push_back(Q.model->w);
+    steps.push_back(Q->model->w);
 
     // calculate _check
     _check=std::sqrt(1/((LD) dim) *_check);
