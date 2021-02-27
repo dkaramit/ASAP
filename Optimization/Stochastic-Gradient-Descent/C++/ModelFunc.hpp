@@ -70,14 +70,14 @@ class lossFunc{
     }
   
     LD operator()(std::vector<LD> &signal, std::vector<LD> &target){
-    LD sum_Q=0;
-    
-    for(unsigned int r=0; r<N; ++r){
-        sum_Q+=Q_i(signal[r],target[r]); 
-    }
-    sum_Q=sum_Q/((LD) N);
+        LD sum_Q=0;
+        
+        for(unsigned int r=0; r<N; ++r){
+            sum_Q+=Q_i(signal[r],target[r]); 
+        }
+        sum_Q=sum_Q/((LD) N);
 
-    return sum_Q;
+        return sum_Q;
     }
 
 

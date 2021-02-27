@@ -80,8 +80,8 @@ LD Vanilla_SGD_Namespace::update(LD abs_tol, LD rel_tol){
 
     
     for(unsigned int i=0 ; i<this->dim; ++i ){
-    // calculate the gradient at current value of w and at the index^th data point 
-    Q->grad(i,Q->model->signal,output_data->operator[](index));
+        // calculate the gradient at current value of w and at the index^th data point 
+        Q->grad(i,Q->model->signal,output_data->operator[](index));
         // update w (remember that model is a pointer to the model, so as update runs, the model is 
         // updated)
         dw=(alpha)*Q->dQdw;

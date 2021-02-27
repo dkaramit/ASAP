@@ -1,4 +1,4 @@
-from .StochasticGradientDescent import StochasticGradientDescent, lossFunc, targetFunc 
+from .StochasticGradientDescent import StochasticGradientDescent, modelFunc, lossFunc 
 from .VanillaSGD import VanillaSGD
 from .AdaDeltaSGD import AdaDeltaSGD 
 from .RMSpropSGD import RMSpropSGD

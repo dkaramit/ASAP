@@ -1,33 +1,32 @@
 from numpy   import random as np_random
 from numpy   import sqrt as np_sqrt
 
-
-
 class RMSpropSGD:
     '''Implementation of RMSprop.'''
 
-    def __init__(self,loss,data,gamma=0.95,epsilon=1e-6,alpha=1e-2):
+    def __init__(self,loss,data_in,data_out,gamma=0.95,epsilon=1e-6,alpha=1e-3):
         '''
         loss: the loss function
-        data: the data to be used in order to minimize the loss
+        data_in, data_out: the input, output data to be used in order to minimize the loss
         gamma: the decaying parameter
         epsilon: safety parameter (to avoid division by 0)
         alpha: learning rate
         '''
         
-        self.lossFunc=loss
-        self.data=data
+        self.Q=loss
+        self.data_in=data_in
+        self.data_out=data_out
         self.gamma=gamma
         self.epsilon=epsilon
         self.alpha=alpha
         
-        self.data_size=len(self.data)
+        self.data_size=len(self.data_in)
         self.steps=[]
-        self.steps.append(self.lossFunc.targetFunc.w[:])
-        self.dim=self.lossFunc.targetFunc.dim
+        self.steps.append(self.Q.model.w[:])
+        self.dim=self.Q.model.dim
         
         # counters for the decaying means of the gradient and dw         
-        self.gE=[0 for _ in self.lossFunc.targetFunc.w]
+        self.gE=[0 for _ in self.Q.model.w]
 
     def update(self,abs_tol=1e-5, rel_tol=1e-3):
         '''
@@ -36,27 +35,26 @@ class RMSpropSGD:
         sqrt(1/dim*sum_{i=0}^{dim}(grad/(abs_tol+x*rel_tol))_i^2)
         '''
         index=np_random.randint(self.data_size)
-        x=self.data[index][0]
-        t=self.data[index][1]
-        grad=self.lossFunc.Grad(x,t)            
-
-        
+        x=self.data_in[index]
+        t=self.data_out[index]
+        self.Q.model(x)
         
         _w2=0
         _check=0
-        for i,g in enumerate(grad):
-            self.gE[i]=self.gamma*self.gE[i] + (1-self.gamma)*g**2 
-            dw=self.alpha/np_sqrt( (self.gE[i]+self.epsilon)  )*g
+        for i in range(self.dim):
+            self.Q.grad(i,self.Q.model.signal,t)
+            
+            self.gE[i]=self.gamma*self.gE[i] + (1-self.gamma)*self.Q.dQdw**2 
+            dw=self.alpha/np_sqrt( (self.gE[i]+self.epsilon)  )*self.Q.dQdw
             
             
-            self.lossFunc.targetFunc.w[i]=self.lossFunc.targetFunc.w[i] - dw
+            self.Q.model.w[i]=self.Q.model.w[i] - dw
             
             
-            _w2=abs_tol + self.lossFunc.targetFunc.w[i] * rel_tol
-            _check+=(dw[i]/_w2)*(dw[i]/_w2)
+            _w2=abs_tol + self.Q.model.w[i] * rel_tol
+            _check+=(dw/_w2)*(dw/_w2)
 
         _check=np_sqrt(1./self.dim *_check)
-        self.steps.append(self.lossFunc.targetFunc.w[:])
+        self.steps.append(self.Q.model.w[:])
         
         return _check
-
