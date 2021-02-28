@@ -2,7 +2,7 @@
 #define FFANN_loss
 #include"FFANN.hpp"
 
-template<class LD, class FFANN>
+template<class LD>
 class loss{
     /*
     The loss should look like this.
@@ -19,18 +19,18 @@ class loss{
     model: the feed-forward neural network which is going to be used.
     */
 
-    using func= LD (*)(LD,LD);
+    using func= LD (*)(FFANN<LD> *, unsigned int, LD);
     public:
     func Q_i, dQds_i;
     LD dQdw,dQdb;
     
     
-    FFANN *model;
+    FFANN<LD> *model;
     unsigned int N;
 
 
     loss(){};
-    loss(const func &Q_i, const func &dQds_i,FFANN *brain){
+    loss(const func &Q_i, const func &dQds_i,FFANN<LD> *brain){
 
         this->model=brain;// don't make copy of FFANN!
         this->N=this->model->nodes[model->total_layers-1];
@@ -43,7 +43,7 @@ class loss{
         LD sum_Q=0;
         
         for(unsigned int r=0; r<N; ++r){
-            sum_Q+=Q_i(signal[r],target[r]); 
+            sum_Q+=Q_i(model, r, target[r]); 
         }
         sum_Q=sum_Q/((LD) N);
 
@@ -61,7 +61,7 @@ class loss{
         dQdb=0;
 
         for(unsigned int r=0; r<N; ++r){
-            tmp_dQds=dQds_i(signal[r],target[r])/((LD)N);
+            tmp_dQds=dQds_i(model, r, target[r])/((LD)N);
             dQdw += tmp_dQds*model->dsdw[r];
             dQdb += tmp_dQds*model->dsdb[r];
         }

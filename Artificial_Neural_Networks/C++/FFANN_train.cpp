@@ -26,13 +26,17 @@ LD sigmoidActivation(LD x){return 1/(1+std::exp(-x));}
 LD sigmoidActivationDerivative(LD x){return std::exp(-x)*std::pow(sigmoidActivation(x),2.);};
 
 
-LD Q_i(LD signal, LD target){
-    return (signal-target)*(signal-target);
+
+// the loss function for one dimension. The class lossFunc averages over all dimensions.
+LD Q_i(FFANN<LD> *model, unsigned int i, LD target){
+    return (model->signals[model->total_layers-1][i]-target)*(model->signals[model->total_layers-1][i]-target);
 }
 
-LD dQds_i(LD signal, LD target){
-    return 2*(signal-target);
+// the derivative of the loss function for one dimension.
+LD dQds_i(FFANN<LD> *model, unsigned int i, LD target){
+    return 2*(model->signals[model->total_layers-1][i]-target);
 }
+
 
 // #define vanilla
 // #define rms_prop
@@ -57,34 +61,36 @@ int main(){
     brain.init_weights(-1,1);
 
 
-    loss<LD, FFANN<LD>> Q(Q_i,dQds_i,&brain);
+    loss<LD> Q(Q_i,dQds_i,&brain);
+
+
     #ifdef vanilla
-    Vanilla_SGD<FFANN<LD>, loss<LD, FFANN<LD>>, LD  >
+    Vanilla_SGD<FFANN<LD>, loss<LD>, LD  >
     strategy(&brain,&Q,1e-2); 
     #endif
      
     #ifdef rms_prop
-    RMSprop_SGD<FFANN<LD>, loss<LD, FFANN<LD>>, LD  > 
+    RMSprop_SGD<FFANN<LD>, loss<LD>, LD  > 
     strategy(&brain,&Q,0.999,1e-4,1e-2); 
     #endif
 
     #ifdef ada_delta
-    AdaDelta_SGD<FFANN<LD>, loss<LD, FFANN<LD>>, LD  > 
+    AdaDelta_SGD<FFANN<LD>, loss<LD>, LD  > 
     strategy(&brain,&Q,0.999,1e-4,1); 
     #endif
 
     #ifdef adam
-    Adam_SGD<FFANN<LD>, loss<LD, FFANN<LD>>, LD  > 
+    Adam_SGD<FFANN<LD>, loss<LD>, LD  > 
     strategy(&brain,&Q,0.9,0.999,1e-8,1e-2); 
     #endif
 
     #ifdef adaMax
-    AdaMax_SGD<FFANN<LD>, loss<LD, FFANN<LD>>, LD  > 
+    AdaMax_SGD<FFANN<LD>, loss<LD>, LD  > 
     strategy(&brain,&Q,0.9,0.999,1e-8,1e-2); 
     #endif
 
     #ifdef nadam
-    NAdam_SGD<FFANN<LD>, loss<LD, FFANN<LD>>, LD  > 
+    NAdam_SGD<FFANN<LD>, loss<LD>, LD  > 
     strategy(&brain,&Q,0.9,0.999,1e-8,1e-2); 
     #endif
 
