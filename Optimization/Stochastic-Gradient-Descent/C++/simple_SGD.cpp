@@ -18,30 +18,25 @@ using std::vector;
 
 
 // the loss function for one dimension. The class lossFunc averages over all dimensions.
-LD Q_i(LD signal, LD target){
-    return (signal-target)*(signal-target);
+LD Q_i(modelFunc<LD> *model, unsigned int i, LD target){
+    return (model->signal[i]-target)*(model->signal[i]-target);
 }
 
 // the derivative of the loss function for one dimension.
-LD dQds_i(LD signal, LD target){
-    return 2*(signal-target);
+LD dQds_i(modelFunc<LD> *model, unsigned int i, LD target){
+    return 2*(model->signal[i]-target);
 }
-
-
-// basically macros for the model function and its derivative 
-using MFunc= void (*)(vector<LD> *x, vector<LD> *w, vector<LD> *output);
-using MDer= void (*)(unsigned int i, std::vector<LD> *x, std::vector<LD> *w, std::vector<LD> *dsdw);
 
 
 // the model
-void f(vector<LD> *x, vector<LD> *w, vector<LD> *signal){
-    (*signal)[0]=(*x)[0]*(*w)[0]+ (*w)[1];
+void f(modelFunc<LD> *model){
+    model->signal[0]=model->input[0]* model->w[0]+ model->w[1];
 }
 
 // the model's derivative. Clearly there should be better ways to define the derivative
-void dfdw_i(unsigned int i, vector<LD> *x, vector<LD> *w, vector<LD> *dsdw){
-    if(i==0){ (*dsdw)[0]=(*x)[0];}
-    if(i==1){ (*dsdw)[0]=1;}
+void dfdw_i(unsigned int i, modelFunc<LD> *model){
+    if(i==0){ model->dsdw[0]=model->input[0];}
+    if(i==1){ model->dsdw[0]=1;}
 
 }
 

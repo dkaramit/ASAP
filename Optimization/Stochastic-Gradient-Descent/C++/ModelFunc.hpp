@@ -6,11 +6,14 @@
 #include <vector>
 
 
-// Generic model function implementation
+// Generic model and loss function implementation. I choose to pass "this" because it gives 
+// mode freedom on how the functions can be defined
+
+
 template<class LD>
 class modelFunc{
-    using MFunc= void (*)(std::vector<LD> *x, std::vector<LD> *w, std::vector<LD> *signal );
-    using MDer= void (*)(unsigned int i, std::vector<LD> *x, std::vector<LD> *w, std::vector<LD> *dsdw );
+    using MFunc= void (*)(modelFunc<LD> *);
+    using MDer= void (*)(unsigned int,  modelFunc<LD> *);
     
     //the function
     MFunc f;
@@ -54,16 +57,16 @@ class modelFunc{
         
     }
 
-    void operator()(){ f(&input,&w,&signal); }
+    void operator()(){ f(this); }
 
     void derivative_w(unsigned int i){
-        dfdw_i(i,&input,&w,&dsdw);
+        dfdw_i(i,this);
     }
 };
 
 template<class LD, class MFunc>
 class lossFunc{
-    using QFunc= LD (*)( LD signal, LD target);
+    using QFunc= LD (*)(modelFunc<LD> *, unsigned int, LD );
     public:
     QFunc Q_i, dQds_i;
     MFunc *model;
@@ -84,7 +87,7 @@ class lossFunc{
         LD sum_Q=0;
         
         for(unsigned int r=0; r<N; ++r){
-            sum_Q+=Q_i(model->signal[r],target[r]); 
+            sum_Q+=Q_i(model, r,target[r]); 
         }
         sum_Q=sum_Q/((LD) N);
 
@@ -99,7 +102,7 @@ class lossFunc{
         dQdw=0;
 
         for(unsigned int r=0; r<N; ++r){
-            tmp_dQds=dQds_i(model->signal[r],target[r])/((LD)N);
+            tmp_dQds=dQds_i(model, r,target[r])/((LD)N);
             dQdw += tmp_dQds*model->dsdw[r];
         }
 
