@@ -104,7 +104,7 @@ FFANN_Namespace::FFANN(un_int inputNodes, un_int outputNodes,
     _nodes.push_back(outputNodes);
 
     
-    this->operator=(FFANN<LD, Func>(_nodes, activationFunctions));
+    this->operator=(FFANN<LD>(_nodes, activationFunctions));
     this->printBiases();
 
 }

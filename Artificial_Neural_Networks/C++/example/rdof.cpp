@@ -21,9 +21,6 @@ using std::setfill;
 using std::vector;
 using std::array;
 
-
-using Func= LD(*)(LD);
-
 LD linearActivation(LD x){return x;}
 LD linearActivationDerivative(LD x){return 1;}
 
@@ -64,55 +61,55 @@ LD dQds_i(LD signal, LD target){
 
 int main(){
     //some activation functions
-    activationType<LD,Func> lin(linearActivation,linearActivationDerivative);
-    activationType<LD,Func> sig(sigmoidActivation,sigmoidActivationDerivative);
-    activationType<LD,Func> exp(expActivation,expActivationDerivative);
-    activationType<LD,Func> dexp(dexpActivation,dexpActivationDerivative);
-    activationType<LD,Func> tanh(tanhActivation,tanhActivationDerivative);
-    activationType<LD,Func> gauss(gaussActivation,gaussActivationDerivative);
-    activationType<LD,Func> softPlus(softPlusActivation,softPlusActivationDerivative);
+    activationType<LD> lin(linearActivation,linearActivationDerivative);
+    activationType<LD> sig(sigmoidActivation,sigmoidActivationDerivative);
+    activationType<LD> exp(expActivation,expActivationDerivative);
+    activationType<LD> dexp(dexpActivation,dexpActivationDerivative);
+    activationType<LD> tanh(tanhActivation,tanhActivationDerivative);
+    activationType<LD> gauss(gaussActivation,gaussActivationDerivative);
+    activationType<LD> softPlus(softPlusActivation,softPlusActivationDerivative);
 
     /*simplest fit*/
-    vector<activationType<LD,Func>> activations{sig,dexp};
+    vector<activationType<LD>> activations{sig,dexp};
     vector<unsigned int> nodes{1,4,2};
 
     /*not so simple fit, but still works*/
-    // vector<activationType<LD,Func>> activations{gauss,gauss,softPlus};
+    // vector<activationType<LD>> activations{gauss,gauss,softPlus};
     // vector<unsigned int> nodes{1,5,5,2};
 
-    FFANN<LD, Func> brain(nodes,activations);
+    FFANN<LD> brain(nodes,activations);
     brain.init_biases(-1e-1,1e-1);
     brain.init_weights(-1e-1,1e-1);
 
 
-    loss<LD, FFANN<LD, Func>> Q(Q_i,dQds_i,&brain);
+    loss<LD, FFANN<LD>> Q(Q_i,dQds_i,&brain);
     #ifdef vanilla
-    Vanilla_SGD<FFANN<LD, Func>, loss<LD, FFANN<LD, Func>>, LD  >
+    Vanilla_SGD<FFANN<LD>, loss<LD, FFANN<LD>>, LD  >
     strategy(&brain,&Q,1e-2); 
     #endif
      
     #ifdef rms_prop
-    RMSprop_SGD<FFANN<LD, Func>, loss<LD, FFANN<LD, Func>>, LD  > 
+    RMSprop_SGD<FFANN<LD>, loss<LD, FFANN<LD>>, LD  > 
     strategy(&brain,&Q,0.999,1e-4,1e-2); 
     #endif
 
     #ifdef ada_delta
-    AdaDelta_SGD<FFANN<LD, Func>, loss<LD, FFANN<LD, Func>>, LD  > 
+    AdaDelta_SGD<FFANN<LD>, loss<LD, FFANN<LD>>, LD  > 
     strategy(&brain,&Q,0.9999,1e-5,1); 
     #endif
 
     #ifdef adam
-    Adam_SGD<FFANN<LD, Func>, loss<LD, FFANN<LD, Func>>, LD  > 
+    Adam_SGD<FFANN<LD>, loss<LD, FFANN<LD>>, LD  > 
     strategy(&brain,&Q,0.99,0.9999,1e-8,1e-2); 
     #endif
 
     #ifdef adaMax
-    AdaMax_SGD<FFANN<LD, Func>, loss<LD, FFANN<LD, Func>>, LD  > 
+    AdaMax_SGD<FFANN<LD>, loss<LD, FFANN<LD>>, LD  > 
     strategy(&brain,&Q,0.99,0.9999,1e-8,1e-2); 
     #endif
 
     #ifdef nadam
-    NAdam_SGD<FFANN<LD, Func>, loss<LD, FFANN<LD, Func>>, LD  > 
+    NAdam_SGD<FFANN<LD>, loss<LD, FFANN<LD>>, LD  > 
     strategy(&brain,&Q,0.9,0.999,1e-8,1e-3); 
     #endif
 

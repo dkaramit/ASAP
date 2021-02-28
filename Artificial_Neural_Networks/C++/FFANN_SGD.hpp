@@ -4,7 +4,7 @@
 
 #include"FFANN.hpp"
 
-template<class LD, class Func>
+template<class LD>
 template<class Strategy>
 unsigned int FFANN_Namespace::SGD(Strategy *strategy, 
                         const std::vector<std::vector<LD>> *data_in, const std::vector<std::vector<LD>> *data_out, 

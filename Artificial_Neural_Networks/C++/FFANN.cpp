@@ -21,8 +21,6 @@ using std::vector;
 using std::array;
 
 
-using Func= LD(*)(LD);
-
 LD linearActivation(LD x){return x;}
 LD linearActivationDerivative(LD x){return 1;}
 LD sigmoidActivation(LD x){return 1/(1+std::exp(-x));}
@@ -32,20 +30,20 @@ LD sigmoidActivationDerivative(LD x){return std::exp(-x)*std::pow(sigmoidActivat
 
 int main(){
     //some activation functions
-    activationType<LD,Func> lin(linearActivation,linearActivationDerivative);
-    activationType<LD,Func> sig(sigmoidActivation,sigmoidActivationDerivative);
+    activationType<LD> lin(linearActivation,linearActivationDerivative);
+    activationType<LD> sig(sigmoidActivation,sigmoidActivationDerivative);
 
     // array of activation functins in each layer
-    vector<activationType<LD,Func>> activations{lin,lin,lin};
+    vector<activationType<LD>> activations{lin,lin,lin};
 
 
     // this is how the network is constructed
     // vector<unsigned int> nodes{2,3,4,2};
-    // FFANN<LD, Func> brain(nodes,activations);
+    // FFANN<LD> brain(nodes,activations);
     
     /*or:*/
     vector<unsigned int> hiddenNodes{3,4};
-    FFANN<LD, Func> brain(2,2,hiddenNodes,activations);
+    FFANN<LD> brain(2,2,hiddenNodes,activations);
 
     brain.fill_biases_with(1);
     brain.fill_weights_with(0.2);

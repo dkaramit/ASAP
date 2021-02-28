@@ -20,8 +20,6 @@ using std::vector;
 using std::array;
 
 
-using Func= LD(*)(LD);
-
 LD linearActivation(LD x){return x;}
 LD linearActivationDerivative(LD x){return 1;}
 LD sigmoidActivation(LD x){return 1/(1+std::exp(-x));}
@@ -46,47 +44,47 @@ LD dQds_i(LD signal, LD target){
 
 int main(){
     //some activation functions
-    activationType<LD,Func> lin(linearActivation,linearActivationDerivative);
-    activationType<LD,Func> sig(sigmoidActivation,sigmoidActivationDerivative);
+    activationType<LD> lin(linearActivation,linearActivationDerivative);
+    activationType<LD> sig(sigmoidActivation,sigmoidActivationDerivative);
 
 
     // array of activation functins in each layer
-    vector<activationType<LD,Func>> activations{sig,lin};
+    vector<activationType<LD>> activations{sig,lin};
     // this is how the network is constructed
     vector<unsigned int> nodes{2,2,1};
-    FFANN<LD, Func> brain(nodes,activations);
+    FFANN<LD> brain(nodes,activations);
     brain.init_biases(-1,1);
     brain.init_weights(-1,1);
 
 
-    loss<LD, FFANN<LD, Func>> Q(Q_i,dQds_i,&brain);
+    loss<LD, FFANN<LD>> Q(Q_i,dQds_i,&brain);
     #ifdef vanilla
-    Vanilla_SGD<FFANN<LD, Func>, loss<LD, FFANN<LD, Func>>, LD  >
+    Vanilla_SGD<FFANN<LD>, loss<LD, FFANN<LD>>, LD  >
     strategy(&brain,&Q,1e-2); 
     #endif
      
     #ifdef rms_prop
-    RMSprop_SGD<FFANN<LD, Func>, loss<LD, FFANN<LD, Func>>, LD  > 
+    RMSprop_SGD<FFANN<LD>, loss<LD, FFANN<LD>>, LD  > 
     strategy(&brain,&Q,0.999,1e-4,1e-2); 
     #endif
 
     #ifdef ada_delta
-    AdaDelta_SGD<FFANN<LD, Func>, loss<LD, FFANN<LD, Func>>, LD  > 
+    AdaDelta_SGD<FFANN<LD>, loss<LD, FFANN<LD>>, LD  > 
     strategy(&brain,&Q,0.999,1e-4,1); 
     #endif
 
     #ifdef adam
-    Adam_SGD<FFANN<LD, Func>, loss<LD, FFANN<LD, Func>>, LD  > 
+    Adam_SGD<FFANN<LD>, loss<LD, FFANN<LD>>, LD  > 
     strategy(&brain,&Q,0.9,0.999,1e-8,1e-2); 
     #endif
 
     #ifdef adaMax
-    AdaMax_SGD<FFANN<LD, Func>, loss<LD, FFANN<LD, Func>>, LD  > 
+    AdaMax_SGD<FFANN<LD>, loss<LD, FFANN<LD>>, LD  > 
     strategy(&brain,&Q,0.9,0.999,1e-8,1e-2); 
     #endif
 
     #ifdef nadam
-    NAdam_SGD<FFANN<LD, Func>, loss<LD, FFANN<LD, Func>>, LD  > 
+    NAdam_SGD<FFANN<LD>, loss<LD, FFANN<LD>>, LD  > 
     strategy(&brain,&Q,0.9,0.999,1e-8,1e-2); 
     #endif
 

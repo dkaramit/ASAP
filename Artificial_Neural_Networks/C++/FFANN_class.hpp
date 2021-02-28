@@ -4,9 +4,11 @@
 #include<vector>
 #include<array>
 
-template<class LD, class Func>
+template<class LD>
 class activationType{
     private:
+    using Func= LD (*)(LD);
+
     Func _function,_derivative;
     
     public:
@@ -28,16 +30,17 @@ class activationType{
     // }
 };
 
-#define FFANN_Template template<class LD, class Func>
-#define FFANN_Namespace FFANN<LD, Func>
+#define FFANN_Template template<class LD>
+#define FFANN_Namespace FFANN<LD>
 
 
 
 FFANN_Template
 class FFANN{
+    using Func= LD (*)(LD);
 
     using un_int=unsigned int;
-    using actArray=std::vector<activationType<LD,Func>>;
+    using actArray=std::vector<activationType<LD>>;
     using nodeArray=std::vector<un_int>;
 
     // This multidimensional arrays do not seem to be the best option.
