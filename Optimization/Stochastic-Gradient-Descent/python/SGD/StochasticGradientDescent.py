@@ -27,15 +27,14 @@ class modelFunc:
         self.input=[0 for i in range(dimensions[1])]
     
     def __call__(self):
-        self.f(self,self.input)
+        self.f(self)
     
     def setInput(self,x):
         '''set the input'''
         self.input=x
     
     def derivative_w(self,i):
-        self.dfdw_i(self,i,self.input)
-   
+        self.dfdw_i(self,i)
 
  
  
@@ -67,11 +66,9 @@ class lossFunc:
     def __call__(self,target):
         sum_Q=0;
         
-        
-        signal=self.model.signal
-        
+                
         for r in range(self.N):
-            sum_Q+=self.Q_i(signal[r],target[r])
+            sum_Q+=self.Q_i(self.model,r,target[r])
     
         sum_Q=sum_Q/(float(self.N))
 
@@ -84,7 +81,7 @@ class lossFunc:
         signal=self.model.signal
         for dim in range(self.dim):
             for r in range(self.N):
-                tmp_dQds=self.dQds_i(signal[r],target[r])/(float(self.N))
+                tmp_dQds=self.dQds_i(self.model,r,target[r])/(float(self.N))
                 self.dQdw += tmp_dQds*self.model.dsdw[r]
 #--------------------------------------------------------------------------------#
 
