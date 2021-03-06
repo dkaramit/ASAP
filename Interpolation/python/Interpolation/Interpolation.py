@@ -1,6 +1,8 @@
 #let's make a base class that holds the functions we'll need
 from numpy import ceil as np_ceil
 
+#let's make a base class that holds the functions we'll need
+
 class Interpolation:
     '''
     Base class for spline interpolation.
@@ -38,6 +40,7 @@ class Interpolation:
         #    print('value:',x,'>',self.X[self.N-1])
         #    return self.N-1
 
+        #while int(np.abs(L-R))>=1 
         while L!=R and R-L!=1 :
             m = int(np_ceil((L + R) / 2))
             if self.X[m] > x:
@@ -49,12 +52,16 @@ class Interpolation:
     
     
     def __call__(self,x):
+        '''0^th order spline'''
         i=self.bSearch(x)
         return self.Y[i]
     
     
     def derivative_1(self,x):
-        return 0
+        '''0^th order spline of the first derivative'''
+        
+        i=self.bSearch(x)
+        return (self.Y[i]-self.Y[i+1])/(self.X[i]-self.X[i+1])
     
     def derivative_2(self,x):
         return 0
@@ -80,9 +87,23 @@ class linearSpline(Interpolation):
         return a*self.Y[i]+(1-a)*self.Y[i+1]
     
     def derivative_1(self,x):
+        '''
+        1st order spline of the first derivative.
+        It is better than taking the derivative of __call__
+        '''
         i=self.bSearch(x)
-        return (self.Y[i]-self.Y[i+1])/(self.X[i]-self.X[i+1])
-
+        
+        if i==self.N-2:
+            return (self.Y[i]-self.Y[i+1])/(self.X[i]-self.X[i+1])
+        
+        a=(self.X[i+1]-x)/(self.X[i+1]-self.X[i])
+        dydx0=(self.Y[i]-self.Y[i+1])/(self.X[i]-self.X[i+1])
+        dydx1=(self.Y[i+1]-self.Y[i+2])/(self.X[i+1]-self.X[i+2])
+    
+        return a*dydx0+(1-a)*dydx1
+    
+    
+    
 
 class cubicSpline(Interpolation):
     '''
@@ -155,6 +176,9 @@ class cubicSpline(Interpolation):
         return y
     
     def derivative_1(self,x):
+        '''
+        The first derivative of  __call__ obtained analytically.
+        '''
         i=self.bSearch(x)
 
         klo=i
@@ -181,3 +205,16 @@ class cubicSpline(Interpolation):
         i=self.bSearch(x)
         a=(self.X[i+1]-x)/(self.X[i+1]-self.X[i])
         return a*self.y2[i]+(1-a)*self.y2[i+1]
+
+    
+    def derivative_1_linear(self,x):
+        i=self.bSearch(x)
+        
+        if i==self.N-2:
+            return (self.Y[i]-self.Y[i+1])/(self.X[i]-self.X[i+1])
+        
+        a=(self.X[i+1]-x)/(self.X[i+1]-self.X[i])
+        dydx0=(self.Y[i]-self.Y[i+1])/(self.X[i]-self.X[i+1])
+        dydx1=(self.Y[i+1]-self.Y[i+2])/(self.X[i+1]-self.X[i+2])
+    
+        return a*dydx0+(1-a)*dydx1
