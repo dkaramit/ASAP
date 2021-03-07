@@ -1,5 +1,5 @@
-#let's make a base class that holds the functions we'll need
 from numpy import ceil as np_ceil
+
 
 #let's make a base class that holds the functions we'll need
 
@@ -31,28 +31,24 @@ class Interpolation:
         '''
         L=0
         R=self.N-1
-            
-        #you can do a bound check, but.. come on!
-        #if x<self.X[0]:
-        #    print('value:',x,'<',self.X[0])
-        #    return 0
-        #if x>self.X[self.N-1]:
-        #    print('value:',x,'>',self.X[self.N-1])
-        #    return self.N-1
-
-        #while int(np.abs(L-R))>=1 
-        while L!=R and R-L!=1 :
-            m = int(np_ceil((L + R) / 2))
-            if self.X[m] > x:
-                R = m - 1
+                
+        while R-L>1:
+            m=int((L+R)/2.); 
+            if self.X[m]<x:
+                L=m
             else:
-                L = m
+                R=m
+        
         return L
 
     
     
     def __call__(self,x):
-        '''0^th order spline'''
+        '''
+        0th order spline
+        this is not good because the binary search is defined in such way that if x=X[N-1] 
+        this function returns Y[N-2].
+        '''
         i=self.bSearch(x)
         return self.Y[i]
     
@@ -65,7 +61,6 @@ class Interpolation:
     
     def derivative_2(self,x):
         return 0
-
 
 
 
@@ -103,49 +98,30 @@ class linearSpline(Interpolation):
         return a*dydx0+(1-a)*dydx1
     
     
-    
 
 class cubicSpline(Interpolation):
     '''
     cubic spline interpolation class 
     '''
-    def __init__(self,data_x,data_y,yp=[]):
+    def __init__(self,data_x,data_y):
         '''
         data_x: the list for x. Note that I assume that x is sorted in ascending order! 
         data_y: the list for y
-        yp: first derivatives on the boundaries. If you don't know them, leave it empty 
         '''
 
         Interpolation.__init__(self, data_x,data_y)
         #these are the tables we need here. y2 are the points of the second derivatives we need to find
         self.y2=[0 for _ in range(self.N)]
-        
-        #this determines if we use natural boundary conditions
-        self.yp=yp[:]
-        if len(yp)!=2:
-            self.natural=True
-        else:
-            self.natural=False
-        
         #calculate the parameters (the list of second derivatives)
         self.paramCalc()
     
     def paramCalc(self):
         '''This calculates the parameters we need'''
         u=[0 for _ in range(self.N-1)]
-        un=0
-        qn=0        
-        if self.natural:
-            #use natural boundary conditions (the second derivatives are set to be zero at the boundaries)
-            self.y2[0]=0
-        else:
-            self.y2[0] = -0.5
-            u[0]=(3/(self.X[1]-self.X[0]))*((self.Y[1]-self.Y[0])/(self.X[1]-self.X[0])-self.yp[0])
-            
-            qn=0.5;
-            un=(3/(self.X[self.N-1]-self.X[self.N-2]))*(self.yp[1]-(self.Y[self.N-1]-self.Y[self.N-2])/(self.X[self.N-1]-self.X[self.N-2]))
+        self.y2[0]=0
+        self.y2[self.N-1]=0
         
-        for i in range(self.N-1):
+        for i in range(1,self.N-1):
             sig=(self.X[i]-self.X[i-1])/(self.X[i+1]-self.X[i-1])
             p=sig*self.y2[i-1]+2
             self.y2[i]=(sig-1)/p
@@ -153,7 +129,6 @@ class cubicSpline(Interpolation):
             u[i]=(6*u[i]/(self.X[i+1]-self.X[i-1])-sig*u[i-1])/p
         
         
-        self.y2[self.N-1]=(un-qn*u[self.N-2])/(qn*self.y2[self.N-2]+1)
         
         for k in range(self.N-2,-1,-1): #we need k=N-2,N-1,...0
             self.y2[k]=self.y2[k]*self.y2[k+1]+u[k]
@@ -197,9 +172,7 @@ class cubicSpline(Interpolation):
         
     def derivative_2(self,x):
         '''
-        If we take the analytical derivative at of self.derivative_1, the result is not good.
-        However, since the second derivatives at the data points are known, we can interpolate them
-        using linear interpolation. This gives an approximate result!
+        The second derivative of  __call__ obtained analytically.
         '''
 
         i=self.bSearch(x)
@@ -207,14 +180,3 @@ class cubicSpline(Interpolation):
         return a*self.y2[i]+(1-a)*self.y2[i+1]
 
     
-    def derivative_1_linear(self,x):
-        i=self.bSearch(x)
-        
-        if i==self.N-2:
-            return (self.Y[i]-self.Y[i+1])/(self.X[i]-self.X[i+1])
-        
-        a=(self.X[i+1]-x)/(self.X[i+1]-self.X[i])
-        dydx0=(self.Y[i]-self.Y[i+1])/(self.X[i]-self.X[i+1])
-        dydx1=(self.Y[i+1]-self.Y[i+2])/(self.X[i+1]-self.X[i+2])
-    
-        return a*dydx0+(1-a)*dydx1
