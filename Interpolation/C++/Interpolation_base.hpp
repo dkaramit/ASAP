@@ -23,6 +23,8 @@ class Interpolation{
 
     public:
     // constructor
+    Interpolation()=default;
+
     Interpolation(VecLD *x,VecLD *y){
         /*data to be used in interpolation*/
         try{//abort is data_x are in 

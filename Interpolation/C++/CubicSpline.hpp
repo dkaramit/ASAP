@@ -15,6 +15,8 @@ class CubicSpline: public Interpolation<LD>{
     VecLD y2;
 
     public:
+    CubicSpline()=default;
+
     CubicSpline(VecLD *x,VecLD *y): Interpolation<LD>(x,y){
         y2.reserve(this->N);
         for(un_int i=0; i<this->N-1; ++i){y2.push_back(0);}

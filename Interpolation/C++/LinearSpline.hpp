@@ -13,6 +13,8 @@ class LinearSpline: public Interpolation<LD>{
 
 
     public:
+    LinearSpline()=default;
+    
     LinearSpline(VecLD *x,VecLD *y): Interpolation<LD>(x,y){};
 
     LD operator()(LD x){
