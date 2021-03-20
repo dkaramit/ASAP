@@ -1,10 +1,8 @@
 #ifndef GD_base
 #define GD_base
 
-#include"GD.hpp"
-
 /*
-The base class for Gradient Descent.
+The base class for  Gradient Descent.
 Basically it only holds the  member function (run) that runs the
 loop of updates (update), which should be defined in a derived class. 
 */
@@ -20,9 +18,9 @@ loop of updates (update), which should be defined in a derived class.
 GD_Template
 class GradientDescent{
     public:
-    Strategy strategy;
-    // constructor and destructor (they will be overwritten by the derived class)
-    GradientDescent(const Strategy &strategy){
+    Strategy *strategy;
+
+    GradientDescent(Strategy *strategy){
         this->strategy=strategy;
     };
     ~GradientDescent(){};
@@ -47,7 +45,7 @@ void GD_Namespace::run(LD abs_tol, LD rel_tol, unsigned int step_break, unsigned
         // update should return a number that when it is smaller than 1
         // the loop stops.
         // This number can depend on two abs_tol and rel_tol
-        _check=this->strategy.update(abs_tol,rel_tol);
+        _check=this->strategy->update(abs_tol,rel_tol);
 
         count_steps++;
 
@@ -57,8 +55,6 @@ void GD_Namespace::run(LD abs_tol, LD rel_tol, unsigned int step_break, unsigned
 
     }
 }
-
-
 
 
 #endif

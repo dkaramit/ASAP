@@ -2,60 +2,47 @@
 #define Vanilla_GD_class
 
 /*
-Vanilla Gradient Descent (i.e. no adaptation of the learning rate)
+Vanilla Stochastic Gradient Descent (i.e. no adaptation of the learning rate)
 */
 
 #include<vector>
 #include<cmath>
 
-
-#define Vanilla_GD_Template template<class LD, class Func>
-#define Vanilla_GD_Namespace VanillaGD<LD,Func>
+#define Vanilla_GD_Template template<class LD, class lossFunc>
+#define Vanilla_GD_Namespace VanillaGD<LD,lossFunc>
 
 Vanilla_GD_Template
 class VanillaGD{
+    using vec2=std::vector<std::vector<LD>>;
+
     public:
-    //function to be minimized
-    Func target;
+    // the loss function
+    lossFunc *Q;
+    // pointer to vectors of input and output data
+    vec2 *input_data;
+    vec2 *output_data;
+
+    // we will use this to hold the mean gradient over all data-points
+    std::vector<LD> grad;
+
+
     // the learning rate
     LD alpha;
 
-    // the current position
-    std::vector<LD> x;
-
-    // a vector that holds the steps the algorithm takes
-    std::vector<std::vector<LD>> steps;
-    
-    // the dimension of x
+    // the dimension of the w parameters (same as grad obviously)
     unsigned int dim;
-
-    // a vector that holds the gradient (same dim as x)
-    std::vector<LD> grad;
-
-    // constructor (a=1e-1 is the default value, but probably not that good in general)
-    VanillaGD(Func target, std::vector<LD> x0, LD alpha=1e-1);
-    // just an "empty" constructor
+    
+    // a vector that holds the w as the algorith runs
+    vec2 steps;
+    
+    // size of input_data and output_data (should be constant, as they are assumed to be inputs)
+    unsigned int data_size;
+    
+    // constructor (with default alpha)
+    VanillaGD(lossFunc *Q, vec2 *input_data, vec2 *output_data, LD alpha=1e-3);
     VanillaGD(){};
 
-    // Overload  operator= to make sure that it is copied correctly
-    VanillaGD& operator=(const VanillaGD& strategy){
-        this->target=strategy.target;
-        this->alpha=strategy.alpha;
-        
-        this->x=strategy.x;
-        this->dim=strategy.dim;
-        this->grad=strategy.grad;
-        
-        this->steps=strategy.steps;
-        
-        return *this;    
-    };
-    
-    // the update function called from GradientDescent.update.
-    // update should return a number that when it is smaller than 1
-    // the main loop stops.
-    // Here I choose this number to be:
-    //  sqrt(1/dim*sum_{i=0}^{dim}(grad/(abs_tol+x*rel_tol))_i^2)
+  
     LD update(LD abs_tol=1e-5, LD rel_tol=1e-3);
 };
 
@@ -63,41 +50,79 @@ class VanillaGD{
 
 // Constructor
 Vanilla_GD_Template
-Vanilla_GD_Namespace::VanillaGD(Func target, std::vector<LD> x0, LD alpha){
-    this->target=target;
+Vanilla_GD_Namespace::VanillaGD(lossFunc *Q, vec2 *input_data, vec2 *output_data, LD alpha){
+    this->Q=Q;
+    this->input_data=input_data;
+    this->output_data=output_data;
     this->alpha=alpha;
 
-    this->x=x0;
-    this->dim=(this->x).size();
-    this->grad.resize(this->dim);
-    
-    this->steps.push_back(x0);
-}
+    this->dim=Q->model->dim;
 
-// The update function
-Vanilla_GD_Template
-LD Vanilla_GD_Namespace::update(LD abs_tol, LD rel_tol){
+    this->steps.push_back(Q->model->w);
 
-    LD _check=0,_x2=0;
-    // calculate the gradient at current position
-    this->target.Grad(this->x,this->grad);
-    
-    for(unsigned int i=0 ; i<this->dim; ++i ){
-        // update the position
-        this->x[i] = this->x[i] - (this->alpha)*this->grad[i] ; 
-        
-        // grad^2/(abs_tol + x * rel_tol)^2 for this direction
-        _x2=abs_tol + this->x[i] * rel_tol;
-        _check+=(this->grad[i]/_x2)*(this->grad[i]/_x2);
+    this->data_size=input_data->size();
+
+    (this->grad).reserve(this->data_size);
+    for (unsigned int i = 0; i < this->data_size; i++){
+        (this->grad).push_back(0);
     }
     
-    //put the new x in steps 
-    this->steps.push_back(x);
+}
+
+
+
+// // The update function
+Vanilla_GD_Template
+LD Vanilla_GD_Namespace::update(LD abs_tol, LD rel_tol){
+    
+    LD _check=0,_w2=0,dw=0;
+    // choose index of random data point
+    for (unsigned int index=0; index<data_size; ++index){
+        std::vector<LD> t=output_data->operator[](index);
+
+        // calculate the signal at current value of w and at the data point 
+        Q->model->setInput(input_data->operator[](index));
+        Q->model->operator()();
+        for(unsigned int i=0 ; i<this->dim; ++i ){
+            Q->grad(i,t);
+            grad[i]+=(Q->dQdw)/data_size;
+        }
+    }
+    
+    for(unsigned int i=0 ; i<this->dim; ++i ){
+        // update w (remember that model is a pointer to the model, so as update runs, the model is 
+        // updated)
+        dw=(alpha)*grad[i];
+        Q->model->w[i] = Q->model->w[i] - dw ; 
+
+        // grad^2/(abs_tol + w * rel_tol)^2 for this direction
+        _w2=abs_tol + Q->model->w[i] * rel_tol;
+        _check+=(dw/_w2)*(dw/_w2);
+
+        // reset grad to 0
+        grad[i]=0;
+    }
+    // append new w to steps
+    steps.push_back(Q->model->w);
 
     // calculate _check
-    _check=std::sqrt(1/((LD) this->dim) *_check);
+    _check=std::sqrt(1/((LD) dim) *_check);
     return _check;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
