@@ -1,4 +1,4 @@
-from .GradientDescent import GradientDescent, targetFunc 
+from .GradientDescent import GradientDescent, modelFunc, lossFunc 
 from .VanillaGD import VanillaGD
 from .AdaDeltaGD import AdaDeltaGD
 from .RMSpropGD import RMSpropGD

@@ -2,27 +2,30 @@ from numpy   import sqrt as np_sqrt
 
 class RMSpropGD:
     '''Implementation of RMSprop.'''
-    
-    def __init__(self,target,x0,gamma=0.95,epsilon=1e-6,alpha=1e-2):
+
+    def __init__(self,loss,data_in,data_out,gamma=0.95,epsilon=1e-6,alpha=1e-3):
         '''
-        target: the target function to be minimized, with target.Gard its gradient
-        x0: starting point
+        loss: the loss function
+        data_in, data_out: the input, output data to be used in order to minimize the loss
         gamma: the decaying parameter
         epsilon: safety parameter (to avoid division by 0)
-        alpha: a learning rate that multiplies the rate of AdaDelta. 
+        alpha: learning rate
         '''
-        self.target=target
+        
+        self.Q=loss
+        self.data_in=data_in
+        self.data_out=data_out
         self.gamma=gamma
         self.epsilon=epsilon
         self.alpha=alpha
         
+        self.data_size=len(self.data_in)
         self.steps=[]
-        self.steps.append(x0[:])
-        self.x=[_ for _ in x0]
-        self.dim=len(x0)
+        self.steps.append(self.Q.model.w[:])
+        self.dim=self.Q.model.dim
         
-        # counters for the decaying means of the gradient and dx         
-        self.gE=[0 for _ in self.x]
+        # counters for the decaying means of the gradient and dw         
+        self.gE=[0 for _ in self.Q.model.w]
 
     def update(self,abs_tol=1e-5, rel_tol=1e-3):
         '''
@@ -30,26 +33,34 @@ class RMSpropGD:
         the main loop stops. Here I choose this number to be:
         sqrt(1/dim*sum_{i=0}^{dim}(grad/(abs_tol+x*rel_tol))_i^2)
         '''
-        grad=self.target.Grad(self.x)
-
-        
+        _w2=0
         _check=0
-        _x2=0
+        
+        #we need this to hold the average gadient for all components
+        grad=[0 for _ in range(self.dim)]
 
-        for i,g in enumerate(grad):
-            self.gE[i]=self.gamma*self.gE[i] + (1-self.gamma)*g**2 
-            self.dx=self.alpha/np_sqrt( (self.gE[i]+self.epsilon)  )*g
-            
-            
-            self.x[i]=self.x[i] - self.dx
-            
-            
-            _x2=abs_tol + self.x[i] * rel_tol
-            _check+=(g/_x2)*(g/_x2)
+        #get the average gradient over all data
+        for index in range(self.data_size):
+            t=self.data_out[index]
     
-    
+            self.Q.model.setInput(self.data_in[index])
+            self.Q.model()
+
+            for i in range(self.dim):
+                self.Q.grad(i,t)
+                grad[i]+=self.Q.dQdw/self.data_size
+
+        for i in range(self.dim):
+            self.gE[i]=self.gamma*self.gE[i] + (1-self.gamma)*grad[i]**2 
+            dw=self.alpha/np_sqrt( (self.gE[i]+self.epsilon)  )*grad[i]
+            
+            self.Q.model.w[i]=self.Q.model.w[i]-dw
+
+            _w2=abs_tol + self.Q.model.w[i] * rel_tol
+            _check+=(dw/_w2)*(dw/_w2)
+
         _check=np_sqrt(1./self.dim *_check)
 
-        self.steps.append(self.x[:])
-        
+        self.steps.append(self.Q.model.w[:])
+ 
         return _check
