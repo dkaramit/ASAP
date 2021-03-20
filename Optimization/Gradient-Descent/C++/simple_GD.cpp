@@ -46,12 +46,12 @@ modelFunc<LD> model(f,dfdw_i,vector<unsigned int>{1,1},vector<LD>{1,1});
 lossFunc<LD,modelFunc<LD>> Q(Q_i,dQds_i,&model);
 
 
-#define Vanilla
+// #define Vanilla
 // #define RMSprop
 // #define AdaDelta
 // #define Adam
 // #define AdaMax
-// #define NAdam
+#define NAdam
 
 // we\ll need these vectors to pass the data
 using vec2=vector<vector<LD>>;

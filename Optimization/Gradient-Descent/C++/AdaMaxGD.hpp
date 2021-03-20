@@ -1,19 +1,18 @@
-#ifndef AdaMax_SGD_class
-#define AdaMax_SGD_class
+#ifndef AdaMax_GD_class
+#define AdaMax_GD_class
 
 /*
-AdaMax Stochastic Gradient Descent
+AdaMax Gradient Descent
 */
 
 #include<vector>
 #include<cmath>
-#include<random>
 
-#define AdaMax_SGD_Template template<class LD, class lossFunc>
-#define AdaMax_SGD_Namespace AdaMaxSGD<LD,lossFunc>
+#define AdaMax_GD_Template template<class LD, class lossFunc>
+#define AdaMax_GD_Namespace AdaMaxGD<LD,lossFunc>
 
-AdaMax_SGD_Template
-class AdaMaxSGD{
+AdaMax_GD_Template
+class AdaMaxGD{
     using vec2=std::vector<std::vector<LD>>;
 
     public:
@@ -34,12 +33,11 @@ class AdaMaxSGD{
     
     // size of input_data and output_data (should be constant, as they are assumed to be inputs)
     unsigned int data_size;
+    // we will use this to hold the mean gradient over all data-points
+    std::vector<LD> grad;
+
 
     
-    // set-up a random integer distribution that will randomly choose a data point each time this->update runs 
-    std::default_random_engine RndE{std::random_device{}()}; ;
-    std::uniform_int_distribution<unsigned int> UnInt;
-
     // vector for the decaying averages of m
     std::vector<LD> mE;
     // vector for v_max (see update for its definition)
@@ -49,8 +47,8 @@ class AdaMaxSGD{
     LD beta_m_ac;
 
     // constructor with default values of the parameters    
-    AdaMaxSGD(lossFunc *Q, vec2 *input_data, vec2 *output_data,LD beta_m=1-1e-1, LD beta_v=1-1e-3, LD epsilon=1e-6, LD alpha=1e-2);
-    AdaMaxSGD(){};
+    AdaMaxGD(lossFunc *Q, vec2 *input_data, vec2 *output_data,LD beta_m=1-1e-1, LD beta_v=1-1e-3, LD epsilon=1e-6, LD alpha=1e-2);
+    AdaMaxGD(){};
 
 
     LD update(LD abs_tol=1e-5, LD rel_tol=1e-3);
@@ -59,8 +57,8 @@ class AdaMaxSGD{
 
 
 // Constructor
-AdaMax_SGD_Template
-AdaMax_SGD_Namespace::AdaMaxSGD(lossFunc *Q, vec2 *input_data, vec2 *output_data, LD beta_m, LD beta_v, LD epsilon, LD alpha){
+AdaMax_GD_Template
+AdaMax_GD_Namespace::AdaMaxGD(lossFunc *Q, vec2 *input_data, vec2 *output_data, LD beta_m, LD beta_v, LD epsilon, LD alpha){
     this->Q=Q;
     this->input_data=input_data;
     this->output_data=output_data;
@@ -75,7 +73,6 @@ AdaMax_SGD_Namespace::AdaMaxSGD(lossFunc *Q, vec2 *input_data, vec2 *output_data
     this->steps.push_back(Q->model->w);
 
     this->data_size=input_data->size();
-    this->UnInt=std::uniform_int_distribution<unsigned int>{0,this->data_size -1};
 
     this->beta_m_ac=beta_m;
 
@@ -84,36 +81,44 @@ AdaMax_SGD_Namespace::AdaMaxSGD(lossFunc *Q, vec2 *input_data, vec2 *output_data
         this->v_max.push_back(0);
     }
 
+    (this->grad).reserve(this->data_size);
+    for (unsigned int i = 0; i < this->data_size; i++){
+        (this->grad).push_back(0);
+    }
+
+
 }
 
 
 
 // // The update function
-AdaMax_SGD_Template
-LD AdaMax_SGD_Namespace::update(LD abs_tol, LD rel_tol){
+AdaMax_GD_Template
+LD AdaMax_GD_Namespace::update(LD abs_tol, LD rel_tol){
 
-    LD dw=0,_check=0,_w2=0;
+    LD _check=0,_w2=0,dw=0;
 
-    // choose index of random data point
-    unsigned int index=UnInt(RndE);
-    std::vector<LD> t=output_data->operator[](index);
+    // average grad over all data
+    for (unsigned int index=0; index<data_size; ++index){
+        std::vector<LD> t=output_data->operator[](index);
 
-    // calculate the signal at current value of w and at the data point 
-    Q->model->setInput(input_data->operator[](index));
-    Q->model->operator()();
-
+        // calculate the signal at current value of w and at the data point 
+        Q->model->setInput(input_data->operator[](index));
+        Q->model->operator()();
+        for(unsigned int i=0 ; i<this->dim; ++i ){
+            Q->grad(i,t);
+            grad[i]+=(Q->dQdw)/data_size;
+        }
+    }
 
 
     // accumulate the decay rates, in order to correct the averages 
     beta_m_ac*=beta_m_ac;
 
     for(unsigned int i=0 ; i<dim; ++i ){
-        // calculate the gradient at current value of w and at the index^th data point 
-        Q->grad(i,t);
 
         // caclulate the decaying average of the gradient and v_max
-        mE[i]=beta_m*mE[i] + (1-beta_m)*Q->dQdw; 
-        v_max[i]=(std::abs(Q->dQdw) > beta_v*v_max[i]) ? std::abs(Q->dQdw) : beta_v*v_max[i]; 
+        mE[i]=beta_m*mE[i] + (1-beta_m)*grad[i]; 
+        v_max[i]=(std::abs(grad[i]) > beta_v*v_max[i]) ? std::abs(grad[i]) : beta_v*v_max[i]; 
 
         // update w
         dw=alpha/(v_max[i] + epsilon)  *mE[i]/(1-beta_m_ac);
@@ -123,6 +128,8 @@ LD AdaMax_SGD_Namespace::update(LD abs_tol, LD rel_tol){
         // grad^2/(abs_tol + w * rel_tol)^2 for this direction
         _w2=abs_tol + Q->model->w[i] * rel_tol;
         _check+=(dw/_w2)*(dw/_w2);
+
+        grad[i]=0;
     }
     // append new w to steps
     steps.push_back(Q->model->w);

@@ -22,10 +22,6 @@ class VanillaGD{
     vec2 *input_data;
     vec2 *output_data;
 
-    // we will use this to hold the mean gradient over all data-points
-    std::vector<LD> grad;
-
-
     // the learning rate
     LD alpha;
 
@@ -37,7 +33,9 @@ class VanillaGD{
     
     // size of input_data and output_data (should be constant, as they are assumed to be inputs)
     unsigned int data_size;
-    
+    // we will use this to hold the mean gradient over all data-points
+    std::vector<LD> grad;
+
     // constructor (with default alpha)
     VanillaGD(lossFunc *Q, vec2 *input_data, vec2 *output_data, LD alpha=1e-3);
     VanillaGD(){};
@@ -76,7 +74,8 @@ Vanilla_GD_Template
 LD Vanilla_GD_Namespace::update(LD abs_tol, LD rel_tol){
     
     LD _check=0,_w2=0,dw=0;
-    // choose index of random data point
+
+    // average grad over all data
     for (unsigned int index=0; index<data_size; ++index){
         std::vector<LD> t=output_data->operator[](index);
 

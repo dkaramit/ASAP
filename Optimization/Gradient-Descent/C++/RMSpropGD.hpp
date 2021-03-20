@@ -1,19 +1,18 @@
-#ifndef RMSprop_SGD_class
-#define RMSprop_SGD_class
+#ifndef RMSprop_GD_class
+#define RMSprop_GD_class
 
 /*
-RMSprop Stochastic Gradient Descent
+RMSprop Gradient Descent
 */
 
 #include<vector>
 #include<cmath>
-#include<random>
 
-#define RMSprop_SGD_Template template<class LD, class lossFunc>
-#define RMSprop_SGD_Namespace RMSpropSGD<LD,lossFunc>
+#define RMSprop_GD_Template template<class LD, class lossFunc>
+#define RMSprop_GD_Namespace RMSpropGD<LD,lossFunc>
 
-RMSprop_SGD_Template
-class RMSpropSGD{
+RMSprop_GD_Template
+class RMSpropGD{
     using vec2=std::vector<std::vector<LD>>;
 
     public:
@@ -34,17 +33,15 @@ class RMSpropSGD{
     
     // size of input_data and output_data (should be constant, as they are assumed to be inputs)
     unsigned int data_size;
-
-    // set-up a random integer distribution that will randomly choose a data point each time update runs 
-    std::default_random_engine RndE{std::random_device{}()}; ;
-    std::uniform_int_distribution<unsigned int> UnInt;    
+    // we will use this to hold the mean gradient over all data-points
+    std::vector<LD> grad;
 
     // vector for the decaying average of the gradient
     std::vector<LD> gE;
 
     // constructor with default values of the parameters    
-    RMSpropSGD(lossFunc *Q, vec2 *input_data, vec2 *output_data, LD gamma=0.95, LD epsilon=1e-6, LD alpha=1e-2);
-    RMSpropSGD(){};
+    RMSpropGD(lossFunc *Q, vec2 *input_data, vec2 *output_data, LD gamma=0.95, LD epsilon=1e-6, LD alpha=1e-2);
+    RMSpropGD(){};
 
 
     LD update(LD abs_tol=1e-5, LD rel_tol=1e-3);
@@ -53,8 +50,8 @@ class RMSpropSGD{
 
 
 // Constructor
-RMSprop_SGD_Template
-RMSprop_SGD_Namespace::RMSpropSGD(lossFunc *Q, vec2 *input_data, vec2 *output_data, LD gamma, LD epsilon, LD alpha){
+RMSprop_GD_Template
+RMSprop_GD_Namespace::RMSpropGD(lossFunc *Q, vec2 *input_data, vec2 *output_data, LD gamma, LD epsilon, LD alpha){
     this->Q=Q;
     this->input_data=input_data;
     this->output_data=output_data;
@@ -67,44 +64,53 @@ RMSprop_SGD_Namespace::RMSpropSGD(lossFunc *Q, vec2 *input_data, vec2 *output_da
     this->steps.push_back(Q->model->w);
 
     this->data_size=input_data->size();
-    this->UnInt=std::uniform_int_distribution<unsigned int>{0,this->data_size -1};
 
     for(unsigned int i=0; i<this->dim; ++i){
         this->gE.push_back(0);
     }
+
+    (this->grad).reserve(this->data_size);
+    for (unsigned int i = 0; i < this->data_size; i++){
+        (this->grad).push_back(0);
+    }
+
 }
 
 
 
 // // The update function
-RMSprop_SGD_Template
-LD RMSprop_SGD_Namespace::update(LD abs_tol, LD rel_tol){
+RMSprop_GD_Template
+LD RMSprop_GD_Namespace::update(LD abs_tol, LD rel_tol){
     
     LD dw=0,_check=0,_w2=0;
 
-    // choose index of random data point
-    unsigned int index=UnInt(RndE);
-    std::vector<LD> t=output_data->operator[](index);
+    // average grad over all data
+    for (unsigned int index=0; index<data_size; ++index){
+        std::vector<LD> t=output_data->operator[](index);
 
-    // calculate the signal at current value of w and at the data point 
-    Q->model->setInput(input_data->operator[](index));
-    Q->model->operator()();
+        // calculate the signal at current value of w and at the data point 
+        Q->model->setInput(input_data->operator[](index));
+        Q->model->operator()();
+        for(unsigned int i=0 ; i<this->dim; ++i ){
+            Q->grad(i,t);
+            grad[i]+=(Q->dQdw)/data_size;
+        }
+    }
 
 
     for(unsigned int i=0 ; i<dim; ++i ){
-        // calculate the gradient at current value of w and at the index^th data point 
-        Q->grad(i,t);
-
         // calculate decaying average of the gradient
-        gE[i]=gamma*gE[i] + (1-gamma)*Q->dQdw*Q->dQdw;
+        gE[i]=gamma*gE[i] + (1-gamma)*grad[i]*grad[i];
         
         // update w
-        dw=std::sqrt( 1/(gE[i]+epsilon)  )*Q->dQdw*alpha;
+        dw=std::sqrt( 1/(gE[i]+epsilon)  )*grad[i]*alpha;
         Q->model->w[i]=Q->model->w[i] - dw;
 
         // grad^2/(abs_tol + w * rel_tol)^2 for this direction
         _w2=abs_tol + Q->model->w[i] * rel_tol;
         _check+=(dw/_w2)*(dw/_w2);
+
+        grad[i]=0;
     }
     // append new w to steps
     steps.push_back(Q->model->w);

@@ -1,19 +1,18 @@
-#ifndef AdaDelta_SGD_class
-#define AdaDelta_SGD_class
+#ifndef AdaDelta_GD_class
+#define AdaDelta_GD_class
 
 /*
-AdaDelta Stochastic Gradient Descent
+AdaDelta Gradient Descent
 */
 
 #include<vector>
 #include<cmath>
-#include<random>
 
-#define AdaDelta_SGD_Template template<class LD, class lossFunc>
-#define AdaDelta_SGD_Namespace AdaDeltaSGD<LD,lossFunc>
+#define AdaDelta_GD_Template template<class LD, class lossFunc>
+#define AdaDelta_GD_Namespace AdaDeltaGD<LD,lossFunc>
 
-AdaDelta_SGD_Template
-class AdaDeltaSGD{
+AdaDelta_GD_Template
+class AdaDeltaGD{
     using vec2=std::vector<std::vector<LD>>;
 
     public:
@@ -34,18 +33,16 @@ class AdaDeltaSGD{
     
     // size of input_data and output_data (should be constant, as they are assumed to be inputs)
     unsigned int data_size;
+    // we will use this to hold the mean gradient over all data-points
+    std::vector<LD> grad;
 
-    
-    // set-up a random integer distribution that will randomly choose a data point each time this->update runs 
-    std::default_random_engine RndE{std::random_device{}()}; ;
-    std::uniform_int_distribution<unsigned int> UnInt;
 
     // vectors for the decaying averages of the gradient and dw
     std::vector<LD> gE,dwE;
     
     // constructor with default values of the parameters    
-    AdaDeltaSGD(lossFunc *Q, vec2 *input_data, vec2 *output_data, LD gamma=0.95, LD epsilon=1e-6, LD alpha=1);
-    AdaDeltaSGD(){};
+    AdaDeltaGD(lossFunc *Q, vec2 *input_data, vec2 *output_data, LD gamma=0.95, LD epsilon=1e-6, LD alpha=1);
+    AdaDeltaGD(){};
 
     
 
@@ -55,8 +52,8 @@ class AdaDeltaSGD{
 
 
 // costuctor
-AdaDelta_SGD_Template
-AdaDelta_SGD_Namespace::AdaDeltaSGD(lossFunc *Q, vec2 *input_data, vec2 *output_data, LD gamma, LD epsilon, LD alpha){
+AdaDelta_GD_Template
+AdaDelta_GD_Namespace::AdaDeltaGD(lossFunc *Q, vec2 *input_data, vec2 *output_data, LD gamma, LD epsilon, LD alpha){
     this->Q=Q;
     this->input_data=input_data;
     this->output_data=output_data;
@@ -70,42 +67,48 @@ AdaDelta_SGD_Namespace::AdaDeltaSGD(lossFunc *Q, vec2 *input_data, vec2 *output_
     this->steps.push_back(Q->model->w);
 
     this->data_size=input_data->size();
-    this->UnInt=std::uniform_int_distribution<unsigned int>{0,this->data_size -1};
 
 
     for(unsigned int i=0; i<this->dim; ++i){
         this->gE.push_back(0);
         this->dwE.push_back(0);
     }
+
+    (this->grad).reserve(this->data_size);
+    for (unsigned int i = 0; i < this->data_size; i++){
+        (this->grad).push_back(0);
+    }
+
 }
 
 
 
 // // The update function
-AdaDelta_SGD_Template
-LD AdaDelta_SGD_Namespace::update(LD abs_tol, LD rel_tol){
+AdaDelta_GD_Template
+LD AdaDelta_GD_Namespace::update(LD abs_tol, LD rel_tol){
+    
+    LD _check=0,_w2=0,dw=0;
 
-    LD dw=0,_check=0,_w2=0;
+    // average grad over all data
+    for (unsigned int index=0; index<data_size; ++index){
+        std::vector<LD> t=output_data->operator[](index);
 
-    // choose index of random data point
-    unsigned int index=UnInt(RndE);
-    std::vector<LD> t=output_data->operator[](index);
-
-    // calculate the signal at current value of w and at the data point 
-    Q->model->setInput(input_data->operator[](index));
-    Q->model->operator()();
-
+        // calculate the signal at current value of w and at the data point 
+        Q->model->setInput(input_data->operator[](index));
+        Q->model->operator()();
+        for(unsigned int i=0 ; i<this->dim; ++i ){
+            Q->grad(i,t);
+            grad[i]+=(Q->dQdw)/data_size;
+        }
+    }
 
 
     for(unsigned int i=0 ; i<dim; ++i ){
-        // calculate the gradient at current value of w and at the index^th data point 
-        Q->grad(i,t);
-
         // calculate decaying average of the gradient
-        gE[i]=gamma*gE[i] + (1-gamma)*Q->dQdw*Q->dQdw;
+        gE[i]=gamma*gE[i] + (1-gamma)*grad[i]*grad[i];
         
         // update w
-        dw=std::sqrt( (dwE[i]+epsilon)/(gE[i]+epsilon)  )*Q->dQdw*alpha;
+        dw=std::sqrt( (dwE[i]+epsilon)/(gE[i]+epsilon)  )*grad[i]*alpha;
         Q->model->w[i]=Q->model->w[i] - dw;
         
 
@@ -115,6 +118,8 @@ LD AdaDelta_SGD_Namespace::update(LD abs_tol, LD rel_tol){
         // grad^2/(abs_tol + w * rel_tol)^2 for this direction
         _w2=abs_tol + Q->model->w[i] * rel_tol;
         _check+=(dw/_w2)*(dw/_w2);
+
+        grad[i]=0;
     }
     // append new w to steps
     steps.push_back(Q->model->w);
