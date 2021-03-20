@@ -37,7 +37,9 @@ class AdaMaxGD:
         # counters for the decaying means of the gradient         
         self.mE=[0 for _ in self.Q.model.w]
         self.v_max=[0 for _ in self.Q.model.w]
-        
+        #we need this to hold the average gadient over all data points
+        self.grad=[0 for _ in range(self.dim)]
+ 
 
     def update(self,abs_tol=1e-5, rel_tol=1e-3):
         '''
@@ -53,8 +55,6 @@ class AdaMaxGD:
         _w2=0
         _check=0
         
-        #we need this to hold the average gadient for all components
-        grad=[0 for _ in range(self.dim)]
 
         #get the average gradient over all data
         for index in range(self.data_size):
@@ -65,19 +65,21 @@ class AdaMaxGD:
 
             for i in range(self.dim):
                 self.Q.grad(i,t)
-                grad[i]+=self.Q.dQdw/self.data_size
+                self.grad[i]+=self.Q.dQdw/self.data_size
 
                 
         for i in range(self.dim):
 
-            self.mE[i]=self.beta_m*self.mE[i] + (1-self.beta_m)*grad[i] 
-            self.v_max[i]=np_max([self.beta_v*self.v_max[i], np_abs(grad[i]) ]) 
+            self.mE[i]=self.beta_m*self.mE[i] + (1-self.beta_m)*self.grad[i] 
+            self.v_max[i]=np_max([self.beta_v*self.v_max[i], np_abs(self.grad[i]) ]) 
             dw=self.alpha/(self.v_max[i] + self.epsilon)*self.mE[i]/(1-self.beta_m_ac)
             
             self.Q.model.w[i]=self.Q.model.w[i] - dw
             
             _w2=abs_tol + self.Q.model.w[i] * rel_tol
             _check+=(dw/_w2)*(dw/_w2)
+
+            self.grad[i]=0
 
         _check=np_sqrt(1./self.dim *_check)
         

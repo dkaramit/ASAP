@@ -26,6 +26,8 @@ class RMSpropGD:
         
         # counters for the decaying means of the gradient and dw         
         self.gE=[0 for _ in self.Q.model.w]
+        #we need this to hold the average gadient over all data points
+        self.grad=[0 for _ in range(self.dim)]
 
     def update(self,abs_tol=1e-5, rel_tol=1e-3):
         '''
@@ -36,9 +38,6 @@ class RMSpropGD:
         _w2=0
         _check=0
         
-        #we need this to hold the average gadient for all components
-        grad=[0 for _ in range(self.dim)]
-
         #get the average gradient over all data
         for index in range(self.data_size):
             t=self.data_out[index]
@@ -48,16 +47,17 @@ class RMSpropGD:
 
             for i in range(self.dim):
                 self.Q.grad(i,t)
-                grad[i]+=self.Q.dQdw/self.data_size
+                self.grad[i]+=self.Q.dQdw/self.data_size
 
         for i in range(self.dim):
-            self.gE[i]=self.gamma*self.gE[i] + (1-self.gamma)*grad[i]**2 
-            dw=self.alpha/np_sqrt( (self.gE[i]+self.epsilon)  )*grad[i]
+            self.gE[i]=self.gamma*self.gE[i] + (1-self.gamma)*self.grad[i]**2 
+            dw=self.alpha/np_sqrt( (self.gE[i]+self.epsilon)  )*self.grad[i]
             
             self.Q.model.w[i]=self.Q.model.w[i]-dw
 
             _w2=abs_tol + self.Q.model.w[i] * rel_tol
             _check+=(dw/_w2)*(dw/_w2)
+            self.grad[i]=0
 
         _check=np_sqrt(1./self.dim *_check)
 
