@@ -16,24 +16,25 @@ class Function:
         
         self.dim=len(x0)
         
-        self.grad=[[0 for _1 in x0] for _2 in x0]
+        self.grad=[0 for _ in x0]
         
     def __call__(self,x):
         pass
     
     def derivative(self,x,h=1e-5):
+        _x=x[:]
         
         for i in range(self.dim):
             heff=np_abs(x[i])*h+h
-            _x=x[:]
             
             _x[i]-=heff
             f0=self(_x)
             _x[i]+=2*heff
             f1=self(_x)
+            
+            _x[i]-=heff
 
             self.grad[i]=(f1-f0)/(2*heff)
-
 
 
 class GradientDescent:

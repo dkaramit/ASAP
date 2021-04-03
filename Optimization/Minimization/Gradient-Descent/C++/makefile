@@ -1,6 +1,5 @@
 Path=$(PWD)
 
-LONG=  #leave empty to use doubles
 # LONG=long #set to long , in order to use long doubles
 
 Headers=$(wildcard ./*.hpp)

@@ -1,8 +1,7 @@
-#ifndef GD_base
-#define GD_base
+#ifndef GD_Head
+#define GD_Head
 
 /*
-The base class for  Gradient Descent.
 Basically it only holds the  member function (run) that runs the
 loop of updates (update), which should be defined in a derived class. 
 */
