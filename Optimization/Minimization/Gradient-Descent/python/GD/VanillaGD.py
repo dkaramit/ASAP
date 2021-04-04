@@ -1,20 +1,16 @@
 from numpy   import sqrt as np_sqrt
 
-class VanillaGD:
+from .GradientDescent import GradientDescent
+ 
+class VanillaGD(GradientDescent):
     def __init__(self,function,alpha=1e-2):
         '''
         function: instance of Function
         alpha: the learning rate
         '''
-        
-        self.function=function
-        self.f_min=function(function.x)
+        GradientDescent.__init__(self,function)
         
         self.alpha=alpha
-
-        self.steps=[]
-        self.steps.append(self.function.x[:])
-        self.dim=self.function.dim
 
     def update(self,abs_tol=1e-5, rel_tol=1e-3):
         '''

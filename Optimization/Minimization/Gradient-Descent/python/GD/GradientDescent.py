@@ -39,8 +39,17 @@ class Function:
 
 class GradientDescent:
     
-    def __init__(self,strategy):
-            self.strategy=strategy
+    def __init__(self,function):
+        '''
+        function: instance of Function
+        '''
+        
+        self.function=function
+        self.f_min=function(function.x)
+
+        self.steps=[]
+        self.steps.append(self.function.x[:])
+        self.dim=self.function.dim
     
     def run(self,abs_tol=1e-5, rel_tol=1e-3, step_break=100,max_step=5000):
         '''        
@@ -52,7 +61,7 @@ class GradientDescent:
         _s=0
         count_steps=1
         while count_steps<=max_step:
-            _check=self.strategy.update(abs_tol, rel_tol)
+            _check=self.update(abs_tol, rel_tol)
             
             count_steps+=1             
                 

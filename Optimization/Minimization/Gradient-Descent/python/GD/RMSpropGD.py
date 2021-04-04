@@ -1,6 +1,8 @@
 from numpy   import sqrt as np_sqrt
 
-class RMSpropGD:
+from .GradientDescent import GradientDescent
+ 
+class RMSpropGD(GradientDescent):
     '''Implementation of RMSprop.'''
 
     def __init__(self,function,gamma=0.95,epsilon=1e-6,alpha=1e-3):
@@ -10,17 +12,13 @@ class RMSpropGD:
         epsilon: safety parameter (to avoid division by 0)
         alpha: learning rate
         '''
-        
-        self.function=function
-        self.f_min=function(function.x)
+        GradientDescent.__init__(self,function)
+
 
         self.gamma=gamma
         self.epsilon=epsilon
         self.alpha=alpha
 
-        self.steps=[]
-        self.steps.append(self.function.x[:])
-        self.dim=self.function.dim
         
         # counters for the decaying means of the gradient     
         self.gE=[0 for _ in range(self.dim)]

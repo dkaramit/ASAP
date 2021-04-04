@@ -1,32 +1,26 @@
-from numpy   import random as np_random
 from numpy   import sqrt as np_sqrt
 
-class RMSpropSGD:
+from .StochasticGradientDescent import StochasticGradientDescent
+
+class RMSpropSGD(StochasticGradientDescent):
     '''Implementation of RMSprop.'''
 
-    def __init__(self,loss,data_in,data_out,gamma=0.95,epsilon=1e-6,alpha=1e-3):
+    def __init__(self,loss,gamma=0.95,epsilon=1e-6,alpha=1e-3):
         '''
         loss: the loss function
-        data_in, data_out: the input, output data to be used in order to minimize the loss
         gamma: the decaying parameter
         epsilon: safety parameter (to avoid division by 0)
         alpha: learning rate
         '''
         
-        self.Q=loss
-        self.data_in=data_in
-        self.data_out=data_out
+        StochasticGradientDescent.__init__(self,loss)
         self.gamma=gamma
         self.epsilon=epsilon
         self.alpha=alpha
         
-        self.data_size=len(self.data_in)
-        self.steps=[]
-        self.steps.append(self.Q.model.w[:])
-        self.dim=self.Q.model.dim
-        
         # counters for the decaying means of the gradient and dw         
         self.gE=[0 for _ in self.Q.model.w]
+        
 
     def update(self,abs_tol=1e-5, rel_tol=1e-3):
         '''
@@ -34,16 +28,12 @@ class RMSpropSGD:
         the main loop stops. Here I choose this number to be:
         sqrt(1/dim*sum_{i=0}^{dim}(grad/(abs_tol+x*rel_tol))_i^2)
         '''
-        index=np_random.randint(self.data_size)
-        t=self.data_out[index]
-
-        self.Q.model.setInput(self.data_in[index])
-        self.Q.model()
+        self.Q.randomDataPoint()
         
         _w2=0
         _check=0
         for i in range(self.dim):
-            self.Q.grad(i,t)
+            self.Q.grad(i)
             
             self.gE[i]=self.gamma*self.gE[i] + (1-self.gamma)*self.Q.dQdw**2 
             dw=self.alpha/np_sqrt( (self.gE[i]+self.epsilon)  )*self.Q.dQdw

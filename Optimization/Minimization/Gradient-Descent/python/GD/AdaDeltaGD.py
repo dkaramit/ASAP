@@ -1,7 +1,8 @@
 from numpy   import sqrt as np_sqrt
 
-
-class AdaDeltaGD:
+from .GradientDescent import GradientDescent
+ 
+class AdaDeltaGD(GradientDescent):
     '''Implementation of AdaDelta.'''
     
     def __init__(self,function,gamma=0.95,epsilon=1e-6,alpha=1):
@@ -10,16 +11,11 @@ class AdaDeltaGD:
         gamma: the decaying parameter
         epsilon: safety parameter (to avoid division by 0)
         '''
-        self.function=function
-        self.f_min=function(function.x)
+        GradientDescent.__init__(self,function)
 
         self.gamma=gamma
         self.epsilon=epsilon
         self.alpha=alpha
-        
-        self.steps=[]
-        self.steps.append(self.function.x[:])
-        self.dim=self.function.dim
         
         # counters for the decaying means of the gradient and dx         
         self.gE=[0 for _ in range(self.dim)]

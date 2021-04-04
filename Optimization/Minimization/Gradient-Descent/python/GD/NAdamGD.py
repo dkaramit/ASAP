@@ -1,7 +1,8 @@
 from numpy   import sqrt as np_sqrt
 
+from .GradientDescent import GradientDescent
 
-class NAdamGD:
+class NAdamGD(GradientDescent):
     '''Implementation of NAdam.'''
     def __init__(self,function,beta_m=1-1e-1,beta_v=1-1e-3,epsilon=1e-8,alpha=1e-2):
         '''
@@ -10,17 +11,12 @@ class NAdamGD:
         epsilon: safety parameter (to avoid division by 0)
         alpha: a learning rate that multiplies the rate of AdaDelta. 
         '''
-        self.function=function
-        self.f_min=function(function.x)
+        GradientDescent.__init__(self,function)
 
         self.beta_m=beta_m
         self.beta_v=beta_v
         self.epsilon=epsilon
         self.alpha=alpha
-        
-        self.steps=[]
-        self.steps.append(self.function.x[:])
-        self.dim=self.function.dim        
         
         #The "bias corrected" m and v need beta^iteration, so I need something like this
         self.beta_m_ac=beta_m
