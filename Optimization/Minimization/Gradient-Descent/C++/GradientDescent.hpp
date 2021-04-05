@@ -10,21 +10,31 @@ loop of updates (update), which should be defined in a derived class.
 #include <cmath>
 
 
-#define GD_Template template<class LD,class Strategy>
-#define GD_Namespace GradientDescent<LD, Strategy>
+#define GD_Template template<class LD,class Function>
+#define GD_Namespace GradientDescent<LD, Function>
 
 
 GD_Template
 class GradientDescent{
     public:
-    Strategy *strategy;
+    // the function to be minimized (instance of class that is derived from Function)
+    Function *function;
+    LD f_min;
+    // the dimension of the x  
+    unsigned int dim;    
+    // a vector that holds the w as the algorith runs
+    std::vector<std::vector<LD>> steps;
 
-    GradientDescent(Strategy *strategy){
-        this->strategy=strategy;
+
+    ~GradientDescent()=default;
+    GradientDescent(Function *function){
+        this->function=function;
+        this->f_min=function->operator()(function->x);
+        this->dim=function->dim;
+        steps.push_back(this->function->x);
     };
-    ~GradientDescent(){};
 
-    
+    virtual LD update(LD abs_tol, LD rel_tol){return 0;};
     // function that runs the main loop.
     // abs_tol, rel_tol, , step_break: stop when _check<1 for step_break succesive steps
     // max_step: maximum number of steps
@@ -44,7 +54,7 @@ void GD_Namespace::run(LD abs_tol, LD rel_tol, unsigned int step_break, unsigned
         // update should return a number that when it is smaller than 1
         // the loop stops.
         // This number can depend on two abs_tol and rel_tol
-        _check=this->strategy->update(abs_tol,rel_tol);
+        _check=update(abs_tol,rel_tol);
 
         count_steps++;
 

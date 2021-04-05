@@ -12,20 +12,10 @@ AdaDelta Gradient Descent
 #define AdaDelta_GD_Namespace AdaDeltaGD<LD,Function>
 
 AdaDelta_GD_Template
-class AdaDeltaGD{
+class AdaDeltaGD: public GradientDescent<LD,Function>{
     public:
-    // the function to be minimized (instance of class that is derived from Function)
-    Function *function;
-    LD f_min;
-
     // parameters of the algorithm
     LD gamma,epsilon,alpha;
-
-    // the dimension of the x  
-    unsigned int dim;
-    
-    // a vector that holds the w as the algorith runs
-    std::vector<std::vector<LD>> steps;
 
     // vectors for the decaying averages of the gradient and dx
     std::vector<LD> gE,dxE;
@@ -42,16 +32,10 @@ class AdaDeltaGD{
 
 // costuctor
 AdaDelta_GD_Template
-AdaDelta_GD_Namespace::AdaDeltaGD(Function *function, LD gamma, LD epsilon, LD alpha){
-    this->function=function;
-    this->f_min=function->operator()(function->x);
-    this->dim=function->dim;
-    
+AdaDelta_GD_Namespace::AdaDeltaGD(Function *function, LD gamma, LD epsilon, LD alpha):GradientDescent<LD, Function>(function){
     this->gamma=gamma;
     this->epsilon=epsilon;
     this->alpha=alpha;
-
-    steps.push_back(this->function->x);
 
     for(unsigned int i=0; i<this->dim; ++i){
         this->gE.push_back(0);
@@ -67,34 +51,34 @@ LD AdaDelta_GD_Namespace::update(LD abs_tol, LD rel_tol){
     
     LD _check=0,_x2=0,dx=0;
 
-    function->derivative(function->x);
+    this->function->derivative(this->function->x);
 
-    for(unsigned int i=0 ; i<dim; ++i ){
+    for(unsigned int i=0 ; i<this->dim; ++i ){
         // calculate decaying average of the gradient
-        gE[i]=gamma*gE[i] + (1-gamma)*function->grad[i]*function->grad[i];
+        gE[i]=gamma*gE[i] + (1-gamma)*this->function->grad[i]*this->function->grad[i];
         
         // update w
-        dx=std::sqrt( (dxE[i]+epsilon)/(gE[i]+epsilon)  )*function->grad[i]*alpha;
-        function->x[i]=function->x[i] - dx;
+        dx=std::sqrt( (dxE[i]+epsilon)/(gE[i]+epsilon)  )*this->function->grad[i]*alpha;
+        this->function->x[i]=this->function->x[i] - dx;
         
 
         // calculate decaying average of the stepsize
         dxE[i]=gamma*dxE[i] + (1-gamma)*dx*dx;
         
         // grad^2/(abs_tol + dx * rel_tol)^2 for this direction
-        _x2=abs_tol + function->x[i] * rel_tol;
+        _x2=abs_tol + this->function->x[i] * rel_tol;
         _check+=(dx/_x2)*(dx/_x2);
     }
     // append new x to steps
-    steps.push_back(function->x);
+    this->steps.push_back(this->function->x);
 
     // calculate _check
-    _check=std::sqrt(1/((LD) dim) *_check);
+    _check=std::sqrt(1/((LD) this->dim) *_check);
 
-    LD tmp_min=function->operator()(function->x);
-    if(tmp_min<f_min){
-        function->minimum=function->x;
-        f_min=tmp_min;
+    LD tmp_min=this->function->operator()(this->function->x);
+    if(tmp_min<this->f_min){
+        this->function->minimum=this->function->x;
+        this->f_min=tmp_min;
     }
 
     return _check;

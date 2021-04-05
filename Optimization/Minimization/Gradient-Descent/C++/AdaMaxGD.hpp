@@ -1,5 +1,6 @@
 #ifndef AdaMax_GD_class
 #define AdaMax_GD_class
+#include"GradientDescent.hpp"
 
 /*
 AdaMax Gradient Descent
@@ -12,20 +13,10 @@ AdaMax Gradient Descent
 #define AdaMax_GD_Namespace AdaMaxGD<LD,Function>
 
 AdaMax_GD_Template
-class AdaMaxGD{
+class AdaMaxGD: public GradientDescent<LD,Function>{
     public:
-    // the function to be minimized (instance of class that is derived from Function)
-    Function *function;
-    LD f_min;
-
     // parameters of the algorithm
     LD beta_m,beta_v,epsilon,alpha;
-
-    // the dimension of the x  
-    unsigned int dim;
-    
-    // a vector that holds the w as the algorith runs
-    std::vector<std::vector<LD>> steps;
     
     // vector for the decaying averages of m
     std::vector<LD> mE;
@@ -47,17 +38,11 @@ class AdaMaxGD{
 
 // Constructor
 AdaMax_GD_Template
-AdaMax_GD_Namespace::AdaMaxGD(Function *function, LD beta_m, LD beta_v, LD epsilon, LD alpha){
-    this->function=function;
-    this->f_min=function->operator()(function->x);
-    this->dim=function->dim;
-
+AdaMax_GD_Namespace::AdaMaxGD(Function *function, LD beta_m, LD beta_v, LD epsilon, LD alpha):GradientDescent<LD, Function>(function){
     this->beta_m=beta_m;
     this->beta_v=beta_v;
     this->epsilon=epsilon;
     this->alpha=alpha;
-
-    steps.push_back(this->function->x);
 
     this->beta_m_ac=beta_m;
 
@@ -75,36 +60,36 @@ LD AdaMax_GD_Namespace::update(LD abs_tol, LD rel_tol){
 
     LD _check=0,_x2=0,dx=0;
 
-    function->derivative(function->x);
+    this->function->derivative(this->function->x);
 
     // accumulate the decay rates, in order to correct the averages 
     beta_m_ac*=beta_m_ac;
 
-    for(unsigned int i=0 ; i<dim; ++i ){
+    for(unsigned int i=0 ; i<this->dim; ++i ){
 
         // caclulate the decaying average of the gradient and v_max
-        mE[i]=beta_m*mE[i] + (1-beta_m)*function->grad[i]; 
-        v_max[i]=(std::abs(function->grad[i]) > beta_v*v_max[i]) ? std::abs(function->grad[i]) : beta_v*v_max[i]; 
+        mE[i]=beta_m*mE[i] + (1-beta_m)*this->function->grad[i]; 
+        v_max[i]=(std::abs(this->function->grad[i]) > beta_v*v_max[i]) ? std::abs(this->function->grad[i]) : beta_v*v_max[i]; 
 
         // update w
         dx=alpha/(v_max[i] + epsilon)  *mE[i]/(1-beta_m_ac);
-        function->x[i]=function->x[i] - dx;
+        this->function->x[i]=this->function->x[i] - dx;
         
 
         // grad^2/(abs_tol + dx * rel_tol)^2 for this direction
-        _x2=abs_tol + function->x[i] * rel_tol;
+        _x2=abs_tol + this->function->x[i] * rel_tol;
         _check+=(dx/_x2)*(dx/_x2);
     }
     // append new x to steps
-    steps.push_back(function->x);
+    this->steps.push_back(this->function->x);
 
     // calculate _check
-    _check=std::sqrt(1/((LD) dim) *_check);
+    _check=std::sqrt(1/((LD) this->dim) *_check);
 
-    LD tmp_min=function->operator()(function->x);
-    if(tmp_min<f_min){
-        function->minimum=function->x;
-        f_min=tmp_min;
+    LD tmp_min=this->function->operator()(this->function->x);
+    if(tmp_min<this->f_min){
+        this->function->minimum=this->function->x;
+        this->f_min=tmp_min;
     }
 
     return _check;

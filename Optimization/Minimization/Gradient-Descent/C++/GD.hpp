@@ -5,6 +5,7 @@
 #include <vector>
 
 
+#include"GradientDescent.hpp"
 #include"VanillaGD.hpp"
 #include"RMSpropGD.hpp"
 #include"AdaDeltaGD.hpp"
@@ -12,6 +13,5 @@
 #include"AdaMaxGD.hpp"
 #include"NAdamGD.hpp"
 
-#include"GradientDescent.hpp"
 
 #endif

@@ -19,7 +19,8 @@ class func: public Function<LD>{
     func(const std::vector<LD> &x0):Function<LD>(x0){}
 
     LD operator()(std::vector<LD> &x){
-        return std::log(1+ std::pow((x[0]-2),2) + std::pow((x[1]-3*x[0]*x[0]),2));
+        // return std::log(1+ std::pow((x[0]-2),2) + std::pow((x[1]-3*x[0]*x[0]),2));
+        return std::pow((x[0]-2),2)+std::pow((x[1]-1),2);
     }
 };
 
@@ -80,17 +81,16 @@ using strategy=NAdamGD<LD, func<LD>> ;
 
 int main(){
 
-    strategy  Strategy(params);
-    GradientDescent<LD, strategy> GD( &Strategy );
-    GD.run(1e-4, 1e-2, 5000, 15000);
+    strategy  GD(params);
+    GD.run(1e-4, 1e-3, 5000, 15000);
 
 
 
 
-    for(unsigned int s=0; s<Strategy.steps.size(); ++s){
-        cout<<f(Strategy.steps[s])<<" ";
+    for(unsigned int s=0; s<GD.steps.size(); ++s){
+        cout<<f(GD.steps[s])<<" ";
         for(unsigned int i=0; i<f.dim; ++i){
-            cout<<Strategy.steps[s][i];
+            cout<<GD.steps[s][i];
             if(i==f.dim-1){cout<<endl;}
             else{cout<<" ";}
         }
