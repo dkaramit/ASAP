@@ -1,4 +1,5 @@
 from numpy   import sqrt as np_sqrt
+from numpy   import abs as np_abs
 
 from .GradientDescent import GradientDescent
  
@@ -42,7 +43,7 @@ class AdaDeltaGD(GradientDescent):
             self.function.x[i]=self.function.x[i] - dx
             
             
-            _x2=abs_tol + self.function.x[i] * rel_tol
+            _x2=abs_tol + np_abs(self.function.x[i]) * rel_tol
             _check+=(dx/_x2)*(dx/_x2)
             self.function.grad[i]=0
 
