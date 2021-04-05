@@ -3,7 +3,27 @@
 #include<random>
 
 #include"GD.hpp"
-#include"ModelFunc.hpp"
+#include"ModelBase.hpp"
+
+
+using std::cout;
+using std::endl;
+using std::vector;
+
+template<class LD>
+class modelFunc: public modelBase<LD>{
+    public:
+    modelFunc()=default;
+    modelFunc(const std::vector<unsigned int> &dimensions, const std::vector<LD> &w0):modelBase<LD>(dimensions,w0){};
+    
+    void operator()(){this->signal[0]=this->input[0]* this->w[0]+ this->w[1];}
+    void derivative_w(unsigned int i){
+        if(i==0){ this->dsdw[0]=this->input[0];}
+        if(i==1){ this->dsdw[0]=1;}
+    }
+};
+
+
 
 #ifndef LONG
 #define LONG long
@@ -11,39 +31,15 @@
 
 #define LD LONG double
 
-
-using std::cout;
-using std::endl;
-using std::vector;
-
-
 // the loss function for one dimension. The class lossFunc averages over all dimensions.
-LD Q_i(modelFunc<LD> *model, unsigned int i, LD target){
-    return (model->signal[i]-target)*(model->signal[i]-target);
+LD Q_i(LD signal, LD target){
+    return (signal-target)*(signal-target);
 }
 
 // the derivative of the loss function for one dimension.
-LD dQds_i(modelFunc<LD> *model, unsigned int i, LD target){
-    return 2*(model->signal[i]-target);
+LD dQds_i(LD signal, LD target){
+    return 2*(signal-target);
 }
-
-
-// the model
-void f(modelFunc<LD> *model){
-    model->signal[0]=model->input[0]* model->w[0]+ model->w[1];
-}
-
-// the model's derivative. Clearly there should be better ways to define the derivative
-void dfdw_i(unsigned int i, modelFunc<LD> *model){
-    if(i==0){ model->dsdw[0]=model->input[0];}
-    if(i==1){ model->dsdw[0]=1;}
-
-}
-
-// setup the model
-modelFunc<LD> model(f,dfdw_i,vector<unsigned int>{1,1},vector<LD>{1,1});
-// this is the loss function
-lossFunc<LD,modelFunc<LD>> Q(Q_i,dQds_i,&model);
 
 
 // #define Vanilla
@@ -53,45 +49,45 @@ lossFunc<LD,modelFunc<LD>> Q(Q_i,dQds_i,&model);
 // #define AdaMax
 #define NAdam
 
-// we\ll need these vectors to pass the data
-using vec2=vector<vector<LD>>;
-vec2 X,Y;
 
 
 #ifdef Vanilla
 using strategy=VanillaGD<LD, lossFunc<LD,modelFunc<LD>>> ;
-#define params {&Q,&X,&Y,1e-2}
+#define params {&Q 1e-2}
 #endif
 
 
 #ifdef RMSprop
 using strategy=RMSpropGD<LD, lossFunc<LD,modelFunc<LD>>> ;
-#define params {&Q,&X,&Y,1-1e-2,1e-5,1e-2}
+#define params {&Q, 1-1e-2,1e-5,1e-2}
 #endif
 
 #ifdef AdaDelta
 using strategy=AdaDeltaGD<LD, lossFunc<LD,modelFunc<LD>>> ;
-#define params {&Q,&X,&Y,1-1e-2,1e-5,1}
+#define params {&Q,1-1e-2,1e-5,1}
 #endif
 
 #ifdef Adam
 using strategy=AdamGD<LD, lossFunc<LD,modelFunc<LD>>> ;
-#define params {&Q,&X,&Y,0.9,0.999,1e-8,1e-2}
+#define params {&Q,0.9,0.999,1e-8,1e-2}
 #endif
 
 #ifdef AdaMax
 using strategy=AdaMaxGD<LD, lossFunc<LD,modelFunc<LD>>> ;
-#define params {&Q,&X,&Y,0.9,0.999,1e-8,1e-2}
+#define params {&Q,0.9,0.999,1e-8,1e-2}
 #endif
 
 #ifdef NAdam
 using strategy=NAdamGD<LD, lossFunc<LD,modelFunc<LD>>> ;
-#define params {&Q,&X,&Y,0.9,0.999,1e-8,1e-2}
+#define params {&Q,0.9,0.999,1e-8,1e-2}
 #endif
 
 int main(){
     std::default_random_engine RndE{std::random_device{}()}; ;
     std::uniform_real_distribution<LD> UnDist{-1,1};   
+    // we\ll need these vectors to pass the data
+    using vec2=vector<vector<LD>>;
+    vec2 X,Y;
     LD x=0;
     for(int i=0;i<100;++i){
         x=UnDist(RndE);
@@ -99,9 +95,14 @@ int main(){
         Y.push_back({2*x+3});
     }
 
+    // setup the model
+    modelFunc<LD> model(vector<unsigned int>{1,1},vector<LD>{1,1});
+    // this is the loss function
+    lossFunc<LD,modelFunc<LD>> Q(&X,&Y,Q_i,dQds_i,&model);
 
-    strategy  Strategy(params);
-    GradientDescent<LD, strategy> GD( &Strategy );
+    strategy  GD(params);
+
+
     GD.run(1e-5, 1e-5, 250, 50000);
 
     // print the results
@@ -121,7 +122,7 @@ int main(){
     }
     Qmean=Qmean/X.size();
     
-    cout<<"No steps: "<<Strategy.steps.size()<<"\t";
+    cout<<"No steps: "<<GD.steps.size()<<"\t";
     cout<<"mean error, Q= "<<Qmean<<endl;
     
     return 0;
