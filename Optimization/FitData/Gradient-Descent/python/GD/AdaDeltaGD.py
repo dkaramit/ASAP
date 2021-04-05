@@ -1,4 +1,5 @@
 from numpy   import sqrt as np_sqrt
+from numpy   import abs as np_abs
 
 from .GradientDescent import GradientDescent
 

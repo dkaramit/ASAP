@@ -1,5 +1,4 @@
 from numpy   import sqrt as np_sqrt
-from numpy   import max as np_max
 from numpy   import abs as np_abs
 
 from .StochasticGradientDescent import StochasticGradientDescent
@@ -58,7 +57,7 @@ class NAdamSGD(StochasticGradientDescent):
             dw*=(self.beta_m*self.mE[i] + (1-self.beta_m)*self.Q.dQdw)/(1-self.beta_m_ac)
             self.Q.model.w[i]=self.Q.model.w[i] - dw
             
-            _w2=abs_tol + self.Q.model.w[i] * rel_tol
+            _w2=abs_tol + np_abs(self.Q.model.w[i]) * rel_tol
             _check+=(dw/_w2)*(dw/_w2)
 
         _check=np_sqrt(1./self.dim *_check)

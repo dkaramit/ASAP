@@ -1,4 +1,5 @@
 from numpy   import sqrt as np_sqrt
+from numpy   import abs as np_abs
 
 from .GradientDescent import GradientDescent
 
@@ -27,7 +28,7 @@ class VanillaGD(GradientDescent):
             dw=self.alpha*self.Q.grad[i]
             self.Q.model.w[i]=self.Q.model.w[i]-dw
 
-            _w2=abs_tol + self.Q.model.w[i] * rel_tol
+            _w2=abs_tol + np_abs(self.Q.model.w[i]) * rel_tol
             _check+=(dw/_w2)*(dw/_w2)
             
             self.Q.grad[i]=0
