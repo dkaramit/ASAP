@@ -1,6 +1,6 @@
 #ifndef FFANN_loss
 #define FFANN_loss
-#include"FFANN.hpp"
+#include<random>
 
 template<class LD>
 class loss{
@@ -19,31 +19,62 @@ class loss{
     model: the feed-forward neural network which is going to be used.
     */
 
-    using func= LD (*)(FFANN<LD> *, unsigned int, LD);
+    using QFunc= LD (*)(LD, LD);
+    using vec2=std::vector<std::vector<LD>>;
     public:
-    func Q_i, dQds_i;
+    QFunc Q_i, dQds_i;
     LD dQdw,dQdb;
     
+    // pointer to vectors of input and output data
+    vec2 *data_in;
+    vec2 *data_out;
     
     FFANN<LD> *model;
-    unsigned int N;
+    unsigned int N,layers;
+
+    // size of data_in and output_data (should be constant, as they are assumed to be inputs)
+    unsigned int data_size, dim;
+    std::vector<LD> t;
+    // set-up a random integer distribution that will randomly choose a data point each time this->update runs 
+    std::default_random_engine RndE{std::random_device{}()}; ;
+    std::uniform_int_distribution<unsigned int> UnInt;
+    
 
 
     loss(){};
-    loss(const func &Q_i, const func &dQds_i,FFANN<LD> *brain){
+    loss(vec2 *data_in, vec2 *data_out, const QFunc &Q_i, const QFunc &dQds_i,FFANN<LD> *brain){
 
         this->model=brain;// don't make copy of FFANN!
-        this->N=this->model->nodes[model->total_layers-1];
+        this->layers=this->model->total_layers;
+        this->N=this->model->nodes[this->layers-1];        
+        
         this->Q_i=Q_i;
         this->dQds_i=dQds_i;
 
+        this->data_in=data_in;
+        this->data_out=data_out;
+        this->data_size=data_in->size();
+        (this->t).resize(this->N);
+        this->UnInt=std::uniform_int_distribution<unsigned int>{0,this->data_size -1};
     };
 
-    LD operator()(std::vector<LD> signal, std::vector<LD> target){
+
+    void randomDataPoint(){
+        //get a random data point
+        unsigned int index=UnInt(RndE); 
+        this->t=data_out->operator[](index);
+
+        // run feedForward and backProp to calculate signals and Deltas 
+        model->inputSignal(data_in->operator[](index));
+        model->feedForward();
+        model->backPropagation();
+    }
+
+    LD operator()(std::vector<LD> &signal, std::vector<LD> &target){
         LD sum_Q=0;
         
         for(unsigned int r=0; r<N; ++r){
-            sum_Q+=Q_i(model, r, target[r]); 
+            sum_Q+=Q_i(signal[r], target[r]); 
         }
         sum_Q=sum_Q/((LD) N);
 
@@ -51,7 +82,7 @@ class loss{
     }
 
 
-    void grad(unsigned int l, unsigned int j, unsigned int i, std::vector<LD> signal, std::vector<LD> target){
+    void grad(unsigned int l, unsigned int j, unsigned int i){
         /*calculates the derivatives wrt w^{(l)}_{ji} and b^{(l)}_{j}*/
         LD tmp_dQds;
         model->derivative_bw(l,j,i);
@@ -61,7 +92,7 @@ class loss{
         dQdb=0;
 
         for(unsigned int r=0; r<N; ++r){
-            tmp_dQds=dQds_i(model, r, target[r])/((LD)N);
+            tmp_dQds=dQds_i(model->signals[model->total_layers-1][r], t[r])/((LD)N);
             dQdw += tmp_dQds*model->dsdw[r];
             dQdb += tmp_dQds*model->dsdb[r];
         }

@@ -44,21 +44,55 @@ LD softPlusActivationDerivative(LD x){return  1/(1 + std::exp(-x));}
 
 
 // the loss function for one dimension. The class lossFunc averages over all dimensions.
-LD Q_i(FFANN<LD> *model, unsigned int i, LD target){
-    return (model->signals[model->total_layers-1][i]-target)*(model->signals[model->total_layers-1][i]-target);
+LD Q_i(LD signal, LD target){
+    return (signal-target)*(signal-target);
 }
 
 // the derivative of the loss function for one dimension.
-LD dQds_i(FFANN<LD> *model, unsigned int i, LD target){
-    return 2*(model->signals[model->total_layers-1][i]-target);
+LD dQds_i(LD signal, LD target){
+    return 2*(signal-target);
 }
 
-// #define vanilla
-// #define rms_prop
-// #define ada_delta
-// #define adam
-// #define adaMax
-#define nadam
+// #define Vanilla
+// #define RMSprop
+#define AdaDelta
+// #define Adam
+// #define AdaMax
+// #define NAdam
+
+
+
+#ifdef Vanilla
+using strategy=Vanilla_SGD<LD, loss<LD>> ;
+#define params {&Q, 1e-2}
+#endif
+
+
+#ifdef RMSprop
+using strategy=RMSprop_SGD<LD, loss<LD>> ;
+#define params {&Q, 1-1e-2,1e-5,1e-2}
+#endif
+
+#ifdef AdaDelta
+using strategy=AdaDelta_SGD<LD, loss<LD>> ;
+#define params {&Q,1-1e-2,1e-5,1}
+#endif
+
+#ifdef Adam
+using strategy=Adam_SGD<LD, loss<LD>> ;
+#define params {&Q,0.9,0.999,1e-8,1e-2}
+#endif
+
+#ifdef AdaMax
+using strategy=AdaMax_SGD<LD, loss<LD>> ;
+#define params {&Q,0.9,0.999,1e-8,1e-2}
+#endif
+
+#ifdef NAdam
+using strategy=NAdam_SGD<LD, loss<LD>> ;
+#define params {&Q,0.9,0.999,1e-8,1e-2}
+#endif
+
 
 int main(){
     //some activation functions
@@ -71,7 +105,7 @@ int main(){
     activationType<LD> softPlus(softPlusActivation,softPlusActivationDerivative);
 
     /*simplest fit*/
-    vector<activationType<LD>> activations{sig,dexp};
+    vector<activationType<LD>> activations{sig,lin};
     vector<unsigned int> nodes{1,4,2};
 
     /*not so simple fit, but still works*/
@@ -81,39 +115,6 @@ int main(){
     FFANN<LD> brain(nodes,activations);
     brain.init_biases(-1e-1,1e-1);
     brain.init_weights(-1e-1,1e-1);
-
-
-    loss<LD> Q(Q_i,dQds_i,&brain);
-    #ifdef vanilla
-    Vanilla_SGD<FFANN<LD>, loss<LD>, LD  >
-    strategy(&brain,&Q,1e-3); 
-    #endif
-     
-    #ifdef rms_prop
-    RMSprop_SGD<FFANN<LD>, loss<LD>, LD  > 
-    strategy(&brain,&Q,0.999,1e-4,1e-2); 
-    #endif
-
-    #ifdef ada_delta
-    AdaDelta_SGD<FFANN<LD>, loss<LD>, LD  > 
-    strategy(&brain,&Q,0.9999,1e-5,1); 
-    #endif
-
-    #ifdef adam
-    Adam_SGD<FFANN<LD>, loss<LD>, LD  > 
-    strategy(&brain,&Q,0.99,0.9999,1e-8,1e-2); 
-    #endif
-
-    #ifdef adaMax
-    AdaMax_SGD<FFANN<LD>, loss<LD>, LD  > 
-    strategy(&brain,&Q,0.99,0.9999,1e-8,1e-2); 
-    #endif
-
-    #ifdef nadam
-    NAdam_SGD<FFANN<LD>, loss<LD>, LD  > 
-    strategy(&brain,&Q,0.9,0.999,1e-8,1e-3); 
-    #endif
-
 
 
     vector<vector<LD>> logT;
@@ -135,8 +136,11 @@ int main(){
             break;
         }
     }
-    
-    cout<<brain.SGD(&strategy,&logT,&rdofs,1e-3,1e-3,2*logT.size(),10000000)<<endl;
+
+    loss<LD> Q(&logT,&rdofs,Q_i,dQds_i,&brain);
+    strategy SGD(params);
+
+    cout<<SGD.run(1e-3,1e-3,2*logT.size(),500000)<<endl;
     
     for(unsigned int i=0; i<logT.size(); ++i){
         cout<<logT[i][0]<<","<<rdofs[i][0]<<","<<rdofs[i][1]<<",";

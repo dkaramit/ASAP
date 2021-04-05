@@ -141,11 +141,11 @@ class FFANN{
     // numerical derivative wrt  w^{(l)}_{ji} and b^{(l+1)}_{j}
     void numericalDerivative_bw(un_int l, un_int j, un_int i, LD h=1e-3);
 
-    //stochastic gradient descent main loop.
-    template <class Strategy>
-    unsigned int SGD(Strategy *strategy, 
-            const std::vector<std::vector<LD>> *data_in, const std::vector<std::vector<LD>> *data_out, 
-            LD abs_tol=1e-5, LD rel_tol=1e-3, un_int step_break=100, un_int max_step=5000);
+    // //stochastic gradient descent main loop.
+    // template <class Strategy>
+    // unsigned int SGD(Strategy *strategy, 
+    //         const std::vector<std::vector<LD>> *data_in, const std::vector<std::vector<LD>> *data_out, 
+    //         LD abs_tol=1e-5, LD rel_tol=1e-3, un_int step_break=100, un_int max_step=5000);
 
 
     //Auxilliary functions for printing

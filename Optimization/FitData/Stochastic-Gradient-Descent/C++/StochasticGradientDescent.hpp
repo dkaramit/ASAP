@@ -17,7 +17,7 @@ loop of updates (update), which should be defined in a derived class.
 
 SGD_Template
 class StochasticGradientDescent{
-        public:
+    public:
     // the loss function
     lossFunc *Q;
     using vec2=std::vector<std::vector<LD>>;

@@ -38,12 +38,9 @@ int main(){
 
 
     // this is how the network is constructed
-    // vector<unsigned int> nodes{2,3,4,2};
-    // FFANN<LD> brain(nodes,activations);
+    vector<unsigned int> nodes{2,3,4,2};
+    FFANN<LD> brain(nodes,activations);
     
-    /*or:*/
-    vector<unsigned int> hiddenNodes{3,4};
-    FFANN<LD> brain(2,2,hiddenNodes,activations);
 
     brain.fill_biases_with(1);
     brain.fill_weights_with(0.2);
@@ -56,7 +53,6 @@ int main(){
 
     vector<LD> inputSignal{0.1,-2};
     brain.inputSignal(inputSignal);
-
 
     S="--weights, biases, and signals--";
     cout<<setfill('=')<<setw(S.length()+25)<<S<<setfill('=')<<setw(25)<<""<<endl<<endl;
