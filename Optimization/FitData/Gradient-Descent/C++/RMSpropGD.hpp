@@ -60,8 +60,8 @@ LD RMSprop_GD_Namespace::update(LD abs_tol, LD rel_tol){
         dw=std::sqrt( 1/(gE[i]+epsilon)  )*this->Q->grad[i]*alpha;
         this->Q->model->w[i]=this->Q->model->w[i] - dw;
 
-        // grad^2/(abs_tol + w * rel_tol)^2 for this direction
-        _w2=abs_tol + this->Q->model->w[i] * rel_tol;
+        // dw^2/(abs_tol + w * rel_tol)^2 for this direction
+        _w2=abs_tol + std::abs(this->Q->model->w[i]) * rel_tol;
         _check+=(dw/_w2)*(dw/_w2);
 
         this->Q->grad[i]=0;

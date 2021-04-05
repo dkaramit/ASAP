@@ -61,8 +61,8 @@ LD RMSprop_GD_Namespace::update(LD abs_tol, LD rel_tol){
         dx=std::sqrt( 1/(gE[i]+epsilon)  )*this->function->grad[i]*alpha;
         this->function->x[i]=this->function->x[i] - dx;
 
-        // grad^2/(abs_tol + dx * rel_tol)^2 for this direction
-        _x2=abs_tol + this->function->x[i] * rel_tol;
+        // dx^2/(abs_tol + x * rel_tol)^2 for this direction
+        _x2=abs_tol + std::abs(this->function->x[i]) * rel_tol;
         _check+=(dx/_x2)*(dx/_x2);
     }
     // append new x to steps

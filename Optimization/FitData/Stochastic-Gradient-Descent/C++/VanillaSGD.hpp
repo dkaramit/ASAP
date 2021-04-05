@@ -50,7 +50,7 @@ LD Vanilla_SGD_Namespace::update(LD abs_tol, LD rel_tol){
         this->Q->model->w[i] = this->Q->model->w[i] - dw ; 
 
         // dw^2/(abs_tol + w * rel_tol)^2 for this direction
-        _w2=abs_tol + this->Q->model->w[i] * rel_tol;
+        _w2=abs_tol + std::abs(this->Q->model->w[i]) * rel_tol;
         _check+=(dw/_w2)*(dw/_w2);
     }
 
