@@ -34,7 +34,6 @@ class modelBase:
 
 
 
-
 class lossFunc:
     '''
     This is how the loss function should look like.
@@ -79,7 +78,7 @@ class lossFunc:
     
 
     def averageGrad(self):
-        '''Get the average gradient over all data'''
+        #get the average gradient over all data
         for index in range(self.data_size):
             t=self.data_out[index]
             self.model.setInput(self.data_in[index])
@@ -89,13 +88,12 @@ class lossFunc:
                 self.model.derivative_w(i)
                 self.dQdw=0
 
-                signal=self.model.signal
-                for dim in range(self.dim):
-                    for r in range(self.N):
-                        tmp_dQds=self.dQds_i(self.model.signal[r], t[r])/(float(self.N))
-                        self.dQdw += tmp_dQds*self.model.dsdw[r]
+                for r in range(self.N):
+                    tmp_dQds=self.dQds_i(self.model.signal[r], t[r])/(float(self.N))
+                    self.dQdw += tmp_dQds*self.model.dsdw[r]
 
                 self.grad[i]+=self.dQdw/self.data_size
+
 
 class GradientDescent:
     
@@ -125,6 +123,7 @@ class GradientDescent:
         count_steps=1
         while count_steps<=max_step:
             _check=self.update(abs_tol, rel_tol)
+            self.steps.append(self.Q.model.w[:])
             
             count_steps+=1             
                 

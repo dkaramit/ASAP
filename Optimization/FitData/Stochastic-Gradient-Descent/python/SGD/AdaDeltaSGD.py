@@ -47,6 +47,4 @@ class AdaDeltaSGD(StochasticGradientDescent):
 
         _check=np_sqrt(1./self.dim *_check)
         
-        self.steps.append(self.Q.model.w[:])
-        
         return _check

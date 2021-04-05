@@ -1,7 +1,6 @@
 def FFANN_const(self, N_inputs,N_outputs, hiddenNodes, activationFunctions):
     '''
     Constructor for the class.
-
     N_inputs: number of input nodes
     N_outputs: number of ouput nodes
     
@@ -63,7 +62,6 @@ def FFANN_const(self, N_inputs,N_outputs, hiddenNodes, activationFunctions):
     (i.e. its elements are \dfrac{\partial s^{l+1}_{j}}{\partial s^{(0)}_{i}} for all l).
     Therefore, this is useful when the network is already trained, and we just need its derivatives
     (since they are calculated during the feed forward).
-
     2. self.Delta is obtained by applying the chain-rule during back propagation
     (i.e. its elements are \dfrac{\partial s^{[N-1)]}_{k}}{\partial s^{[N-(f+2)]}_{i}} 
     for N=self.total_layers, f=N-(l+3) and l<N-2).

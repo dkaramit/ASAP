@@ -87,11 +87,9 @@ class lossFunc:
         self.model.derivative_w(i)
         self.dQdw=0
         
-        signal=self.model.signal
-        for dim in range(self.dim):
-            for r in range(self.N):
-                tmp_dQds=self.dQds_i(self.model.signal[r], self.t[r])/(float(self.N))
-                self.dQdw += tmp_dQds*self.model.dsdw[r]
+        for r in range(self.N):
+            tmp_dQds=self.dQds_i(self.model.signal[r], self.t[r])/(float(self.N))
+            self.dQdw += tmp_dQds*self.model.dsdw[r]
 #--------------------------------------------------------------------------------#
 
 
@@ -124,6 +122,7 @@ class StochasticGradientDescent:
         count_steps=1
         while count_steps<=max_step:
             _check=self.update(abs_tol, rel_tol)
+            self.steps.append(self.Q.model.w[:])
             
             count_steps+=1             
                 

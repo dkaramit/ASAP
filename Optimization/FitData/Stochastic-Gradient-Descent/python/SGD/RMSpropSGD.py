@@ -46,6 +46,5 @@ class RMSpropSGD(StochasticGradientDescent):
             _check+=(dw/_w2)*(dw/_w2)
 
         _check=np_sqrt(1./self.dim *_check)
-        self.steps.append(self.Q.model.w[:])
         
         return _check
