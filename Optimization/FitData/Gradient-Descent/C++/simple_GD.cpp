@@ -53,7 +53,7 @@ LD dQds_i(LD signal, LD target){
 
 #ifdef Vanilla
 using strategy=VanillaGD<LD, lossFunc<LD,modelFunc<LD>>> ;
-#define params {&Q 1e-2}
+#define params {&Q, 1e-2}
 #endif
 
 
