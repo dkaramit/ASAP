@@ -20,7 +20,7 @@ class modelBase:
         self.dsdw=[0 for i in range(dimensions[1])] #will store the output of self.dfdw_i
         
         #will store the input, to avoid passing the input every time we callthe function or its derivetive
-        self.input=[0 for i in range(dimensions[1])]
+        self.input=[0 for i in range(dimensions[0])]
     
     def setInput(self,x):
         '''set the input'''

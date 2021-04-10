@@ -43,7 +43,7 @@ class AdaDeltaGD(GradientDescent):
             self.Q.model.w[i]=self.Q.model.w[i] - dw
             
             
-            _w2=abs_tol + self.Q.model.w[i] * rel_tol
+            _w2=abs_tol + np_abs(self.Q.model.w[i]) * rel_tol
             _check+=(dw/_w2)*(dw/_w2)
             self.Q.grad[i]=0
 
