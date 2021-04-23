@@ -53,6 +53,23 @@ DualNumbers<LD> operator*(const long double &y, const DualNumbers<LD> &x){
     return  x*y;
 }
 
+// devide other types by dual number
+template<class LD>
+DualNumbers<LD> operator/(const int &y, const DualNumbers<LD> &x){
+    return  DualNumbers<LD>(y,x.getVarN())/x;
+}
+
+template<class LD>
+DualNumbers<LD> operator/(const double &y, const DualNumbers<LD> &x){
+    return  DualNumbers<LD>(y,x.getVarN())/x;
+}
+
+
+template<class LD>
+DualNumbers<LD> operator/(const long double &y, const DualNumbers<LD> &x){
+    return  DualNumbers<LD>(y,x.getVarN())/x;
+
+}
 
 
 

@@ -87,7 +87,26 @@ class DualNumbers{
     };
 
 
+    /* overload / */
+    DualNumbers operator/(const DualNumbers &y) const {
+        DualNumbers<LD> result(this->getValue() / y.getValue(),this->getVarN());
 
+        LD tmpG=0;
+        for (unsigned int i = 0; i < result.getVarN(); ++i){
+            tmpG=(this->getGrad(i) - this->getValue() *y.getGrad(i)/y.getValue())/y.getValue();
+            result.setGrad(i, tmpG);  
+        }
+        return  result;
+    };
+
+    template<class T>
+    DualNumbers operator/(const T &y) const {
+        DualNumbers<LD> result(this->getValue() / y,this->getVarN());
+        for (unsigned int i = 0; i < result.getVarN(); ++i){
+            result.setGrad(i, this->getGrad(i)/y);  
+        }
+        return  result;
+    };
 
     // "getters" and "setters"
     unInt  getVarN() const {return this->varN;}

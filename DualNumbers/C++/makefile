@@ -19,4 +19,3 @@ DualNumbers.run: makefile $(Headers) DualNumbers.cpp
 
 
 clean:
-	@[ -f "$(Path)/DualNumbers.run" ] && rm "$(Path)/DualNumbers.run" || true
