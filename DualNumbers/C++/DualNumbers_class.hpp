@@ -108,6 +108,8 @@ class DualNumbers{
         return  result;
     };
 
+
+
     // "getters" and "setters"
     unInt  getVarN() const {return this->varN;}
     LD  getValue() const {return this->value;}
@@ -119,6 +121,9 @@ class DualNumbers{
 
     void addToValue(LD value){this->value += value;}
     void addToGrad(unInt i, LD grad_i){this->grad[i] += grad_i;}
+
+
+
 
 
 
