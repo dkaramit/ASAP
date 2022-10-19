@@ -195,7 +195,7 @@ sub.xaxis.set_minor_locator(ticker.FixedLocator([]))
 
 #No. bins ticks
 _xx=sub.twiny()
-_xx.scatter(_points,means,color='' )
+_xx.scatter(_points,means,color='red' )
 _xx.xaxis.set_tick_params(labelbottom=False,labeltop=True,bottom=False,top=True)
 
 #the following is for tick formatting (just for fun)
